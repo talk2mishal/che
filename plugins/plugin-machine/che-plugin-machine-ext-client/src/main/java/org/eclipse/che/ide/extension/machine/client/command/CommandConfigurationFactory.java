@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command;
 
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
-
-import javax.validation.constraints.NotNull;
+import org.eclipse.che.api.core.model.machine.Command;
 
 /**
- * Factory for {@link CommandConfiguration} instances.
+ * Abstract factory for {@link CommandConfiguration} instances.
  *
  * @param <T>
  *         type of the command configuration which this factory produces
@@ -31,24 +29,22 @@ public abstract class CommandConfigurationFactory<T extends CommandConfiguration
      * @param commandType
      *         type of the command configuration which this factory should create
      */
-    protected CommandConfigurationFactory(@NotNull CommandType commandType) {
+    protected CommandConfigurationFactory(CommandType commandType) {
         this.commandType = commandType;
     }
 
     /** Returns type of the command configuration which this factory creates. */
-    @NotNull
     public CommandType getCommandType() {
         return commandType;
     }
 
     /**
-     * Creates a new command configuration based on the given {@link CommandDto}.
+     * Creates a new command configuration based on the given {@link Command}.
      *
-     * @param descriptor
-     *         {@link CommandDto}
+     * @param command
+     *         {@link Command}
      * @throws IllegalArgumentException
-     *         if <code>descriptor</code> represents not a valid command.
+     *         if <code>command</code> represents not a valid command.
      */
-    @NotNull
-    public abstract T createFromDto(@NotNull CommandDto descriptor);
+    public abstract T createFromDto(Command command);
 }

@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
+import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
 import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
@@ -26,7 +27,6 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -38,14 +38,14 @@ import java.util.LinkedList;
 @Singleton
 public class JavaCommandType implements CommandType {
 
-    private static final String ID               = "java";
-    private static final String DISPLAY_NAME     = "Java";
+    private static final String ID = "java";
 
     private final JavaResources                                                        resources;
     private final CurrentProjectPathProvider                                           currentProjectPathProvider;
     private final SourcepathProvider                                                   sourcepathProvider;
     private final OutputDirProvider                                                    outputDirProvider;
     private final ClasspathProvider                                                    classpathProvider;
+    private final JavaLocalizationConstant                                             localizationConstants;
     private final JavaCommandConfigurationFactory                                      configurationFactory;
     private final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages;
 
@@ -56,12 +56,14 @@ public class JavaCommandType implements CommandType {
                            SourcepathProvider sourcepathProvider,
                            OutputDirProvider outputDirProvider,
                            ClasspathProvider classpathProvider,
-                           IconRegistry iconRegistry) {
+                           IconRegistry iconRegistry,
+                           JavaLocalizationConstant localizationConstants) {
         this.resources = resources;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.sourcepathProvider = sourcepathProvider;
         this.outputDirProvider = outputDirProvider;
         this.classpathProvider = classpathProvider;
+        this.localizationConstants = localizationConstants;
         configurationFactory = new JavaCommandConfigurationFactory(this);
         pages = new LinkedList<>();
         pages.add(page);
@@ -69,37 +71,36 @@ public class JavaCommandType implements CommandType {
         iconRegistry.registerIcon(new Icon(ID + ".commands.category.icon", resources.javaCategoryIcon()));
     }
 
-    @NotNull
     @Override
     public String getId() {
         return ID;
     }
 
-    @NotNull
     @Override
     public String getDisplayName() {
-        return DISPLAY_NAME;
+        return "Java";
     }
 
-    @NotNull
+    @Override
+    public String getDescription() {
+        return localizationConstants.commandLineDescription();
+    }
+
     @Override
     public SVGResource getIcon() {
         return resources.javaCategoryIcon();
     }
 
-    @NotNull
     @Override
     public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
         return pages;
     }
 
-    @NotNull
     @Override
     public CommandConfigurationFactory<JavaCommandConfiguration> getConfigurationFactory() {
         return configurationFactory;
     }
 
-    @NotNull
     @Override
     public String getCommandTemplate() {
         return "cd " + currentProjectPathProvider.getKey() +

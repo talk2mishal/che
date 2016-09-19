@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Factory for {@link GwtCommandConfiguration} instances.
@@ -24,7 +22,7 @@ import javax.validation.constraints.NotNull;
  */
 public class GwtCommandConfigurationFactory extends CommandConfigurationFactory<GwtCommandConfiguration> {
 
-    protected GwtCommandConfigurationFactory(@NotNull CommandType commandType) {
+    protected GwtCommandConfigurationFactory(CommandType commandType) {
         super(commandType);
     }
 
@@ -32,16 +30,15 @@ public class GwtCommandConfigurationFactory extends CommandConfigurationFactory<
         return commandLine.startsWith(GwtCommandType.COMMAND_TEMPLATE);
     }
 
-    @NotNull
     @Override
-    public GwtCommandConfiguration createFromDto(@NotNull CommandDto descriptor) {
-        if (!isGwtCommand(descriptor.getCommandLine())) {
-            throw new IllegalArgumentException("Not a valid GWT command: " + descriptor.getCommandLine());
+    public GwtCommandConfiguration createFromDto(Command command) {
+        if (!isGwtCommand(command.getCommandLine())) {
+            throw new IllegalArgumentException("Not a valid GWT command: " + command.getCommandLine());
         }
 
         final GwtCommandConfiguration configuration =
-                new GwtCommandConfiguration(getCommandType(), descriptor.getName(), descriptor.getAttributes());
-        final CommandLine cmd = new CommandLine(descriptor.getCommandLine());
+                new GwtCommandConfiguration(getCommandType(), command.getName(), command.getAttributes());
+        final CommandLine cmd = new CommandLine(command.getCommandLine());
 
         if (cmd.hasArgument("-f")) {
             final int index = cmd.indexOf("-f");

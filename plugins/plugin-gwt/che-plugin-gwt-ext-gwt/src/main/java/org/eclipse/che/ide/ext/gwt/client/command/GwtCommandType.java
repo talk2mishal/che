@@ -24,7 +24,6 @@ import org.eclipse.che.ide.extension.machine.client.command.valueproviders.Curre
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -38,8 +37,7 @@ public class GwtCommandType implements CommandType {
 
     public static final String COMMAND_TEMPLATE = "mvn clean gwt:run-codeserver";
 
-    private static final String ID           = "gwt";
-    private static final String DISPLAY_NAME = "GWT";
+    private static final String ID = "gwt";
 
     private final GwtResources                   resources;
     private final CurrentProjectPathProvider     currentProjectPathProvider;
@@ -64,37 +62,36 @@ public class GwtCommandType implements CommandType {
         iconRegistry.registerIcon(new Icon(ID + ".commands.category.icon", resources.gwtCommandType()));
     }
 
-    @NotNull
     @Override
     public String getId() {
         return ID;
     }
 
-    @NotNull
     @Override
     public String getDisplayName() {
-        return DISPLAY_NAME;
+        return "GWT";
     }
 
-    @NotNull
+    @Override
+    public String getDescription() {
+        return "Command for launching GWT Super Dev Mode";
+    }
+
     @Override
     public SVGResource getIcon() {
         return resources.gwtCommandType();
     }
 
-    @NotNull
     @Override
     public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
         return pages;
     }
 
-    @NotNull
     @Override
     public CommandConfigurationFactory<GwtCommandConfiguration> getConfigurationFactory() {
         return configurationFactory;
     }
 
-    @NotNull
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey() + " -Dgwt.bindAddress=" +

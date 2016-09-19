@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.plugins.client.command;
 
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
-
-import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.ext.plugins.client.command.GwtCheCommandType.CODE_SERVER_FQN;
 
@@ -26,7 +24,7 @@ import static org.eclipse.che.ide.ext.plugins.client.command.GwtCheCommandType.C
  */
 public class GwtCheCommandConfigurationFactory extends CommandConfigurationFactory<GwtCheCommandConfiguration> {
 
-    protected GwtCheCommandConfigurationFactory(@NotNull CommandType commandType) {
+    protected GwtCheCommandConfigurationFactory(CommandType commandType) {
         super(commandType);
     }
 
@@ -34,16 +32,15 @@ public class GwtCheCommandConfigurationFactory extends CommandConfigurationFacto
         return commandLine.startsWith("java -classpath ") && commandLine.contains(CODE_SERVER_FQN);
     }
 
-    @NotNull
     @Override
-    public GwtCheCommandConfiguration createFromDto(@NotNull CommandDto descriptor) {
-        if (!isGwtCheCommand(descriptor.getCommandLine())) {
-            throw new IllegalArgumentException("Not a valid GWT4CHE command: " + descriptor.getCommandLine());
+    public GwtCheCommandConfiguration createFromDto(Command command) {
+        if (!isGwtCheCommand(command.getCommandLine())) {
+            throw new IllegalArgumentException("Not a valid GWT4CHE command: " + command.getCommandLine());
         }
 
         final GwtCheCommandConfiguration configuration =
-                new GwtCheCommandConfiguration(getCommandType(), descriptor.getName(), descriptor.getAttributes());
-        final CommandLine cmd = new CommandLine(descriptor.getCommandLine());
+                new GwtCheCommandConfiguration(getCommandType(), command.getName(), command.getAttributes());
+        final CommandLine cmd = new CommandLine(command.getCommandLine());
 
         final String classPathArgument = cmd.getArgument(2);
         // remove quotes

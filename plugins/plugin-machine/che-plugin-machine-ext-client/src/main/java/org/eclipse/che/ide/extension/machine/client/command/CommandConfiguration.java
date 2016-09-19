@@ -12,7 +12,6 @@ package org.eclipse.che.ide.extension.machine.client.command;
 
 import org.eclipse.che.commons.annotation.Nullable;
 
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,25 +35,23 @@ public abstract class CommandConfiguration {
      * @param name
      *         command name
      */
-    protected CommandConfiguration(@NotNull CommandType type, @NotNull String name, @Nullable Map<String, String> attributes) {
+    protected CommandConfiguration(CommandType type, String name, @Nullable Map<String, String> attributes) {
         this.type = type;
         this.name = name;
         this.attributes = attributes;
     }
 
     /** Returns command configuration name. */
-    @NotNull
     public String getName() {
         return name;
     }
 
     /** Sets command configuration name. */
-    public void setName(@NotNull String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     /** Returns command configuration type. */
-    @NotNull
     public CommandType getType() {
         return type;
     }
@@ -71,7 +68,6 @@ public abstract class CommandConfiguration {
     }
 
     /** Returns command line to execute in machine. */
-    @NotNull
     public abstract String toCommandLine();
 
     @Override
@@ -96,5 +92,4 @@ public abstract class CommandConfiguration {
     public int hashCode() {
         return Objects.hash(getName(), getType().getId(), toCommandLine(), getAttributes());
     }
-
 }

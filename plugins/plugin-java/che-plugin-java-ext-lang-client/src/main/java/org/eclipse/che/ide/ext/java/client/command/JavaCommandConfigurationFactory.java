@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.java.client.command;
 
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Factory for {@link JavaCommandConfiguration} instances.
@@ -28,14 +26,13 @@ public class JavaCommandConfigurationFactory extends CommandConfigurationFactory
         super(commandType);
     }
 
-    @NotNull
     @Override
-    public JavaCommandConfiguration createFromDto(@NotNull CommandDto descriptor) {
+    public JavaCommandConfiguration createFromDto(Command command) {
         final JavaCommandConfiguration configuration = new JavaCommandConfiguration(getCommandType(),
-                                                                                    descriptor.getName(),
-                                                                                    descriptor.getAttributes());
+                                                                                    command.getName(),
+                                                                                    command.getAttributes());
 
-        final CommandLine cmd = new CommandLine(descriptor.getCommandLine());
+        final CommandLine cmd = new CommandLine(command.getCommandLine());
 
         if (cmd.hasArgument("-d")) {
             int index = cmd.indexOf("-d");
@@ -44,7 +41,7 @@ public class JavaCommandConfigurationFactory extends CommandConfigurationFactory
             configuration.setMainClassFqn(cmd.getArgument(cmd.getArguments().size() - 1));
         }
 
-        configuration.setCommandLine(descriptor.getCommandLine());
+        configuration.setCommandLine(command.getCommandLine());
         return configuration;
     }
 }

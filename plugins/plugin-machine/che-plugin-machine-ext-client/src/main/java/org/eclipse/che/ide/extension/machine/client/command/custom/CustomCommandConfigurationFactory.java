@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command.custom;
 
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Factory for {@link CustomCommandConfiguration} instances.
@@ -23,16 +21,16 @@ import javax.validation.constraints.NotNull;
  */
 public class CustomCommandConfigurationFactory extends CommandConfigurationFactory<CustomCommandConfiguration> {
 
-    protected CustomCommandConfigurationFactory(@NotNull CommandType commandType) {
+    protected CustomCommandConfigurationFactory(CommandType commandType) {
         super(commandType);
     }
 
-    @NotNull
     @Override
-    public CustomCommandConfiguration createFromDto(@NotNull CommandDto descriptor) {
-        final CustomCommandConfiguration configuration =
-                new CustomCommandConfiguration(getCommandType(), descriptor.getName(), descriptor.getAttributes());
-        configuration.setCommandLine(descriptor.getCommandLine());
+    public CustomCommandConfiguration createFromDto(Command command) {
+        final CustomCommandConfiguration configuration = new CustomCommandConfiguration(getCommandType(),
+                                                                                        command.getName(),
+                                                                                        command.getAttributes());
+        configuration.setCommandLine(command.getCommandLine());
         return configuration;
     }
 }

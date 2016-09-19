@@ -20,7 +20,6 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -33,7 +32,6 @@ import java.util.LinkedList;
 public class CustomCommandType implements CommandType {
 
     private static final String ID               = "custom";
-    private static final String DISPLAY_NAME     = "Custom";
     private static final String COMMAND_TEMPLATE = "echo \"hello\"";
 
     private final MachineResources                  resources;
@@ -49,37 +47,36 @@ public class CustomCommandType implements CommandType {
         pages.add(page);
     }
 
-    @NotNull
     @Override
     public String getId() {
         return ID;
     }
 
-    @NotNull
     @Override
     public String getDisplayName() {
-        return DISPLAY_NAME;
+        return "Custom";
     }
 
-    @NotNull
+    @Override
+    public String getDescription() {
+        return "Arbitrary command";
+    }
+
     @Override
     public SVGResource getIcon() {
         return resources.customCommandTypeSubElementIcon();
     }
 
-    @NotNull
     @Override
     public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
         return pages;
     }
 
-    @NotNull
     @Override
     public CommandConfigurationFactory<CustomCommandConfiguration> getConfigurationFactory() {
         return configurationFactory;
     }
 
-    @NotNull
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE;

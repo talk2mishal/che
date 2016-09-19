@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.maven.client.command;
 
-import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -26,7 +25,6 @@ import org.eclipse.che.ide.extension.machine.client.command.valueproviders.Serve
 import org.eclipse.che.plugin.maven.client.MavenResources;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -39,7 +37,6 @@ import java.util.LinkedList;
 public class MavenCommandType implements CommandType {
 
     private static final String ID               = "mvn";
-    private static final String DISPLAY_NAME     = "Maven";
     private static final String COMMAND_TEMPLATE = "mvn clean install";
     private static final String DEF_PORT         = "8080";
 
@@ -65,37 +62,36 @@ public class MavenCommandType implements CommandType {
         iconRegistry.registerIcon(new Icon(ID + ".commands.category.icon", resources.maven()));
     }
 
-    @NotNull
     @Override
     public String getId() {
         return ID;
     }
 
-    @NotNull
     @Override
     public String getDisplayName() {
-        return DISPLAY_NAME;
+        return "Maven";
     }
 
-    @NotNull
+    @Override
+    public String getDescription() {
+        return "Command for executing Maven goals";
+    }
+
     @Override
     public SVGResource getIcon() {
         return resources.mavenCommandType();
     }
 
-    @NotNull
     @Override
     public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
         return pages;
     }
 
-    @NotNull
     @Override
     public CommandConfigurationFactory<MavenCommandConfiguration> getConfigurationFactory() {
         return configurationFactory;
     }
 
-    @NotNull
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey();

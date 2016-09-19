@@ -22,7 +22,6 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -39,7 +38,6 @@ public class GwtCheCommandType implements CommandType {
             "java -classpath $CHE_CLASSPATH " + CODE_SERVER_FQN + " $GWT_MODULE -noincremental -noprecompile";
 
     private static final String ID             = "gwt_sdm_che";
-    private static final String DISPLAY_NAME   = "GWT SDM for Che";
     private static final String IDE_GWT_MODULE = "org.eclipse.che.ide.IDE";
 
     private final PluginsResources                  resources;
@@ -57,37 +55,36 @@ public class GwtCheCommandType implements CommandType {
         iconRegistry.registerIcon(new Icon(ID + ".commands.category.icon", resources.gwtCheCommandType()));
     }
 
-    @NotNull
     @Override
     public String getId() {
         return ID;
     }
 
-    @NotNull
     @Override
     public String getDisplayName() {
-        return DISPLAY_NAME;
+        return "GWT SDM for Che";
     }
 
-    @NotNull
+    @Override
+    public String getDescription() {
+        return "Command for launching GWT Super Dev Mode for the Che project sources";
+    }
+
     @Override
     public SVGResource getIcon() {
         return resources.gwtCheCommandType();
     }
 
-    @NotNull
     @Override
     public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
         return pages;
     }
 
-    @NotNull
     @Override
     public CommandConfigurationFactory<GwtCheCommandConfiguration> getConfigurationFactory() {
         return configurationFactory;
     }
 
-    @NotNull
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE.replace("$GWT_MODULE", IDE_GWT_MODULE)
