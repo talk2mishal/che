@@ -97,6 +97,11 @@ public class ExplorerCurrentFileRelativePathProvider implements CommandPropertyV
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Path relative to the /projects folder in project tree";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

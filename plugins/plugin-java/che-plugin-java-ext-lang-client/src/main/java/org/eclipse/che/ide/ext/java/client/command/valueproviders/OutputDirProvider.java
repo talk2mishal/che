@@ -31,6 +31,7 @@ import static org.eclipse.che.ide.ext.java.shared.Constants.OUTPUT_FOLDER;
  */
 @Singleton
 public class OutputDirProvider implements CommandPropertyValueProvider {
+
     private static final String KEY = "${project.java.output.dir}";
 
     private final AppContext      appContext;
@@ -45,6 +46,11 @@ public class OutputDirProvider implements CommandPropertyValueProvider {
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Path to the project's output directory";
     }
 
     @Override

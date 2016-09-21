@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.FunctionException;
@@ -22,10 +23,14 @@ import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
-import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.CoreLocalizationConstant;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.dialogs.ChoiceDialog;
+import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
+import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
+import org.eclipse.che.ide.api.dialogs.DialogFactory;
+import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.actions.SelectCommandComboBox;
@@ -36,10 +41,6 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
-import org.eclipse.che.ide.api.dialogs.DialogFactory;
-import org.eclipse.che.ide.api.dialogs.ChoiceDialog;
-import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
 import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.ArrayList;
@@ -190,7 +191,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     public void onDuplicateClicked() {
         final CommandConfiguration selectedConfiguration = view.getSelectedConfiguration();
         if (selectedConfiguration != null) {
-            createNewCommand(selectedConfiguration.getType(), selectedConfiguration.toCommandLine(), selectedConfiguration.getName(),
+            createNewCommand(selectedConfiguration.getType(),
+                             selectedConfiguration.toCommandLine(),
+                             selectedConfiguration.getName(),
                              selectedConfiguration.getAttributes());
         }
     }
@@ -203,7 +206,10 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         }
     }
 
-    private void createNewCommand(final CommandType type, final String customCommand, final String customName, final Map<String, String> attributes) {
+    private void createNewCommand(final CommandType type,
+                                  final String customCommand,
+                                  final String customName,
+                                  final Map<String, String> attributes) {
         if (!isViewModified()) {
             reset();
             createCommand(type, customCommand, customName, attributes);
@@ -264,27 +270,27 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         return newCommandName;
     }
 
-    private void createCommand(CommandType type) {
-        createCommand(type, null, null, null);
-    }
-
     private void createCommand(CommandType type, String customCommand, String customName, Map<String, String> attributes) {
         Map<String, String> attributesToUpdate = (attributes != null) ? attributes : new HashMap<String, String>();
 
         attributesToUpdate.put(PREVIEW_URL_ATTR, type.getPreviewUrlTemplate());
 
+        final CommandConfiguration commandConfiguration = type.getConfigurationFactory().create(getUniqueCommandName(type, customName));
+        commandConfiguration.setAttributes(attributesToUpdate);
+
         final CommandDto commandDto = dtoFactory.createDto(CommandDto.class)
-                                                .withName(getUniqueCommandName(type, customName))
+                                                .withName(commandConfiguration.getName())
                                                 .withCommandLine(customCommand != null ? customCommand : type.getCommandTemplate())
-                                                .withAttributes(attributesToUpdate)
-                                                .withType(type.getId());
+                                                .withAttributes(commandConfiguration.getAttributes())
+                                                .withType(commandConfiguration.getType().getId());
+
         workspaceServiceClient.addCommand(workspaceId, commandDto).then(new Operation<WorkspaceDto>() {
             @Override
             public void apply(WorkspaceDto arg) throws OperationException {
                 fetchCommands();
 
                 final CommandType type = commandTypeRegistry.getCommandTypeById(commandDto.getType());
-                final CommandConfiguration command = type.getConfigurationFactory().createFromDto(commandDto);
+                final CommandConfiguration command = type.getConfigurationFactory().create(commandDto);
                 fireConfigurationAdded(command);
                 view.setSelectedConfiguration(command);
             }
@@ -488,12 +494,12 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             public List<CommandConfiguration> apply(List<CommandDto> arg) throws FunctionException {
                 final List<CommandConfiguration> configurationList = new ArrayList<>();
 
-                for (CommandDto descriptor : arg) {
+                for (Command descriptor : arg) {
                     final CommandType type = commandTypeRegistry.getCommandTypeById(descriptor.getType());
                     // skip command if it's type isn't registered
                     if (type != null) {
                         try {
-                            configurationList.add(type.getConfigurationFactory().createFromDto(descriptor));
+                            configurationList.add(type.getConfigurationFactory().create(descriptor));
                         } catch (IllegalArgumentException e) {
                             Log.warn(EditCommandsPresenter.class, e.getMessage());
                         }

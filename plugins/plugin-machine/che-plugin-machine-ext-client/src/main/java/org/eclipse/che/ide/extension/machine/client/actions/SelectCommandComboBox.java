@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
@@ -216,12 +217,12 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
             public List<CommandConfiguration> apply(List<CommandDto> arg) throws FunctionException {
                 final List<CommandConfiguration> configurationList = new ArrayList<>();
 
-                for (CommandDto command : arg) {
+                for (Command command : arg) {
                     final CommandType type = commandTypeRegistry.getCommandTypeById(command.getType());
                     // skip command if it's type isn't registered
                     if (type != null) {
                         try {
-                            configurationList.add(type.getConfigurationFactory().createFromDto(command));
+                            configurationList.add(type.getConfigurationFactory().create(command));
                         } catch (IllegalArgumentException e) {
                             Log.warn(EditCommandsPresenter.class, e.getMessage());
                         }

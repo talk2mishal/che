@@ -13,6 +13,7 @@ package org.eclipse.che.ide.extension.machine.client.command.edit;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.ide.api.mvp.View;
+import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 

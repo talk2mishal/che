@@ -48,6 +48,11 @@ public class CurrentClassFQNProvider implements CommandPropertyValueProvider {
     }
 
     @Override
+    public String getDescription() {
+        return "The fully qualified name of the Java class currently active in the editor";
+    }
+
+    @Override
     public Promise<String> getValue() {
         final Resource[] resources = appContext.getResources();
 

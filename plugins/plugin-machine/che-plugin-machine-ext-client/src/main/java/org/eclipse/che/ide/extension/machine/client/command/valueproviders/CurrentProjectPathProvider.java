@@ -34,8 +34,7 @@ import javax.validation.constraints.NotNull;
  * @author Vlad Zhukovskyi
  */
 @Singleton
-public class CurrentProjectPathProvider implements CommandPropertyValueProvider,
-                                                   WsAgentStateHandler {
+public class CurrentProjectPathProvider implements CommandPropertyValueProvider, WsAgentStateHandler {
 
     private static final String KEY = "${current.project.path}";
 
@@ -57,6 +56,11 @@ public class CurrentProjectPathProvider implements CommandPropertyValueProvider,
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Absolute path to the project or module currently selected in the project explorer tree";
     }
 
     @NotNull

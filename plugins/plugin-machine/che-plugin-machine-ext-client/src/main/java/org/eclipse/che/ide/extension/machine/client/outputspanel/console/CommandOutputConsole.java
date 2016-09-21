@@ -28,5 +28,5 @@ public interface CommandOutputConsole extends OutputConsole {
     void listenToOutput(String wsChannel);
 
     /** Attaches to the process launched by the command. */
-    void attachToProcess(final MachineProcessDto process);
+    void attachToProcess(MachineProcessDto process);
 }

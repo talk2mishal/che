@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CustomPageViewImpl implements CustomPageView {
 
-    private static final MavenPageViewImplUiBinder UI_BINDER = GWT.create(MavenPageViewImplUiBinder.class);
+    private static final CustomPageViewImplUiBinder UI_BINDER = GWT.create(CustomPageViewImplUiBinder.class);
 
     private final FlowPanel rootElement;
 
@@ -72,6 +72,6 @@ public class CustomPageViewImpl implements CustomPageView {
         }.schedule(0);
     }
 
-    interface MavenPageViewImplUiBinder extends UiBinder<FlowPanel, CustomPageViewImpl> {
+    interface CustomPageViewImplUiBinder extends UiBinder<FlowPanel, CustomPageViewImpl> {
     }
 }

@@ -49,6 +49,11 @@ public class EditorCurrentFileNameProvider extends AbstractEditorMacroProvider {
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Currently selected file in editor";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

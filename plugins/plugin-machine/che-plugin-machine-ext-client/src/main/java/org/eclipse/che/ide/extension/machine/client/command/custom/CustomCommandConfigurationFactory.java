@@ -10,27 +10,37 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command.custom;
 
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 /**
  * Factory for {@link CustomCommandConfiguration} instances.
  *
  * @author Artem Zatsarynnyi
  */
-public class CustomCommandConfigurationFactory extends CommandConfigurationFactory<CustomCommandConfiguration> {
+@Singleton
+public class CustomCommandConfigurationFactory implements CommandConfigurationFactory<CustomCommandConfiguration> {
 
-    protected CustomCommandConfigurationFactory(CommandType commandType) {
-        super(commandType);
+    @Override
+    public CustomCommandConfiguration create(String name) {
+        final CustomCommandConfiguration commandConfiguration = new CustomCommandConfiguration(null, name, null);
+        commandConfiguration.setCommandLine("echo \"hello\"");
+
+        return commandConfiguration;
     }
 
     @Override
-    public CustomCommandConfiguration createFromDto(Command command) {
-        final CustomCommandConfiguration configuration = new CustomCommandConfiguration(getCommandType(),
-                                                                                        command.getName(),
-                                                                                        command.getAttributes());
+    public CustomCommandConfiguration create(CustomCommandConfiguration commandConfiguration) {
+        return null;
+    }
+
+    @Override
+    public CustomCommandConfiguration create(Command command) {
+        final CustomCommandConfiguration configuration = new CustomCommandConfiguration(null, command.getName(), null);
         configuration.setCommandLine(command.getCommandLine());
+
         return configuration;
     }
 }

@@ -53,6 +53,11 @@ public class EditorCurrentProjectTypeProvider extends AbstractEditorMacroProvide
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Project type of the file currently selected in editor";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

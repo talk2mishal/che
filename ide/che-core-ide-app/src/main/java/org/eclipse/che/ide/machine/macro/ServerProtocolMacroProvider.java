@@ -63,7 +63,8 @@ public class ServerProtocolMacroProvider extends AbstractServerMacroProvider {
             }
 
             CommandPropertyValueProvider macroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", entry.getKey()),
-                                                                                                entry.getValue().getProtocol());
+                                                                                                entry.getValue().getProtocol(),
+                                                                                                "Returns protocol of a server registered by name");
 
             providers.add(macroProvider);
 
@@ -72,7 +73,8 @@ public class ServerProtocolMacroProvider extends AbstractServerMacroProvider {
                 final String port = entry.getKey().substring(0, entry.getKey().length() - 4);
 
                 CommandPropertyValueProvider shortMacroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", port),
-                                                                                                         entry.getValue().getProtocol());
+                                                                                                         entry.getValue().getProtocol(),
+                                                                                                         "Returns protocol of a server registered by name");
 
                 providers.add(shortMacroProvider);
             }

@@ -1,95 +1,27 @@
-/*******************************************************************************
- * Copyright (c) 2012-2016 Codenvy, S.A.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *   Codenvy, S.A. - initial API and implementation
- *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command;
 
-import org.eclipse.che.commons.annotation.Nullable;
-
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
- * Abstract command which can be configured and executed in machine.
+ * API for the command configuration.
  *
  * @author Artem Zatsarynnyi
  */
-public abstract class CommandConfiguration {
-
-    private final CommandType         type;
-    private       String              name;
-    private       Map<String, String> attributes;
-
-    /**
-     * Creates new command configuration of the specified type with the given name.
-     *
-     * @param type
-     *         type of the command
-     * @param name
-     *         command name
-     */
-    protected CommandConfiguration(CommandType type, String name, @Nullable Map<String, String> attributes) {
-        this.type = type;
-        this.name = name;
-        this.attributes = attributes;
-    }
+public interface CommandConfiguration {
 
     /** Returns command configuration name. */
-    public String getName() {
-        return name;
-    }
+    String getName();
 
     /** Sets command configuration name. */
-    public void setName(String name) {
-        this.name = name;
-    }
+    void setName(String name);
 
     /** Returns command configuration type. */
-    public CommandType getType() {
-        return type;
-    }
+    CommandType getType();
 
-    public Map<String, String> getAttributes() {
-        if (attributes == null) {
-            attributes = new HashMap<>();
-        }
-        return attributes;
-    }
+    Map<String, String> getAttributes();
 
-    public void setAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
+    void setAttributes(Map<String, String> attributes);
 
     /** Returns command line to execute in machine. */
-    public abstract String toCommandLine();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof CommandConfiguration)) {
-            return false;
-        }
-
-        CommandConfiguration other = (CommandConfiguration)o;
-
-        return Objects.equals(getName(), other.getName())
-               && Objects.equals(getType().getId(), other.getType().getId())
-               && Objects.equals(toCommandLine(), other.toCommandLine())
-               && Objects.equals(getAttributes(), other.getAttributes());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getType().getId(), toCommandLine(), getAttributes());
-    }
+    String toCommandLine();
 }

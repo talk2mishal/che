@@ -641,7 +641,7 @@ public class ProcessesPanelPresenterTest {
         when(commandConsoleFactory.create(anyObject(), any(org.eclipse.che.api.core.model.machine.Machine.class)))
                 .thenReturn(outputConsole);
         when(commandType.getConfigurationFactory()).thenReturn(commandConfigurationFactory);
-        when(commandConfigurationFactory.createFromDto(anyObject())).thenReturn(commandConfiguration);
+        when(commandConfigurationFactory.create(anyObject())).thenReturn(commandConfiguration);
 
         presenter.onWsAgentStarted(event);
 

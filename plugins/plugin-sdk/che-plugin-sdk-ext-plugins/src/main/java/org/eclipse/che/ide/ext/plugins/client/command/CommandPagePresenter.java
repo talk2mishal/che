@@ -16,8 +16,6 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Page allows to configure {@link GwtCheCommandConfiguration} command parameters.
  *
@@ -44,7 +42,7 @@ public class CommandPagePresenter implements CommandPageView.ActionDelegate, Com
     }
 
     @Override
-    public void resetFrom(@NotNull GwtCheCommandConfiguration configuration) {
+    public void resetFrom(GwtCheCommandConfiguration configuration) {
         editedConfiguration = configuration;
         originGwtModule = configuration.getGwtModule();
         originCodeServerAddress = configuration.getCodeServerAddress();
@@ -68,7 +66,7 @@ public class CommandPagePresenter implements CommandPageView.ActionDelegate, Com
     }
 
     @Override
-    public void setDirtyStateListener(@NotNull DirtyStateListener listener) {
+    public void setDirtyStateListener(DirtyStateListener listener) {
         this.listener = listener;
     }
 

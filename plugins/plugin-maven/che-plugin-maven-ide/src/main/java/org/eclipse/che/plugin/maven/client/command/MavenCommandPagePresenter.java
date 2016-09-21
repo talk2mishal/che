@@ -16,8 +16,6 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Page allows to configure Maven command parameters.
  *
@@ -42,7 +40,7 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
     }
 
     @Override
-    public void resetFrom(@NotNull MavenCommandConfiguration configuration) {
+    public void resetFrom(MavenCommandConfiguration configuration) {
         editedConfiguration = configuration;
         originWorkingDirectory = configuration.getWorkingDirectory();
         originCommandLine = configuration.getCommandLine();
@@ -63,7 +61,7 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
     }
 
     @Override
-    public void setDirtyStateListener(@NotNull DirtyStateListener listener) {
+    public void setDirtyStateListener(DirtyStateListener listener) {
         this.listener = listener;
     }
 

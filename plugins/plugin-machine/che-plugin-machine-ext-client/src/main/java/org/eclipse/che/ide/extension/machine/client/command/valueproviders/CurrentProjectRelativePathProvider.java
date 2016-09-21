@@ -47,6 +47,11 @@ public class CurrentProjectRelativePathProvider implements CommandPropertyValueP
     }
 
     @Override
+    public String getDescription() {
+        return "The path to the currently selected project relative to /projects. Effectively removes the /projects path from any project reference";
+    }
+
+    @Override
     public Promise<String> getValue() {
         final Resource[] resources = appContext.getResources();
 

@@ -26,6 +26,10 @@ public class JavaCommandConfigurationFactory extends CommandConfigurationFactory
         super(commandType);
     }
 
+    public JavaCommandConfiguration create() {
+
+    }
+
     @Override
     public JavaCommandConfiguration createFromDto(Command command) {
         final JavaCommandConfiguration configuration = new JavaCommandConfiguration(getCommandType(),

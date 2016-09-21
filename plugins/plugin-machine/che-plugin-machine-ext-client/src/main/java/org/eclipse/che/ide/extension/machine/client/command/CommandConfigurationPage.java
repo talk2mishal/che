@@ -14,10 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.ide.api.mvp.Presenter;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * Page allows to configure specific command parameters.
+ * Page allows to edit concrete command.
  *
  * @param <T>
  *         type of the command configuration which this page should edit
@@ -34,7 +32,7 @@ public interface CommandConfigurationPage<T extends CommandConfiguration> extend
      * an appropriate command configuration in 'Command Configuration'
      * dialog and before actual displaying this page.
      */
-    void resetFrom(@NotNull T configuration);
+    void resetFrom(T configuration);
 
     /**
      * This method is called every time when user selects an appropriate
@@ -56,15 +54,13 @@ public interface CommandConfigurationPage<T extends CommandConfiguration> extend
      * Sets {@link DirtyStateListener} that should be called
      * every time when any modifications on the page has been performed.
      */
-    void setDirtyStateListener(@NotNull DirtyStateListener listener);
+    void setDirtyStateListener(DirtyStateListener listener);
 
-    /**
-     * Sets {@link FieldStateActionDelegate} that should be operated all panels.
-     */
-    void setFieldStateActionDelegate (FieldStateActionDelegate delegate);
+    /** Sets {@link FieldStateActionDelegate} that should be operated all panels. */
+    void setFieldStateActionDelegate(FieldStateActionDelegate delegate);
 
     interface FieldStateActionDelegate {
-        /** Sets a state of the visibility for the Preview URL panel.*/
+        /** Sets a state of the visibility for the Preview URL panel. */
         void updatePreviewURLState(boolean isVisible);
     }
 

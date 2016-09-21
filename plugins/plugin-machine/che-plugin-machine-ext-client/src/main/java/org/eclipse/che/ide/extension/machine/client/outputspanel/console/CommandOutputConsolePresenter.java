@@ -161,7 +161,7 @@ public class CommandOutputConsolePresenter implements CommandOutputConsole, Outp
     }
 
     @Override
-    public void attachToProcess(final MachineProcessDto process) {
+    public void attachToProcess(MachineProcessDto process) {
         this.pid = process.getPid();
         view.showCommandLine(process.getCommandLine());
         //try to restore previous log of the process

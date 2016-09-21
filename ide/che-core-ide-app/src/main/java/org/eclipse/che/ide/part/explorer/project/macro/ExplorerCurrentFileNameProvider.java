@@ -97,6 +97,11 @@ public class ExplorerCurrentFileNameProvider implements CommandPropertyValueProv
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Currently selected file in project tree";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

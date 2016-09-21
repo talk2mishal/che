@@ -10,24 +10,25 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.maven.client.command;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
-import javax.validation.constraints.NotNull;
-import java.util.Map;
+import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
 
 /**
  * Represents Maven command.
  *
  * @author Artem Zatsarynnyi
  */
-public class MavenCommandConfiguration extends CommandConfiguration {
+public class MavenCommandConfiguration extends AbstractCommandConfiguration {
 
     private String workingDirectory;
     private String commandLine;
 
-    protected MavenCommandConfiguration(CommandType type, String name, Map<String, String> attributes) {
-        super(type, name, attributes);
+    @Inject
+    protected MavenCommandConfiguration(MavenCommandType type, @Assisted String name) {
+        super(type, name, null);
+
         workingDirectory = "";
         commandLine = "";
     }
@@ -44,11 +45,11 @@ public class MavenCommandConfiguration extends CommandConfiguration {
         return commandLine;
     }
 
+    /** Set command line, e.g. {@code [options] [<goal(s)>] [<phase(s)>]}. */
     public void setCommandLine(String commandLine) {
         this.commandLine = commandLine;
     }
 
-    @NotNull
     @Override
     public String toCommandLine() {
         final StringBuilder cmd = new StringBuilder("mvn");

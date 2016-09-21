@@ -10,20 +10,30 @@
  *******************************************************************************/
 package org.eclipse.che.plugin.maven.client.command;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 
 /**
  * Factory for {@link MavenCommandConfiguration} instances.
  *
  * @author Artem Zatsarynnyi
  */
-public class MavenCommandConfigurationFactory extends CommandConfigurationFactory<MavenCommandConfiguration> {
+@Singleton
+public class MavenCommandConfigurationFactory implements CommandConfigurationFactory<MavenCommandConfiguration> {
 
-    protected MavenCommandConfigurationFactory(CommandType commandType) {
-        super(commandType);
+    private final MavenCommandFactory        mavenCommandFactory;
+    private final CurrentProjectPathProvider currentProjectPathProvider;
+
+    @Inject
+    public MavenCommandConfigurationFactory(MavenCommandFactory mavenCommandFactory,
+                                            CurrentProjectPathProvider currentProjectPathProvider) {
+        this.mavenCommandFactory = mavenCommandFactory;
+        this.currentProjectPathProvider = currentProjectPathProvider;
     }
 
     private static boolean isMavenCommand(String commandLine) {
@@ -31,28 +41,41 @@ public class MavenCommandConfigurationFactory extends CommandConfigurationFactor
     }
 
     @Override
-    public MavenCommandConfiguration createFromDto(Command command) {
+    public MavenCommandConfiguration create(String name) {
+        final MavenCommandConfiguration configuration = mavenCommandFactory.newCommand(name);
+        configuration.setWorkingDirectory(currentProjectPathProvider.getKey());
+        configuration.setCommandLine("clean install");
+
+        return configuration;
+    }
+
+    @Override
+    public MavenCommandConfiguration create(Command command) {
         if (!isMavenCommand(command.getCommandLine())) {
             throw new IllegalArgumentException("Not a valid Maven command: " + command.getCommandLine());
         }
 
-        final MavenCommandConfiguration configuration =
-                new MavenCommandConfiguration(getCommandType(), command.getName(), command.getAttributes());
+        final MavenCommandConfiguration configuration = mavenCommandFactory.newCommand(command.getName());
+        configuration.setAttributes(command.getAttributes());
 
-        final CommandLine cmd = new CommandLine(command.getCommandLine());
+        setUpFromCommandLine(configuration, command.getCommandLine());
+
+        return configuration;
+    }
+
+    public void setUpFromCommandLine(MavenCommandConfiguration commandConfiguration, String commandLine) {
+        final CommandLine cmd = new CommandLine(commandLine);
 
         if (cmd.hasArgument("-f")) {
             final int index = cmd.indexOf("-f");
             final String workDir = cmd.getArgument(index + 1);
-            configuration.setWorkingDirectory(workDir);
+            commandConfiguration.setWorkingDirectory(workDir);
 
             cmd.removeArgument("-f");
             cmd.removeArgument(workDir);
         }
 
         cmd.removeArgument("mvn");
-        configuration.setCommandLine(cmd.toString());
-
-        return configuration;
+        commandConfiguration.setCommandLine(cmd.toString());
     }
 }

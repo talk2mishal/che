@@ -13,6 +13,8 @@ package org.eclipse.che.ide.ext.java.client.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.eclipse.che.api.core.model.machine.Command;
+import org.eclipse.che.ide.CommandLine;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
@@ -23,12 +25,14 @@ import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProv
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Java command type.
@@ -113,7 +117,30 @@ public class JavaCommandType implements CommandType {
     }
 
     @Override
+    public List<CommandProducer> getProducers() {
+        return null;
+    }
+
+    @Override
     public String getPreviewUrlTemplate() {
         return "";
+    }
+
+    public JavaCommandConfiguration createCommand(Command command) {
+        final JavaCommandConfiguration configuration = new JavaCommandConfiguration(this,
+                                                                                    command.getName(),
+                                                                                    command.getAttributes());
+
+        final CommandLine cmd = new CommandLine(command.getCommandLine());
+
+        if (cmd.hasArgument("-d")) {
+            int index = cmd.indexOf("-d");
+            final String mainClass = cmd.getArgument(index + 2);
+            configuration.setMainClass(mainClass);
+            configuration.setMainClassFqn(cmd.getArgument(cmd.getArguments().size() - 1));
+        }
+
+        configuration.setCommandLine(command.getCommandLine());
+        return configuration;
     }
 }

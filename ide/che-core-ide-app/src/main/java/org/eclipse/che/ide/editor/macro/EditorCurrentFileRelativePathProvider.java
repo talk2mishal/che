@@ -49,6 +49,11 @@ public class EditorCurrentFileRelativePathProvider extends AbstractEditorMacroPr
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Path relative to the /projects folder to the selected file in editor";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

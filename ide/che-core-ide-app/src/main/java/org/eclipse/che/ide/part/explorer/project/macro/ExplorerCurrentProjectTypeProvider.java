@@ -57,6 +57,11 @@ public class ExplorerCurrentProjectTypeProvider implements CommandPropertyValueP
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Project type of the file currently selected in explorer";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

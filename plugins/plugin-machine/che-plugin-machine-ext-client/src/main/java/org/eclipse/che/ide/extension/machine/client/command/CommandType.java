@@ -13,6 +13,7 @@ package org.eclipse.che.ide.extension.machine.client.command;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The type of a command.
@@ -41,6 +42,8 @@ public interface CommandType {
 
     /** Returns command template that will be used for newly created command. */
     String getCommandTemplate();
+
+    List<CommandProducer> getProducers();
 
     /** Returns template for preview Url. */
     String getPreviewUrlTemplate();

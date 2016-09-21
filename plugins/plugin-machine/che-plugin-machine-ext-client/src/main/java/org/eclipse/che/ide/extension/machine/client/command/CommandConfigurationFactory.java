@@ -13,38 +13,35 @@ package org.eclipse.che.ide.extension.machine.client.command;
 import org.eclipse.che.api.core.model.machine.Command;
 
 /**
- * Abstract factory for {@link CommandConfiguration} instances.
+ * Factory for {@link CommandConfiguration} instances.
  *
  * @param <T>
  *         type of the command configuration which this factory produces
  * @author Artem Zatsarynnyi
  */
-public abstract class CommandConfigurationFactory<T extends CommandConfiguration> {
-
-    private final CommandType commandType;
+public interface CommandConfigurationFactory<T extends CommandConfiguration> {
 
     /**
-     * Creates new command configuration factory for the specified command type.
+     * Creates a new 'empty' command with the given name.
+     * <p>Called when user tries to create new command in 'Commands' dialog.
      *
-     * @param commandType
-     *         type of the command configuration which this factory should create
+     * @return a new 'empty' command
      */
-    protected CommandConfigurationFactory(CommandType commandType) {
-        this.commandType = commandType;
-    }
+    T create(String name);
 
-    /** Returns type of the command configuration which this factory creates. */
-    public CommandType getCommandType() {
-        return commandType;
-    }
+    /** Creates duplicate of the given {@code commandConfiguration}. */
+    T create(T commandConfiguration);
 
     /**
-     * Creates a new command configuration based on the given {@link Command}.
+     * Creates a new command based on the given model object.
+     * <p>Called for instantiating command from the saved state.
+     * <p>Typically, should create a new command and set it up from the given {@link Command} object.
      *
      * @param command
-     *         {@link Command}
+     *         {@link Command} model
+     * @return a new command based on the given {@link Command} object
      * @throws IllegalArgumentException
-     *         if <code>command</code> represents not a valid command.
+     *         if the {@code command} represents not a suitable command
      */
-    public abstract T createFromDto(Command command);
+    T create(Command command);
 }

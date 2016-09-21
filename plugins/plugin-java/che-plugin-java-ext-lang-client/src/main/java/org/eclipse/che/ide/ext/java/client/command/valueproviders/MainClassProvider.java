@@ -26,6 +26,7 @@ import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
  */
 @Singleton
 public class MainClassProvider implements CommandPropertyValueProvider {
+
     private static final String KEY = "${java.main.class}";
 
     private final JavaCommandPagePresenter javaCommandPagePresenter;
@@ -38,6 +39,11 @@ public class MainClassProvider implements CommandPropertyValueProvider {
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Path to the Main class";
     }
 
     @Override

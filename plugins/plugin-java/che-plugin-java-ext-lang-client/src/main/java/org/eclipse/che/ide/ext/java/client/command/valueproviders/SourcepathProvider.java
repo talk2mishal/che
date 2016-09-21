@@ -37,6 +37,7 @@ import java.util.Set;
  */
 @Singleton
 public class SourcepathProvider implements CommandPropertyValueProvider {
+
     private static final String KEY = "${project.java.sourcepath}";
 
     private final ClasspathContainer classpathContainer;
@@ -58,6 +59,11 @@ public class SourcepathProvider implements CommandPropertyValueProvider {
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Project sourcepath";
     }
 
     @Override

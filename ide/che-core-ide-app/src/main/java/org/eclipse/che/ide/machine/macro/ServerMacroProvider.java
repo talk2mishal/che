@@ -63,7 +63,8 @@ public class ServerMacroProvider extends AbstractServerMacroProvider {
             final String value = prefix + entry.getValue().getAddress() + (isNullOrEmpty(prefix) ? "" : "/");
 
             CommandPropertyValueProvider macroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", entry.getKey()),
-                                                                                                value);
+                                                                                                value,
+                                                                                                "Returns protocol, hostname and port of an internal server");
 
             providers.add(macroProvider);
 
@@ -72,7 +73,8 @@ public class ServerMacroProvider extends AbstractServerMacroProvider {
                 final String port = entry.getKey().substring(0, entry.getKey().length() - 4);
 
                 CommandPropertyValueProvider shortMacroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", port),
-                                                                                                         value);
+                                                                                                         value,
+                                                                                                         "Returns protocol, hostname and port of an internal server");
 
                 providers.add(shortMacroProvider);
             }

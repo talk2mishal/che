@@ -16,8 +16,6 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Page allows to configure GWT command parameters.
  *
@@ -45,7 +43,7 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
     }
 
     @Override
-    public void resetFrom(@NotNull GwtCommandConfiguration configuration) {
+    public void resetFrom(GwtCommandConfiguration configuration) {
         editedConfiguration = configuration;
         originWorkingDirectory = configuration.getWorkingDirectory();
         originGwtModule = configuration.getGwtModule();
@@ -69,7 +67,7 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
     }
 
     @Override
-    public void setDirtyStateListener(@NotNull DirtyStateListener listener) {
+    public void setDirtyStateListener(DirtyStateListener listener) {
         this.listener = listener;
     }
 

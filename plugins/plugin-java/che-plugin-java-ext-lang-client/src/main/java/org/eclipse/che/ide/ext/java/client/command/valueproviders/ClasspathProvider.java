@@ -40,6 +40,7 @@ import static org.eclipse.che.ide.ext.java.shared.ClasspathEntryKind.LIBRARY;
  */
 @Singleton
 public class ClasspathProvider implements CommandPropertyValueProvider {
+
     private static final String KEY = "${project.java.classpath}";
 
     private final ClasspathContainer classpathContainer;
@@ -61,6 +62,11 @@ public class ClasspathProvider implements CommandPropertyValueProvider {
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Project classpath";
     }
 
     @Override

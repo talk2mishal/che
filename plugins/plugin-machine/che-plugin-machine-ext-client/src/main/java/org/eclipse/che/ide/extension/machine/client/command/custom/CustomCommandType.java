@@ -17,11 +17,14 @@ import org.eclipse.che.ide.extension.machine.client.MachineResources;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Arbitrary command type.
@@ -40,9 +43,12 @@ public class CustomCommandType implements CommandType {
     private final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages;
 
     @Inject
-    public CustomCommandType(MachineResources resources, CustomPagePresenter page) {
+    public CustomCommandType(MachineResources resources,
+                             CustomCommandConfigurationFactory customCommandConfigurationFactory,
+                             CustomPagePresenter page) {
         this.resources = resources;
-        configurationFactory = new CustomCommandConfigurationFactory(this);
+        configurationFactory = customCommandConfigurationFactory;
+
         pages = new LinkedList<>();
         pages.add(page);
     }
@@ -80,6 +86,11 @@ public class CustomCommandType implements CommandType {
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE;
+    }
+
+    @Override
+    public List<CommandProducer> getProducers() {
+        return Collections.emptyList();
     }
 
     @Override

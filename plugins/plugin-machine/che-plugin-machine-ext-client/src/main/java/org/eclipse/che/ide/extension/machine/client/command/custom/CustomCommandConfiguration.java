@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command.custom;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
-import javax.validation.constraints.NotNull;
+import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
+
 import java.util.Map;
 
 /**
@@ -21,11 +22,12 @@ import java.util.Map;
  *
  * @author Artem Zatsarynnyi
  */
-public class CustomCommandConfiguration extends CommandConfiguration {
+public class CustomCommandConfiguration extends AbstractCommandConfiguration {
 
     private String commandLine;
 
-    protected CustomCommandConfiguration(CommandType type, String name, Map<String, String> attributes) {
+    @Inject
+    protected CustomCommandConfiguration(CustomCommandType type, @Assisted String name, Map<String, String> attributes) {
         super(type, name, attributes);
         commandLine = "";
     }
@@ -38,7 +40,6 @@ public class CustomCommandConfiguration extends CommandConfiguration {
         this.commandLine = commandLine;
     }
 
-    @NotNull
     @Override
     public String toCommandLine() {
         return getCommandLine();

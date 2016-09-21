@@ -101,6 +101,11 @@ public class ExplorerCurrentFilePathProvider implements CommandPropertyValueProv
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Absolute path to the selected file in project tree";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

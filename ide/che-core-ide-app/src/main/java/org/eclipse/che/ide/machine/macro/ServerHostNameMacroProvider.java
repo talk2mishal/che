@@ -63,7 +63,8 @@ public class ServerHostNameMacroProvider extends AbstractServerMacroProvider {
             }
 
             CommandPropertyValueProvider macroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", entry.getKey()),
-                                                                                                entry.getValue().getRef());
+                                                                                                entry.getValue().getRef(),
+                                                                                                "Returns hostname of a server registered by name");
 
             providers.add(macroProvider);
 
@@ -72,7 +73,8 @@ public class ServerHostNameMacroProvider extends AbstractServerMacroProvider {
                 final String port = entry.getKey().substring(0, entry.getKey().length() - 4);
 
                 CommandPropertyValueProvider shortMacroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", port),
-                                                                                                         entry.getValue().getRef());
+                                                                                                         entry.getValue().getRef(),
+                                                                                                         "Returns hostname of a server registered by name");
 
                 providers.add(shortMacroProvider);
             }

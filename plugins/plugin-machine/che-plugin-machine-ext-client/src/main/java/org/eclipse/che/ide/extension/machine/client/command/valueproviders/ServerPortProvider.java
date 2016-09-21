@@ -79,10 +79,13 @@ public class ServerPortProvider implements WsAgentStateHandler {
     private Set<CommandPropertyValueProvider> getProviders(MachineDto machine) {
         Set<CommandPropertyValueProvider> providers = Sets.newHashSet();
         for (Map.Entry<String, ServerDto> entry : machine.getRuntime().getServers().entrySet()) {
-            providers.add(new AddressProvider(entry.getKey(), entry.getValue().getAddress()));
+            providers.add(new AddressProvider(entry.getKey(),
+                                              entry.getValue().getAddress(),
+                                              entry.getKey()));
 
             if (entry.getKey().endsWith("/tcp")) {
-                providers.add(new AddressProvider(entry.getKey().substring(0, entry.getKey().length() - 4), entry.getValue().getAddress()));
+                providers.add(new AddressProvider(entry.getKey().substring(0, entry.getKey().length() - 4),
+                                                  entry.getValue().getAddress(), entry.getKey()));
             }
         }
 
@@ -107,15 +110,22 @@ public class ServerPortProvider implements WsAgentStateHandler {
 
         String variable;
         String address;
+        String description;
 
-        AddressProvider(String internalPort, String address) {
+        AddressProvider(String internalPort, String address, String description) {
             this.variable = KEY_TEMPLATE.replaceAll("%", internalPort);
             this.address = address;
+            this.description = description;
         }
 
         @Override
         public String getKey() {
             return variable;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
         }
 
         @Override

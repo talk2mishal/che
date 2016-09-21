@@ -49,6 +49,11 @@ public class WorkspaceNameMacroProvider implements CommandPropertyValueProvider 
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Returns the name of the workspace";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

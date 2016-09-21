@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ import java.util.Map;
  *
  * @author Artem Zatsarynnyi
  */
-public class GwtCommandConfiguration extends CommandConfiguration {
+public class GwtCommandConfiguration extends AbstractCommandConfiguration {
 
     private String workingDirectory;
     private String gwtModule;
@@ -58,7 +57,6 @@ public class GwtCommandConfiguration extends CommandConfiguration {
         this.codeServerAddress = codeServerAddress;
     }
 
-    @NotNull
     @Override
     public String toCommandLine() {
         final StringBuilder cmd = new StringBuilder(GwtCommandType.COMMAND_TEMPLATE);

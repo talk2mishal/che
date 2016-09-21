@@ -54,6 +54,11 @@ public class EditorCurrentFilePathProvider extends AbstractEditorMacroProvider {
         return KEY;
     }
 
+    @Override
+    public String getDescription() {
+        return "Absolute path to the selected file in editor";
+    }
+
     /** {@inheritDoc} */
     @Override
     public Promise<String> getValue() {

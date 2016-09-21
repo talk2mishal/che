@@ -19,7 +19,6 @@ import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.core.model.machine.Machine;
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.machine.shared.dto.MachineDto;
 import org.eclipse.che.api.machine.shared.dto.MachineProcessDto;
 import org.eclipse.che.api.promises.client.Operation;
@@ -104,7 +103,6 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
     private final TerminalFactory               terminalFactory;
     private final CommandConsoleFactory         commandConsoleFactory;
     private final DialogFactory                 dialogFactory;
-    private final DtoFactory                    dtoFactory;
     private final CommandTypeRegistry           commandTypeRegistry;
     private final ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory;
     private final Map<String, ProcessTreeNode>  machineNodes;
@@ -141,7 +139,6 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
         this.terminalFactory = terminalFactory;
         this.commandConsoleFactory = commandConsoleFactory;
         this.dialogFactory = dialogFactory;
-        this.dtoFactory = dtoFactory;
         this.commandTypeRegistry = commandTypeRegistry;
         this.consoleTreeContextMenuFactory = consoleTreeContextMenuFactory;
 
@@ -718,15 +715,9 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                         continue;
                     }
 
-                    final CommandDto commandDto = dtoFactory.createDto(CommandDto.class)
-                                                            .withName(machineProcessDto.getName())
-                                                            .withAttributes(machineProcessDto.getAttributes())
-                                                            .withCommandLine(machineProcessDto.getCommandLine())
-                                                            .withType(machineProcessDto.getType());
-
-                    final CommandType type = commandTypeRegistry.getCommandTypeById(commandDto.getType());
+                    final CommandType type = commandTypeRegistry.getCommandTypeById(machineProcessDto.getType());
                     if (type != null ) {
-                        final CommandConfiguration configuration = type.getConfigurationFactory().createFromDto(commandDto);
+                        final CommandConfiguration configuration = type.getConfigurationFactory().create(machineProcessDto);
                         final CommandOutputConsole console = commandConsoleFactory.create(configuration, machine);
                         console.listenToOutput(machineProcessDto.getOutputChannel());
                         console.attachToProcess(machineProcessDto);

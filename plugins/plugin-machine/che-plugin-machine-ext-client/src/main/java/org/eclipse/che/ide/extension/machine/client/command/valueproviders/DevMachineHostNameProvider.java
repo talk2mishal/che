@@ -14,12 +14,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
-import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
+import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;
 
 import javax.validation.constraints.NotNull;
 
@@ -33,7 +33,7 @@ public class DevMachineHostNameProvider implements CommandPropertyValueProvider,
 
     private static final String KEY = "${machine.dev.hostname}";
 
-    private final AppContext           appContext;
+    private final AppContext appContext;
 
     private String value;
 
@@ -48,6 +48,11 @@ public class DevMachineHostNameProvider implements CommandPropertyValueProvider,
     @Override
     public String getKey() {
         return KEY;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Dev-machine's host name";
     }
 
     @NotNull

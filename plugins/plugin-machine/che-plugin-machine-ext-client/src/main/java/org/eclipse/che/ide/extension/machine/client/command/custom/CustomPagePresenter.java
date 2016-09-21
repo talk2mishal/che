@@ -58,7 +58,7 @@ public class CustomPagePresenter implements CustomPageView.ActionDelegate, Comma
     }
 
     @Override
-    public void setDirtyStateListener(@NotNull DirtyStateListener listener) {
+    public void setDirtyStateListener(DirtyStateListener listener) {
         this.listener = listener;
     }
 

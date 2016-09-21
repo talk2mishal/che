@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.java.client.command;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author Valeriy Svydenko
  */
-public class JavaCommandConfiguration extends CommandConfiguration {
+public class JavaCommandConfiguration extends AbstractCommandConfiguration {
 
     private String project;
     private String mainClass;

@@ -18,6 +18,7 @@ import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
 import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectRelativePathProvider;
@@ -26,7 +27,9 @@ import org.eclipse.che.plugin.maven.client.MavenResources;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Maven command type.
@@ -41,6 +44,7 @@ public class MavenCommandType implements CommandType {
     private static final String DEF_PORT         = "8080";
 
     private final MavenResources                                                       resources;
+    private final MavenTestCommandProducer                                             mavenTestCommandProducer;
     private final CurrentProjectPathProvider                                           currentProjectPathProvider;
     private final CurrentProjectRelativePathProvider                                   currentProjectRelativePathProvider;
     private final MavenCommandConfigurationFactory                                     configurationFactory;
@@ -49,13 +53,17 @@ public class MavenCommandType implements CommandType {
     @Inject
     public MavenCommandType(MavenResources resources,
                             MavenCommandPagePresenter page,
+                            MavenCommandConfigurationFactory mavenCommandConfigurationFactory,
+                            MavenTestCommandProducer mavenTestCommandProducer,
                             CurrentProjectPathProvider currentProjectPathProvider,
                             CurrentProjectRelativePathProvider currentProjectRelativePathProvider,
                             IconRegistry iconRegistry) {
         this.resources = resources;
+        this.mavenTestCommandProducer = mavenTestCommandProducer;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.currentProjectRelativePathProvider = currentProjectRelativePathProvider;
-        configurationFactory = new MavenCommandConfigurationFactory(this);
+        configurationFactory = mavenCommandConfigurationFactory;
+
         pages = new LinkedList<>();
         pages.add(page);
 
@@ -95,6 +103,11 @@ public class MavenCommandType implements CommandType {
     @Override
     public String getCommandTemplate() {
         return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey();
+    }
+
+    @Override
+    public List<CommandProducer> getProducers() {
+        return Collections.singletonList(mavenTestCommandProducer);
     }
 
     @Override

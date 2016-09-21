@@ -31,16 +31,23 @@ public class CustomCommandPropertyValueProvider implements CommandPropertyValueP
 
     private final String key;
     private final String value;
+    private final String description;
 
-    public CustomCommandPropertyValueProvider(String key, String value) {
+    public CustomCommandPropertyValueProvider(String key, String value, String description) {
         this.key = checkNotNull(key, "Key should not be null");
         this.value = checkNotNull(value, "Value should not be null");
+        this.description = checkNotNull(value, "Description should not be null");
     }
 
     /** {@inheritDoc} */
     @Override
     public String getKey() {
         return key;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     /** {@inheritDoc} */
