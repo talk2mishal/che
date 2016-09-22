@@ -12,8 +12,8 @@ package org.eclipse.che.ide.ext.gwt.client.command;
 
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.gwt.client.GwtResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
 import org.junit.Test;
@@ -55,7 +55,7 @@ public class GwtCommandTypeTest {
 
     @Test
     public void shouldReturnPages() throws Exception {
-        final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages = gwtCommandType.getConfigurationPages();
+        final Collection<CommandConfigurationPage<? extends CommandImpl>> pages = gwtCommandType.getConfigurationPages();
 
         assertTrue(pages.contains(gwtCommandPagePresenter));
     }

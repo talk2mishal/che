@@ -37,12 +37,9 @@ import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.api.workspace.event.EnvironmentOutputEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
-import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
-import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.EntityFactory;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.TerminalFactory;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStateEvent;
@@ -103,7 +100,6 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
     private final TerminalFactory               terminalFactory;
     private final CommandConsoleFactory         commandConsoleFactory;
     private final DialogFactory                 dialogFactory;
-    private final CommandTypeRegistry           commandTypeRegistry;
     private final ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory;
     private final Map<String, ProcessTreeNode>  machineNodes;
 
@@ -125,8 +121,6 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                                    TerminalFactory terminalFactory,
                                    CommandConsoleFactory commandConsoleFactory,
                                    DialogFactory dialogFactory,
-                                   DtoFactory dtoFactory,
-                                   CommandTypeRegistry commandTypeRegistry,
                                    ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory) {
         this.view = view;
         this.localizationConstant = localizationConstant;
@@ -139,7 +133,6 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
         this.terminalFactory = terminalFactory;
         this.commandConsoleFactory = commandConsoleFactory;
         this.dialogFactory = dialogFactory;
-        this.commandTypeRegistry = commandTypeRegistry;
         this.consoleTreeContextMenuFactory = consoleTreeContextMenuFactory;
 
         machineNodes = new HashMap<>();
@@ -711,19 +704,16 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                     /**
                      * Do not show the process if the command line has prefix #hidden
                      */
-                    if (!Strings.isNullOrEmpty(machineProcessDto.getCommandLine()) && machineProcessDto.getCommandLine().startsWith("#hidden")) {
+                    if (!Strings.isNullOrEmpty(machineProcessDto.getCommandLine()) &&
+                        machineProcessDto.getCommandLine().startsWith("#hidden")) {
                         continue;
                     }
 
-                    final CommandType type = commandTypeRegistry.getCommandTypeById(machineProcessDto.getType());
-                    if (type != null ) {
-                        final CommandConfiguration configuration = type.getConfigurationFactory().create(machineProcessDto);
-                        final CommandOutputConsole console = commandConsoleFactory.create(configuration, machine);
-                        console.listenToOutput(machineProcessDto.getOutputChannel());
-                        console.attachToProcess(machineProcessDto);
-                        addCommandOutput(machine.getId(), console);
-                    }
+                    final CommandOutputConsole console = commandConsoleFactory.create(new CommandImpl(machineProcessDto), machine);
+                    console.listenToOutput(machineProcessDto.getOutputChannel());
+                    console.attachToProcess(machineProcessDto);
 
+                    addCommandOutput(machine.getId(), console);
                 }
             }
         }).catchError(new Operation<PromiseError>() {

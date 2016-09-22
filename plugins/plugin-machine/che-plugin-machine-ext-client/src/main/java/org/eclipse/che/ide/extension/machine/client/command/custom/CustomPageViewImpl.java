@@ -63,7 +63,7 @@ public class CustomPageViewImpl implements CustomPageView {
     @UiHandler({"commandLine"})
     void onKeyUp(KeyUpEvent event) {
         // commandLine value may not be updated immediately after keyUp
-        // therefore use the timer with delay=0
+        // therefore use the timer with zero delay
         new Timer() {
             @Override
             public void run() {

@@ -21,6 +21,7 @@ import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class CommandManagerTest {
     public void shouldShowWarningWhenNoDevMachineIsRunning() throws Exception {
         when(appContext.getDevMachine()).thenReturn(devMachine);
         when(devMachine.getId()).thenReturn(null);
-        commandManager.execute(mock(CommandConfiguration.class));
+        commandManager.execute(mock(CommandImpl.class));
 
         verify(localizationConstant).noDevMachine();
         notificationManager.notify(anyString());

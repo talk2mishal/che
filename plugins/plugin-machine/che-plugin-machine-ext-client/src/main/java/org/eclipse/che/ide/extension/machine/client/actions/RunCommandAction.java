@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.util.loging.Log;
 
@@ -57,7 +57,7 @@ public class RunCommandAction extends Action {
             return;
         }
 
-        final CommandConfiguration command = selectCommandAction.getCommandByName(name);
+        final CommandImpl command = selectCommandAction.getCommandByName(name);
         if (command != null) {
             commandManager.execute(command);
         }

@@ -18,7 +18,7 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.ext.java.client.command.mainclass.SelectNodePresenter;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.eclipse.che.ide.resource.Path;
 
 /**

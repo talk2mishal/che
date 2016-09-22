@@ -8,39 +8,55 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.extension.machine.client.command.api;
 
-import org.eclipse.che.commons.annotation.Nullable;
+import org.eclipse.che.api.core.model.machine.Command;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Abstract {@link CommandConfiguration}.
+ * Model of the command.
  *
  * @author Artem Zatsarynnyi
  */
-public abstract class AbstractCommandConfiguration implements CommandConfiguration {
+public class CommandImpl implements Command {
 
-    private final CommandType         type;
+    private final String              type;
     private       String              name;
+    private       String              commandLine;
     private       Map<String, String> attributes;
 
     /**
-     * Creates new command configuration of the specified type with the given name.
+     * Creates new command of the specified type with the given name and command line.
      *
-     * @param type
-     *         type of the command
      * @param name
      *         command name
-     * @param attributes
-     *         command attributes
+     * @param commandLine
+     *         command line
+     * @param type
+     *         type of the command
      */
-    protected AbstractCommandConfiguration(CommandType type, String name, @Nullable Map<String, String> attributes) {
-        this.type = type;
+    public CommandImpl(String name, String commandLine, String type) {
         this.name = name;
+        this.commandLine = commandLine;
+        this.type = type;
+    }
+
+    public CommandImpl(String name, String commandLine, String type, Map<String, String> attributes) {
+        this.name = name;
+        this.commandLine = commandLine;
+        this.type = type;
         this.attributes = attributes;
+    }
+
+    /** Creates new command from the given {@link Command}. */
+    public CommandImpl(Command command) {
+        this.name = command.getName();
+        this.commandLine = command.getCommandLine();
+        this.type = command.getType();
+        this.attributes = command.getAttributes();
     }
 
     @Override
@@ -48,13 +64,21 @@ public abstract class AbstractCommandConfiguration implements CommandConfigurati
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public CommandType getType() {
+    public String getCommandLine() {
+        return commandLine;
+    }
+
+    public void setCommandLine(String commandLine) {
+        this.commandLine = commandLine;
+    }
+
+    @Override
+    public String getType() {
         return type;
     }
 
@@ -63,11 +87,9 @@ public abstract class AbstractCommandConfiguration implements CommandConfigurati
         if (attributes == null) {
             attributes = new HashMap<>();
         }
-
         return attributes;
     }
 
-    @Override
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
     }
@@ -78,20 +100,20 @@ public abstract class AbstractCommandConfiguration implements CommandConfigurati
             return true;
         }
 
-        if (!(o instanceof CommandConfiguration)) {
+        if (!(o instanceof CommandImpl)) {
             return false;
         }
 
-        CommandConfiguration other = (CommandConfiguration)o;
+        CommandImpl other = (CommandImpl)o;
 
         return Objects.equals(getName(), other.getName())
-               && Objects.equals(getType().getId(), other.getType().getId())
-               && Objects.equals(toCommandLine(), other.toCommandLine())
+               && Objects.equals(type, other.type)
+               && Objects.equals(commandLine, other.commandLine)
                && Objects.equals(getAttributes(), other.getAttributes());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getType().getId(), toCommandLine(), getAttributes());
+        return Objects.hash(name, type, commandLine, getAttributes());
     }
 }

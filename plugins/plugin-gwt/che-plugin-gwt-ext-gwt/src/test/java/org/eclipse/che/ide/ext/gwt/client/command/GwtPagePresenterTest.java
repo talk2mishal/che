@@ -12,7 +12,7 @@ package org.eclipse.che.ide.ext.gwt.client.command;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

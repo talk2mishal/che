@@ -14,7 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 
 /**
  * Page allows to configure Maven command parameters.
@@ -22,42 +23,49 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDelegate, CommandConfigurationPage<MavenCommandConfiguration> {
+public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDelegate, CommandConfigurationPage {
 
     private final MavenCommandPageView view;
 
-    private MavenCommandConfiguration editedConfiguration;
-    /** Working directory value before any editing. */
-    private String                    originWorkingDirectory;
-    /** Command line value before any editing. */
-    private String                    originCommandLine;
-    private DirtyStateListener        listener;
+    private CommandImpl       editedCommand;
+    private MavenCommandModel editedCommandModel;
+
+    // initial value of the 'working directory' parameter
+    private String workingDirectoryInitial;
+    // initial value of the 'arguments' parameter
+    private String commandLineInitial;
+
+    private DirtyStateListener listener;
 
     @Inject
     public MavenCommandPagePresenter(MavenCommandPageView view) {
         this.view = view;
+
         view.setDelegate(this);
     }
 
     @Override
-    public void resetFrom(MavenCommandConfiguration configuration) {
-        editedConfiguration = configuration;
-        originWorkingDirectory = configuration.getWorkingDirectory();
-        originCommandLine = configuration.getCommandLine();
+    public void resetFrom(CommandImpl configuration) {
+        editedCommand = configuration;
+
+        editedCommandModel = MavenCommandModel.fromCommandLine(configuration.getCommandLine());
+
+        workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
+        commandLineInitial = editedCommandModel.getArguments();
     }
 
     @Override
     public void go(AcceptsOneWidget container) {
         container.setWidget(view);
 
-        view.setWorkingDirectory(editedConfiguration.getWorkingDirectory());
-        view.setCommandLine(editedConfiguration.getCommandLine());
+        view.setWorkingDirectory(editedCommandModel.getWorkingDirectory());
+        view.setArguments(editedCommandModel.getArguments());
     }
 
     @Override
     public boolean isDirty() {
-        return !(originWorkingDirectory.equals(editedConfiguration.getWorkingDirectory()) &&
-                 originCommandLine.equals(editedConfiguration.getCommandLine()));
+        return !(workingDirectoryInitial.equals(editedCommandModel.getWorkingDirectory()) &&
+                 commandLineInitial.equals(editedCommandModel.getArguments()));
     }
 
     @Override
@@ -71,13 +79,17 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
 
     @Override
     public void onWorkingDirectoryChanged() {
-        editedConfiguration.setWorkingDirectory(view.getWorkingDirectory());
+        editedCommandModel.setWorkingDirectory(view.getWorkingDirectory());
+
+        editedCommand.setCommandLine(editedCommandModel.toCommandLine());
         listener.onDirtyStateChanged();
     }
 
     @Override
-    public void onCommandLineChanged() {
-        editedConfiguration.setCommandLine(view.getCommandLine());
+    public void onArgumentsChanged() {
+        editedCommandModel.setArguments(view.getArguments());
+
+        editedCommand.setCommandLine(editedCommandModel.toCommandLine());
         listener.onDirtyStateChanged();
     }
 }

@@ -21,7 +21,7 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class ExecuteSelectedCommandAction extends AbstractPerspectiveAction impl
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final CommandConfiguration command = selectCommandAction.getSelectedCommand();
+        final CommandImpl command = selectCommandAction.getSelectedCommand();
         Machine machine = selectCommandAction.getSelectedMachine();
 
         if (command != null && machine != null) {

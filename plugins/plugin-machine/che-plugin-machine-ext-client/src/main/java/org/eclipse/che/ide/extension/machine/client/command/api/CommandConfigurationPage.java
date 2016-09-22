@@ -8,52 +8,44 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.extension.machine.client.command.api;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.ide.api.mvp.Presenter;
 
 /**
- * Page allows to edit concrete command.
+ * Page allows to edit command.
  *
- * @param <T>
- *         type of the command configuration which this page should edit
  * @author Artem Zatsarynnyi
  * @author Valeriy Svydenko
  */
-public interface CommandConfigurationPage<T extends CommandConfiguration> extends Presenter {
+public interface CommandConfigurationPage extends Presenter {
 
     /**
-     * Resets the page from the given {@code configuration}
-     * which this page should edit.
-     * <p/>
-     * This method is called every time when user selects
-     * an appropriate command configuration in 'Command Configuration'
-     * dialog and before actual displaying this page.
+     * Resets the page with the given {@code command}.
+     * <p>Typically, implementors should hold the given {@code command} and edit it directly.
+     * <p>This method is called every time when user selects an appropriate
+     * command in 'Commands' dialog but before the actual displaying of the page.
      */
-    void resetFrom(T configuration);
+    void resetFrom(CommandImpl command);
 
     /**
-     * This method is called every time when user selects an appropriate
-     * command configuration in 'Command Configuration' dialog.
-     * <p/>
-     * {@inheritDoc}
+     * Called every time when user selects an appropriate command in 'Commands' dialog.
+     * <p>Typically, should be used for initializing page.
+     * <p>{@inheritDoc}
      */
     @Override
     void go(final AcceptsOneWidget container);
 
     /**
-     * Returns whether this page is changed or not.
+     * Whether the page has been changed or not?
      *
      * @return {@code true} if page is changed, and {@code false} - otherwise
      */
     boolean isDirty();
 
-    /**
-     * Sets {@link DirtyStateListener} that should be called
-     * every time when any modifications on the page has been performed.
-     */
+    /** Sets {@link DirtyStateListener}. */
     void setDirtyStateListener(DirtyStateListener listener);
 
     /** Sets {@link FieldStateActionDelegate} that should be operated all panels. */
@@ -64,7 +56,7 @@ public interface CommandConfigurationPage<T extends CommandConfiguration> extend
         void updatePreviewURLState(boolean isVisible);
     }
 
-    /** Listener that should be called when any modifications on page. */
+    /** Listener that should be called every time when any modifications on the page has been performed. */
     interface DirtyStateListener {
         void onDirtyStateChanged();
     }

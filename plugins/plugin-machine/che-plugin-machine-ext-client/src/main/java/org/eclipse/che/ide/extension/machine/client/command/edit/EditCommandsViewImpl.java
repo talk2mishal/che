@@ -46,8 +46,8 @@ import org.eclipse.che.ide.CoreLocalizationConstant;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.eclipse.che.ide.ui.list.CategoriesList;
 import org.eclipse.che.ide.ui.list.Category;
 import org.eclipse.che.ide.ui.list.CategoryRenderer;
@@ -78,37 +78,37 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     private       Button                   saveButton;
     private       Button                   closeButton;
 
-    private final CategoryRenderer<CommandConfiguration> commandConfigurationRenderer =
-            new CategoryRenderer<CommandConfiguration>() {
+    private final CategoryRenderer<CommandImpl> commandConfigurationRenderer =
+            new CategoryRenderer<CommandImpl>() {
                 @Override
-                public void renderElement(Element element, CommandConfiguration data) {
-                    UIObject.ensureDebugId(element, "commandsManager-type-" + data.getType().getId());
+                public void renderElement(Element element, CommandImpl data) {
+                    UIObject.ensureDebugId(element, "commandsManager-type-" + data.getType());
                     element.addClassName(commandResources.getCss().categorySubElementHeader());
                     element.setInnerText(data.getName().trim().isEmpty() ? "<none>" : data.getName());
                     element.appendChild(renderSubElementButtons(data));
                 }
 
                 @Override
-                public SpanElement renderCategory(Category<CommandConfiguration> category) {
+                public SpanElement renderCategory(Category<CommandImpl> category) {
                     return renderCategoryHeader(category.getTitle());
                 }
             };
 
-    private final Category.CategoryEventDelegate<CommandConfiguration> commandConfigurationDelegate =
-            new Category.CategoryEventDelegate<CommandConfiguration>() {
+    private final Category.CategoryEventDelegate<CommandImpl> commandConfigurationDelegate =
+            new Category.CategoryEventDelegate<CommandImpl>() {
                 @Override
-                public void onListItemClicked(Element listItemBase, CommandConfiguration itemData) {
+                public void onListItemClicked(Element listItemBase, CommandImpl itemData) {
                     selectType = itemData.getType();
                     setSelectedConfiguration(itemData);
                 }
             };
 
-    private ActionDelegate                               delegate;
-    private CategoriesList                               list;
-    private Map<CommandType, List<CommandConfiguration>> categories;
-    private CommandConfiguration                         selectConfiguration;
-    private CommandType                                  selectType;
-    private String                                       filterTextValue;
+    private ActionDelegate                      delegate;
+    private CategoriesList                      list;
+    private Map<CommandType, List<CommandImpl>> categories;
+    private CommandImpl                         selectConfiguration;
+    private String                              selectType;
+    private String                              filterTextValue;
 
     @UiField(provided = true)
     MachineLocalizationConstant machineLocale;
@@ -191,7 +191,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         return null;
     }
 
-    private SpanElement renderSubElementButtons(CommandConfiguration commandConfiguration) {
+    private SpanElement renderSubElementButtons(CommandImpl command) {
         SpanElement categorySubElement = Document.get().createSpanElement();
         categorySubElement.setClassName(commandResources.getCss().buttonArea());
 
@@ -251,7 +251,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                     event.stopPropagation();
                     savePanel.setVisible(true);
                     previewUrlPanel.setVisible(true);
-                    selectType = getTypeById(commandId);
+                    selectType = commandId;
                     delegate.onAddClicked();
                     resetFilter();
                 }
@@ -275,7 +275,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         filterTextValue = "";
     }
 
-    private void renderCategoriesList(Map<CommandType, List<CommandConfiguration>> categories) {
+    private void renderCategoriesList(Map<CommandType, List<CommandImpl>> categories) {
         if (categories == null) {
             return;
         }
@@ -283,17 +283,17 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         final List<Category<?>> categoriesList = new ArrayList<>();
 
         for (CommandType type : categories.keySet()) {
-            List<CommandConfiguration> configurations = new ArrayList<>();
+            List<CommandImpl> configurations = new ArrayList<>();
             if (filterTextValue.isEmpty()) {
                 configurations = categories.get(type);
             } else {  // filtering List
-                for (final CommandConfiguration configuration : categories.get(type)) {
+                for (final CommandImpl configuration : categories.get(type)) {
                     if (configuration.getName().contains(filterTextValue)) {
                         configurations.add(configuration);
                     }
                 }
             }
-            Category<CommandConfiguration> category =
+            Category<CommandImpl> category =
                     new Category<>(type.getId(), commandConfigurationRenderer, configurations, commandConfigurationDelegate);
             categoriesList.add(category);
         }
@@ -314,8 +314,8 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
     @Override
     public void selectNextItem() {
-        final CommandConfiguration nextItem;
-        final List<CommandConfiguration> configurations = categories.get(selectConfiguration.getType());
+        final CommandImpl nextItem;
+        final List<CommandImpl> configurations = categories.get(selectConfiguration.getType());
 
         int selectPosition = configurations.indexOf(selectConfiguration);
         if (configurations.size() < 2 || selectPosition == -1) {
@@ -333,7 +333,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     }
 
     @Override
-    public void setData(Map<CommandType, List<CommandConfiguration>> categories) {
+    public void setData(Map<CommandType, List<CommandImpl>> categories) {
         this.categories = categories;
         renderCategoriesList(categories);
     }
@@ -455,12 +455,12 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
     @Nullable
     @Override
-    public CommandType getSelectedCommandType() {
+    public String getSelectedCommandType() {
         return selectType;
     }
 
     @Override
-    public void setSelectedConfiguration(CommandConfiguration selectConfiguration) {
+    public void setSelectedConfiguration(CommandImpl selectConfiguration) {
         this.selectConfiguration = selectConfiguration;
         if (selectConfiguration != null) {
             savePanel.setVisible(true);
@@ -471,7 +471,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
     @Nullable
     @Override
-    public CommandConfiguration getSelectedConfiguration() {
+    public CommandImpl getSelectedConfiguration() {
         return selectConfiguration;
     }
 

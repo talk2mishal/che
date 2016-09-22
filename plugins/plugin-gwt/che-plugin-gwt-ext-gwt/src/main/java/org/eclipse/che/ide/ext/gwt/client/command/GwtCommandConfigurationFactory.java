@@ -10,20 +10,27 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 /**
  * Factory for {@link GwtCommandConfiguration} instances.
  *
  * @author Artem Zatsarynnyi
  */
-public class GwtCommandConfigurationFactory extends CommandConfigurationFactory<GwtCommandConfiguration> {
+@Singleton
+public class GwtCommandConfigurationFactory implements CommandConfigurationFactory<GwtCommandConfiguration> {
 
-    protected GwtCommandConfigurationFactory(CommandType commandType) {
-        super(commandType);
+    private final Provider<GwtCommandType> gwtCommandTypeProvider;
+
+    @Inject
+    protected GwtCommandConfigurationFactory(Provider<GwtCommandType> gwtCommandTypeProvider) {
+        // TODO: avoid getting through provider
+        this.gwtCommandTypeProvider = gwtCommandTypeProvider;
     }
 
     private static boolean isGwtCommand(String commandLine) {
@@ -31,12 +38,23 @@ public class GwtCommandConfigurationFactory extends CommandConfigurationFactory<
     }
 
     @Override
-    public GwtCommandConfiguration createFromDto(Command command) {
+    public GwtCommandConfiguration create(String name) {
+        return null;
+    }
+
+    @Override
+    public GwtCommandConfiguration create(GwtCommandConfiguration commandConfiguration) {
+        return null;
+    }
+
+    @Override
+    public GwtCommandConfiguration create(Command command) {
         if (!isGwtCommand(command.getCommandLine())) {
             throw new IllegalArgumentException("Not a valid GWT command: " + command.getCommandLine());
         }
 
-        final GwtCommandConfiguration configuration = new GwtCommandConfiguration(getCommandType(),
+        // TODO: need better way of creating
+        final GwtCommandConfiguration configuration = new GwtCommandConfiguration(gwtCommandTypeProvider.get(),
                                                                                   command.getName(),
                                                                                   command.getAttributes());
         final CommandLine cmd = new CommandLine(command.getCommandLine());

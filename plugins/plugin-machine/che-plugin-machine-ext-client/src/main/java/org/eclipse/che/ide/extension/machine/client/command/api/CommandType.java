@@ -8,15 +8,17 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.extension.machine.client.command.api;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
- * The type of a command.
+ * Used for registering new command type and providing all the necessary
+ * information and components for working with the appropriate command.
+ * <p>Implementations of this interface need to be registered using
+ * a multibinder in order to be picked-up on application's start-up.
  *
  * @author Artem Zatsarynnyi
  */
@@ -31,19 +33,16 @@ public interface CommandType {
     /** Returns a short description what command of concrete type can do. */
     String getDescription();
 
-    /** Returns the icon used to represent the command type. */
+    /** Returns the icon for displaying in the UI. */
     SVGResource getIcon();
 
-    /** Returns the {@link CommandConfigurationPage}s that allow to configure specific command parameters. */
-    Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages();
+    /** Returns the {@link CommandConfigurationPage}s that allow to edit commands of concrete type. */
+    List<CommandConfigurationPage> getConfigurationPages();
 
-    /** Returns factory for {@link CommandConfiguration} instances. */
-    CommandConfigurationFactory<? extends CommandConfiguration> getConfigurationFactory();
-
-    /** Returns command template that will be used for newly created command. */
     String getCommandTemplate();
 
-    List<CommandProducer> getProducers();
+    /** Returns the {@link CommandProducer}s that can produce commands of concrete type from the current context. */
+    List<? extends CommandProducer> getProducers();
 
     /** Returns template for preview Url. */
     String getPreviewUrlTemplate();

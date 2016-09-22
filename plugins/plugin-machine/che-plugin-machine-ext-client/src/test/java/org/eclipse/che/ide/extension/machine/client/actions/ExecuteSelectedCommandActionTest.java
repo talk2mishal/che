@@ -15,7 +15,7 @@ import org.eclipse.che.api.machine.shared.dto.MachineDto;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,9 +45,9 @@ public class ExecuteSelectedCommandActionTest {
     private EventBus                    eventBus;
 
     @Mock
-    private CommandConfiguration command;
+    private CommandImpl command;
     @Mock
-    private MachineDto           machine;
+    private MachineDto  machine;
 
     @InjectMocks
     private ExecuteSelectedCommandAction action;

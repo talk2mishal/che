@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
-import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 
 import java.util.Map;
 

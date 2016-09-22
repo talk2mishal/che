@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.plugins.client.command;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 import static org.eclipse.che.ide.ext.plugins.client.command.GwtCheCommandType.CODE_SERVER_FQN;
 
@@ -22,10 +24,15 @@ import static org.eclipse.che.ide.ext.plugins.client.command.GwtCheCommandType.C
  *
  * @author Artem Zatsarynnyi
  */
-public class GwtCheCommandConfigurationFactory extends CommandConfigurationFactory<GwtCheCommandConfiguration> {
+@Singleton
+public class GwtCheCommandConfigurationFactory implements CommandConfigurationFactory<GwtCheCommandConfiguration> {
 
-    protected GwtCheCommandConfigurationFactory(CommandType commandType) {
-        super(commandType);
+    private final Provider<GwtCheCommandType> gwtCheCommandTypeProvider;
+
+    @Inject
+    protected GwtCheCommandConfigurationFactory(Provider<GwtCheCommandType> gwtCheCommandTypeProvider) {
+        // TODO: avoid getting through provider
+        this.gwtCheCommandTypeProvider = gwtCheCommandTypeProvider;
     }
 
     private static boolean isGwtCheCommand(String commandLine) {
@@ -33,13 +40,25 @@ public class GwtCheCommandConfigurationFactory extends CommandConfigurationFacto
     }
 
     @Override
-    public GwtCheCommandConfiguration createFromDto(Command command) {
+    public GwtCheCommandConfiguration create(String name) {
+        return null;
+    }
+
+    @Override
+    public GwtCheCommandConfiguration create(GwtCheCommandConfiguration commandConfiguration) {
+        return null;
+    }
+
+    @Override
+    public GwtCheCommandConfiguration create(Command command) {
         if (!isGwtCheCommand(command.getCommandLine())) {
             throw new IllegalArgumentException("Not a valid GWT4CHE command: " + command.getCommandLine());
         }
 
-        final GwtCheCommandConfiguration configuration =
-                new GwtCheCommandConfiguration(getCommandType(), command.getName(), command.getAttributes());
+        // TODO: need better way of creating
+        final GwtCheCommandConfiguration configuration = new GwtCheCommandConfiguration(gwtCheCommandTypeProvider.get(),
+                                                                                        command.getName(),
+                                                                                        command.getAttributes());
         final CommandLine cmd = new CommandLine(command.getCommandLine());
 
         final String classPathArgument = cmd.getArgument(2);

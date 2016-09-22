@@ -14,14 +14,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,17 +34,13 @@ public class CustomCommandType implements CommandType {
     private static final String ID               = "custom";
     private static final String COMMAND_TEMPLATE = "echo \"hello\"";
 
-    private final MachineResources                  resources;
-    private final CustomCommandConfigurationFactory configurationFactory;
+    private final MachineResources resources;
 
-    private final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages;
+    private final List<CommandConfigurationPage> pages;
 
     @Inject
-    public CustomCommandType(MachineResources resources,
-                             CustomCommandConfigurationFactory customCommandConfigurationFactory,
-                             CustomPagePresenter page) {
+    public CustomCommandType(MachineResources resources, CustomPagePresenter page) {
         this.resources = resources;
-        configurationFactory = customCommandConfigurationFactory;
 
         pages = new LinkedList<>();
         pages.add(page);
@@ -74,13 +67,8 @@ public class CustomCommandType implements CommandType {
     }
 
     @Override
-    public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
+    public List<CommandConfigurationPage> getConfigurationPages() {
         return pages;
-    }
-
-    @Override
-    public CommandConfigurationFactory<CustomCommandConfiguration> getConfigurationFactory() {
-        return configurationFactory;
     }
 
     @Override

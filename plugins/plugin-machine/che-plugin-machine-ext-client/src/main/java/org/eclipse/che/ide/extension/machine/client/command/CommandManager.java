@@ -23,15 +23,16 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandOutputConsole;
+import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
 import org.eclipse.che.ide.util.UUID;
 
 import javax.validation.constraints.NotNull;
@@ -85,17 +86,17 @@ public class CommandManager {
      * @param machine
      *         machine in which command will be executed
      */
-    public void execute(@NotNull CommandConfiguration command, @NotNull Machine machine) {
+    public void execute(@NotNull CommandImpl command, @NotNull Machine machine) {
         executeCommand(command, machine);
     }
 
     /** Execute the the given command configuration on the developer machine. */
-    public void execute(@NotNull CommandConfiguration configuration) {
+    public void execute(@NotNull CommandImpl configuration) {
         final Machine devMachine = appContext.getDevMachine().getDescriptor();
         executeCommand(configuration, devMachine);
     }
 
-    public void executeCommand(@NotNull final CommandConfiguration configuration, @NotNull final Machine machine) {
+    public void executeCommand(@NotNull final CommandImpl configuration, @NotNull final Machine machine) {
         if (machine == null) {
             notificationManager.notify(localizationConstant.failedToExecuteCommand(),
                                        localizationConstant.noDevMachine(),
@@ -110,14 +111,14 @@ public class CommandManager {
         console.listenToOutput(outputChannel);
         processesPanelPresenter.addCommandOutput(machine.getId(), console);
 
-        substituteProperties(configuration.toCommandLine()).then(new Operation<String>() {
+        substituteProperties(configuration.getCommandLine()).then(new Operation<String>() {
             @Override
             public void apply(String arg) throws OperationException {
                 final CommandDto command = dtoFactory.createDto(CommandDto.class)
                                                      .withName(configuration.getName())
                                                      .withAttributes(configuration.getAttributes())
                                                      .withCommandLine(arg)
-                                                     .withType(configuration.getType().getId());
+                                                     .withType(configuration.getType());
 
                 final Promise<MachineProcessDto> processPromise =
                         machineServiceClient.executeCommand(machine.getWorkspaceId(),

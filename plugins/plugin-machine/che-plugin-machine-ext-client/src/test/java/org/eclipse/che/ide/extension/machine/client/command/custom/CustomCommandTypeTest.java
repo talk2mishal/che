@@ -11,8 +11,7 @@
 package org.eclipse.che.ide.extension.machine.client.command.custom;
 
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,7 +44,7 @@ public class CustomCommandTypeTest {
 
     @Test
     public void shouldReturnPages() throws Exception {
-        final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages = arbitraryCommandType.getConfigurationPages();
+        Collection<CommandConfigurationPage> pages = arbitraryCommandType.getConfigurationPages();
 
         assertTrue(pages.contains(arbitraryPagePresenter));
     }

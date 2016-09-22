@@ -15,19 +15,16 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectRelativePathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.ServerPortProvider;
 import org.eclipse.che.plugin.maven.client.MavenResources;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,17 +40,15 @@ public class MavenCommandType implements CommandType {
     private static final String COMMAND_TEMPLATE = "mvn clean install";
     private static final String DEF_PORT         = "8080";
 
-    private final MavenResources                                                       resources;
-    private final MavenTestCommandProducer                                             mavenTestCommandProducer;
-    private final CurrentProjectPathProvider                                           currentProjectPathProvider;
-    private final CurrentProjectRelativePathProvider                                   currentProjectRelativePathProvider;
-    private final MavenCommandConfigurationFactory                                     configurationFactory;
-    private final Collection<CommandConfigurationPage<? extends CommandConfiguration>> pages;
+    private final MavenResources                     resources;
+    private final MavenTestCommandProducer           mavenTestCommandProducer;
+    private final CurrentProjectPathProvider         currentProjectPathProvider;
+    private final CurrentProjectRelativePathProvider currentProjectRelativePathProvider;
+    private final List<CommandConfigurationPage>     pages;
 
     @Inject
     public MavenCommandType(MavenResources resources,
                             MavenCommandPagePresenter page,
-                            MavenCommandConfigurationFactory mavenCommandConfigurationFactory,
                             MavenTestCommandProducer mavenTestCommandProducer,
                             CurrentProjectPathProvider currentProjectPathProvider,
                             CurrentProjectRelativePathProvider currentProjectRelativePathProvider,
@@ -62,7 +57,6 @@ public class MavenCommandType implements CommandType {
         this.mavenTestCommandProducer = mavenTestCommandProducer;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.currentProjectRelativePathProvider = currentProjectRelativePathProvider;
-        configurationFactory = mavenCommandConfigurationFactory;
 
         pages = new LinkedList<>();
         pages.add(page);
@@ -82,7 +76,7 @@ public class MavenCommandType implements CommandType {
 
     @Override
     public String getDescription() {
-        return "Command for executing Maven goals";
+        return "Command for executing Maven command line";
     }
 
     @Override
@@ -91,13 +85,8 @@ public class MavenCommandType implements CommandType {
     }
 
     @Override
-    public Collection<CommandConfigurationPage<? extends CommandConfiguration>> getConfigurationPages() {
+    public List<CommandConfigurationPage> getConfigurationPages() {
         return pages;
-    }
-
-    @Override
-    public CommandConfigurationFactory<MavenCommandConfiguration> getConfigurationFactory() {
-        return configurationFactory;
     }
 
     @Override
@@ -107,7 +96,9 @@ public class MavenCommandType implements CommandType {
 
     @Override
     public List<CommandProducer> getProducers() {
-        return Collections.singletonList(mavenTestCommandProducer);
+        ArrayList<CommandProducer> list = new ArrayList<>();
+        list.add(mavenTestCommandProducer);
+        return list;
     }
 
     @Override

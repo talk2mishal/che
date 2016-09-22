@@ -10,29 +10,43 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.java.client.command;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.ide.CommandLine;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationFactory;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 /**
  * Factory for {@link JavaCommandConfiguration} instances.
  *
  * @author Valeriy Svydenko
  */
-public class JavaCommandConfigurationFactory extends CommandConfigurationFactory<JavaCommandConfiguration> {
+@Singleton
+public class JavaCommandConfigurationFactory implements CommandConfigurationFactory<JavaCommandConfiguration> {
 
-    protected JavaCommandConfigurationFactory(CommandType commandType) {
-        super(commandType);
-    }
+    private final Provider<JavaCommandType> javaCommandTypeProvider;
 
-    public JavaCommandConfiguration create() {
-
+    @Inject
+    public JavaCommandConfigurationFactory(Provider<JavaCommandType> javaCommandTypeProvider) {
+        // TODO: avoid getting through provider
+        this.javaCommandTypeProvider = javaCommandTypeProvider;
     }
 
     @Override
-    public JavaCommandConfiguration createFromDto(Command command) {
-        final JavaCommandConfiguration configuration = new JavaCommandConfiguration(getCommandType(),
+    public JavaCommandConfiguration create(String name) {
+        return null;
+    }
+
+    @Override
+    public JavaCommandConfiguration create(JavaCommandConfiguration commandConfiguration) {
+        return null;
+    }
+
+    @Override
+    public JavaCommandConfiguration create(Command command) {
+        // TODO: need better way of creating
+        final JavaCommandConfiguration configuration = new JavaCommandConfiguration(javaCommandTypeProvider.get(),
                                                                                     command.getName(),
                                                                                     command.getAttributes());
 

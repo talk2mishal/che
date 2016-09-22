@@ -13,9 +13,8 @@ package org.eclipse.che.ide.extension.machine.client.command.edit;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.ide.api.mvp.View;
-import org.eclipse.che.ide.extension.machine.client.command.AbstractCommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 
 import org.eclipse.che.commons.annotation.Nullable;
 
@@ -50,7 +49,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
      * @param categories
      *         available command type and list of configuration
      */
-    void setData(Map<CommandType, List<CommandConfiguration>> categories);
+    void setData(Map<CommandType, List<CommandImpl>> categories);
 
     /** Returns command name. */
     String getConfigurationName();
@@ -78,14 +77,14 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
 
     /** Returns the selected command type or type of the selected command configuration. */
     @Nullable
-    CommandType getSelectedCommandType();
+    String getSelectedCommandType();
 
     /** Select command with the given ID. */
-    void setSelectedConfiguration(CommandConfiguration config);
+    void setSelectedConfiguration(CommandImpl config);
 
     /** Returns the selected command configuration. */
     @Nullable
-    CommandConfiguration getSelectedConfiguration();
+    CommandImpl getSelectedConfiguration();
 
     /** Sets the focus on the 'Close' button. */
     void setCloseButtonInFocus();
@@ -115,7 +114,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
         void onDuplicateClicked();
 
         /** Called when 'Remove' button is clicked. */
-        void onRemoveClicked(CommandConfiguration selectedConfiguration);
+        void onRemoveClicked(CommandImpl selectedConfiguration);
 
         /** Called when 'Execute' button is clicked. */
         void onExecuteClicked();
@@ -129,7 +128,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
          * @param configuration
          *         selected command configuration
          */
-        void onConfigurationSelected(CommandConfiguration configuration);
+        void onConfigurationSelected(CommandImpl configuration);
 
         /** Called when configuration name has been changed. */
         void onNameChanged();

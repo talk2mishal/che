@@ -12,7 +12,7 @@ package org.eclipse.che.ide.extension.machine.client.actions;
 
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfiguration;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class RunCommandActionTest {
     @Mock
     private ActionEvent                 event;
     @Mock
-    private CommandConfiguration        command;
+    private CommandImpl                 command;
     
     
     @InjectMocks
@@ -64,7 +64,7 @@ public class RunCommandActionTest {
         when(event.getParameters()).thenReturn(Collections.singletonMap("otherParam", "MCI")); 
         action.actionPerformed(event);
 
-        verify(commandManager, never()).execute(any(CommandConfiguration.class));
+        verify(commandManager, never()).execute(any(CommandImpl.class));
     }
     
     @Test

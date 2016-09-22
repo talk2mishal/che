@@ -30,12 +30,13 @@ public class CustomCommandPropertyValueProviderTest {
 
     public static final String KEY   = "key";
     public static final String VALUE = "value";
+    public static final String DESCRIPTION = "description";
 
     private CustomCommandPropertyValueProvider provider;
 
     @Before
     public void init() throws Exception {
-        provider = new CustomCommandPropertyValueProvider(KEY, VALUE);
+        provider = new CustomCommandPropertyValueProvider(KEY, VALUE, DESCRIPTION);
     }
 
     @Test
