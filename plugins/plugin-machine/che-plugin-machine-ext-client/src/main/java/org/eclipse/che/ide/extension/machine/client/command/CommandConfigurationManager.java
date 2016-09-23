@@ -43,4 +43,6 @@ public interface CommandConfigurationManager {
     List<CommandConfigurationPage> getPages(String type);
 
     List<CommandProducer> getApplicableProducers();
+
+    void execute();
 }

@@ -69,7 +69,7 @@ public class ExecuteSelectedCommandActionTest {
     public void actionShouldBePerformed() throws Exception {
         action.actionPerformed(event);
 
-        verify(commandManager).execute(command, machine);
+        verify(commandManager).executeCommand(command, machine);
     }
 
 }

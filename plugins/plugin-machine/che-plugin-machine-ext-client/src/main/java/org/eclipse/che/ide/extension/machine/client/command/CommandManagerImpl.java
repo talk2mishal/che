@@ -73,6 +73,17 @@ public class CommandManagerImpl implements CommandConfigurationManager {
         });
     }
 
+    private void retrieveAllCommands() {
+        workspaceServiceClient.getCommands(appContext.getWorkspaceId()).then(new Operation<List<CommandDto>>() {
+            @Override
+            public void apply(List<CommandDto> arg) throws OperationException {
+                for (Command command : arg) {
+                    commands.put(command.getName(), new CommandImpl(command));
+                }
+            }
+        });
+    }
+
     @Override
     public List<CommandImpl> getCommands() {
         return new ArrayList<>(commands.values());
@@ -184,15 +195,9 @@ public class CommandManagerImpl implements CommandConfigurationManager {
         return producers;
     }
 
-    private void retrieveAllCommands() {
-        workspaceServiceClient.getCommands(appContext.getWorkspaceId()).then(new Operation<List<CommandDto>>() {
-            @Override
-            public void apply(List<CommandDto> arg) throws OperationException {
-                for (Command command : arg) {
-                    commands.put(command.getName(), new CommandImpl(command));
-                }
-            }
-        });
+    @Override
+    public void execute() {
+
     }
 
     private String getUniqueCommandName(String customType, String customName) {

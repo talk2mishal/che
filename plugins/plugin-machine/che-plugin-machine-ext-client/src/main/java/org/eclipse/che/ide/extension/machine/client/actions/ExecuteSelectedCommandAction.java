@@ -71,7 +71,7 @@ public class ExecuteSelectedCommandAction extends AbstractPerspectiveAction impl
         Machine machine = selectCommandAction.getSelectedMachine();
 
         if (command != null && machine != null) {
-            commandManager.execute(command, machine);
+            commandManager.executeCommand(command, machine);
         }
     }
 

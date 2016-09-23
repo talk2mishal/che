@@ -14,7 +14,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.core.model.machine.Machine;
-import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.machine.shared.dto.MachineProcessDto;
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.FunctionException;
@@ -27,7 +26,6 @@ import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
 import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.notification.NotificationManager;
-import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
@@ -35,7 +33,6 @@ import org.eclipse.che.ide.extension.machine.client.outputspanel.console.Command
 import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
 import org.eclipse.che.ide.util.UUID;
 
-import javax.validation.constraints.NotNull;
 import java.util.Iterator;
 
 import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
@@ -50,7 +47,6 @@ import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAI
 @Singleton
 public class CommandManager {
 
-    private final DtoFactory                           dtoFactory;
     private final MachineServiceClient                 machineServiceClient;
     private final ProcessesPanelPresenter              processesPanelPresenter;
     private final CommandConsoleFactory                commandConsoleFactory;
@@ -60,15 +56,13 @@ public class CommandManager {
     private final CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
 
     @Inject
-    public CommandManager(DtoFactory dtoFactory,
-                          MachineServiceClient machineServiceClient,
+    public CommandManager(MachineServiceClient machineServiceClient,
                           ProcessesPanelPresenter processesPanelPresenter,
                           CommandConsoleFactory commandConsoleFactory,
                           NotificationManager notificationManager,
                           MachineLocalizationConstant localizationConstant,
                           AppContext appContext,
                           CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry) {
-        this.dtoFactory = dtoFactory;
         this.machineServiceClient = machineServiceClient;
         this.processesPanelPresenter = processesPanelPresenter;
         this.commandConsoleFactory = commandConsoleFactory;
@@ -79,24 +73,25 @@ public class CommandManager {
     }
 
     /**
-     * The method execute command in passed machine.
+     * Executes the the given {@code command} on the developer machine.
      *
      * @param command
-     *         command which will be executed
-     * @param machine
-     *         machine in which command will be executed
+     *         command to execute
      */
-    public void execute(@NotNull CommandImpl command, @NotNull Machine machine) {
-        executeCommand(command, machine);
-    }
-
-    /** Execute the the given command configuration on the developer machine. */
-    public void execute(@NotNull CommandImpl configuration) {
+    public void execute(CommandImpl command) {
         final Machine devMachine = appContext.getDevMachine().getDescriptor();
-        executeCommand(configuration, devMachine);
+        executeCommand(command, devMachine);
     }
 
-    public void executeCommand(@NotNull final CommandImpl configuration, @NotNull final Machine machine) {
+    /**
+     * Executes the given {@code command} on the specified {@code machine}.
+     *
+     * @param command
+     *         command to execute
+     * @param machine
+     *         machine to execute the command
+     */
+    public void executeCommand(final CommandImpl command, final Machine machine) {
         if (machine == null) {
             notificationManager.notify(localizationConstant.failedToExecuteCommand(),
                                        localizationConstant.noDevMachine(),
@@ -107,24 +102,17 @@ public class CommandManager {
 
         final String outputChannel = "process:output:" + UUID.uuid();
 
-        final CommandOutputConsole console = commandConsoleFactory.create(configuration, machine);
+        final CommandOutputConsole console = commandConsoleFactory.create(command, machine);
         console.listenToOutput(outputChannel);
         processesPanelPresenter.addCommandOutput(machine.getId(), console);
 
-        substituteProperties(configuration.getCommandLine()).then(new Operation<String>() {
+        substituteProperties(command.getCommandLine()).then(new Operation<String>() {
             @Override
             public void apply(String arg) throws OperationException {
-                final CommandDto command = dtoFactory.createDto(CommandDto.class)
-                                                     .withName(configuration.getName())
-                                                     .withAttributes(configuration.getAttributes())
-                                                     .withCommandLine(arg)
-                                                     .withType(configuration.getType());
-
-                final Promise<MachineProcessDto> processPromise =
-                        machineServiceClient.executeCommand(machine.getWorkspaceId(),
-                                                            machine.getId(),
-                                                            command,
-                                                            outputChannel);
+                Promise<MachineProcessDto> processPromise = machineServiceClient.executeCommand(machine.getWorkspaceId(),
+                                                                                                machine.getId(),
+                                                                                                command,
+                                                                                                outputChannel);
                 processPromise.then(new Operation<MachineProcessDto>() {
                     @Override
                     public void apply(MachineProcessDto process) throws OperationException {
@@ -179,7 +167,7 @@ public class CommandManager {
     private class CommandLineContainer {
         private String commandLine;
 
-        public CommandLineContainer(String commandLine) {
+        CommandLineContainer(String commandLine) {
             this.commandLine = commandLine;
         }
 
