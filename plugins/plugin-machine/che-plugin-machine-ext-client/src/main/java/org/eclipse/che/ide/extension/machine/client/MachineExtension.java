@@ -39,6 +39,7 @@ import org.eclipse.che.ide.extension.machine.client.actions.DestroyMachineAction
 import org.eclipse.che.ide.extension.machine.client.actions.EditCommandsAction;
 import org.eclipse.che.ide.extension.machine.client.actions.ExecuteSelectedCommandAction;
 import org.eclipse.che.ide.extension.machine.client.actions.NewTerminalAction;
+import org.eclipse.che.ide.extension.machine.client.actions.ProdAction;
 import org.eclipse.che.ide.extension.machine.client.actions.RestartMachineAction;
 import org.eclipse.che.ide.extension.machine.client.actions.RunCommandAction;
 import org.eclipse.che.ide.extension.machine.client.actions.SelectCommandComboBox;
@@ -163,7 +164,8 @@ public class MachineExtension {
                                 MachineResources machineResources,
                                 ReRunProcessAction reRunProcessAction,
                                 StopProcessAction stopProcessAction,
-                                CloseConsoleAction closeConsoleAction) {
+                                CloseConsoleAction closeConsoleAction,
+                                ProdAction prodAction) {
         final DefaultActionGroup mainMenu = (DefaultActionGroup)actionManager.getAction(GROUP_MAIN_MENU);
 
         final DefaultActionGroup workspaceMenu = (DefaultActionGroup)actionManager.getAction(GROUP_WORKSPACE);
@@ -193,6 +195,8 @@ public class MachineExtension {
         runMenu.addSeparator();
         runMenu.add(editCommandsAction);
         runMenu.add(editTargetsAction);
+
+        runMenu.add(prodAction);
 
         workspaceMenu.add(stopWorkspaceAction);
 

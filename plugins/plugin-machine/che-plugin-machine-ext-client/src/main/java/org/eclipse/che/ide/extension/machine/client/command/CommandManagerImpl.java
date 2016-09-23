@@ -175,9 +175,9 @@ public class CommandManagerImpl implements CommandConfigurationManager {
 
         for (CommandType commandType : commandTypeRegistry.getCommandTypes()) {
             for (CommandProducer commandProducer : commandType.getProducers()) {
-                if (commandProducer.isApplicable()) {
+//                if (commandProducer.isApplicable()) {
                     producers.add(commandProducer);
-                }
+//                }
             }
         }
 

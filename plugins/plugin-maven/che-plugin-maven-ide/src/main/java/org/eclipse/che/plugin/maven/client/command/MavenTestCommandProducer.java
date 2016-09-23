@@ -44,7 +44,28 @@ public class MavenTestCommandProducer implements CommandProducer {
 
     @Override
     public String getName() {
-        return "maven test";
+        return "Test '" + getFileName() + "'";
+    }
+
+    private String getFileName() {
+        final Resource[] resources = appContext.getResources();
+        if (resources == null || resources.length != 1) {
+            return "";
+        }
+
+        final Resource resource = appContext.getResource();
+        final Optional<Project> projectOptional = appContext.getResource().getRelatedProject();
+
+        if (!projectOptional.isPresent()) {
+            return "";
+        }
+
+        final Project project = projectOptional.get();
+        if (project.isTypeOf("maven") && resource.isFile()) {
+            return resource.getName();
+        }
+
+        return "";
     }
 
     @Override
