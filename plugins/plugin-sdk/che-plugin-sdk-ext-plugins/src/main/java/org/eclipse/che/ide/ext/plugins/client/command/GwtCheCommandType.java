@@ -17,12 +17,10 @@ import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.plugins.client.PluginsResources;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,18 +40,13 @@ public class GwtCheCommandType implements CommandType {
     private static final String ID             = "gwt_sdm_che";
     private static final String IDE_GWT_MODULE = "org.eclipse.che.ide.IDE";
 
-    private final PluginsResources                  resources;
-    private final GwtCheCommandConfigurationFactory configurationFactory;
+    private final PluginsResources resources;
 
-    private final Collection<CommandConfigurationPage<? extends CommandImpl>> pages;
+    private final List<CommandConfigurationPage> pages;
 
     @Inject
-    public GwtCheCommandType(PluginsResources resources,
-                             GwtCheCommandConfigurationFactory gwtCheCommandConfigurationFactory,
-                             CommandPagePresenter page,
-                             IconRegistry iconRegistry) {
+    public GwtCheCommandType(PluginsResources resources, GwtCheCommandPagePresenter page, IconRegistry iconRegistry) {
         this.resources = resources;
-        configurationFactory = gwtCheCommandConfigurationFactory;
         pages = new LinkedList<>();
         pages.add(page);
 
@@ -81,13 +74,8 @@ public class GwtCheCommandType implements CommandType {
     }
 
     @Override
-    public Collection<CommandConfigurationPage<? extends CommandImpl>> getConfigurationPages() {
+    public List<CommandConfigurationPage> getConfigurationPages() {
         return pages;
-    }
-
-    @Override
-    public CommandConfigurationFactory<GwtCheCommandConfiguration> getConfigurationFactory() {
-        return configurationFactory;
     }
 
     @Override

@@ -18,7 +18,7 @@ import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigura
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 
 /**
- * Page allows to edit command of the {@link CustomCommandType}.
+ * Page allows to edit arbitrary command.
  *
  * @author Artem Zatsarynnyi
  */

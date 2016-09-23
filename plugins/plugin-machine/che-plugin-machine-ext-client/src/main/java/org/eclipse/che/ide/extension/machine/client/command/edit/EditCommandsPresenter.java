@@ -136,7 +136,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         });
     }
 
-    private Promise<CommandImpl> updateCommand(CommandImpl selectedConfiguration) {
+    private Promise<CommandImpl> updateCommand(final CommandImpl selectedConfiguration) {
         if (editedCommandOriginName.trim().equals(selectedConfiguration.getName())) {
             return commandConfigurationManager.update(selectedConfiguration.getName(), selectedConfiguration);
         } else {
@@ -373,7 +373,6 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
         final Collection<CommandConfigurationPage> pages = commandConfigurationManager.getPages(configuration.getType());
         for (CommandConfigurationPage page : pages) {
-
             editedPage = page;
 
             page.setFieldStateActionDelegate(this);

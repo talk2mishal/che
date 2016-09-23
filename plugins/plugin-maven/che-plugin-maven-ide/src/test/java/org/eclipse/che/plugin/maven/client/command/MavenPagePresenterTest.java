@@ -68,8 +68,7 @@ public class MavenPagePresenterTest {
 
     @Test
     public void testOnWorkingDirectoryChanged() throws Exception {
-        String workDir = "project";
-        when(view.getWorkingDirectory()).thenReturn(workDir);
+        when(view.getWorkingDirectory()).thenReturn(WORK_DIR);
 
         final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
         presenter.setDirtyStateListener(listener);
@@ -83,8 +82,7 @@ public class MavenPagePresenterTest {
 
     @Test
     public void testOnArgumentsChanged() throws Exception {
-        String arguments = "arguments";
-        when(view.getArguments()).thenReturn(arguments);
+        when(view.getArguments()).thenReturn(ARGUMENTS);
 
         final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
         presenter.setDirtyStateListener(listener);
@@ -92,7 +90,7 @@ public class MavenPagePresenterTest {
         presenter.onArgumentsChanged();
 
         verify(view).getArguments();
-        verify(command).setCommandLine(eq(arguments));
+        verify(command).setCommandLine(eq(COMMAND_LINE));
         verify(listener).onDirtyStateChanged();
     }
 }

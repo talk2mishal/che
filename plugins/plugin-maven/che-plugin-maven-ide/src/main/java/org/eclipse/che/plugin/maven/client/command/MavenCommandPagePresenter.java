@@ -18,7 +18,7 @@ import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigura
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 
 /**
- * Page allows to configure Maven command parameters.
+ * Page allows to customize Maven command.
  *
  * @author Artem Zatsarynnyi
  */
@@ -45,10 +45,10 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
     }
 
     @Override
-    public void resetFrom(CommandImpl configuration) {
-        editedCommand = configuration;
+    public void resetFrom(CommandImpl command) {
+        editedCommand = command;
 
-        editedCommandModel = MavenCommandModel.fromCommandLine(configuration.getCommandLine());
+        editedCommandModel = MavenCommandModel.fromCommandLine(command.getCommandLine());
 
         workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
         commandLineInitial = editedCommandModel.getArguments();

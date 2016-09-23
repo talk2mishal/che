@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.ext.gwt.client.command;
+package org.eclipse.che.ide.ext.plugins.client.command;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
@@ -18,29 +18,29 @@ import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigura
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 
 /**
- * Page allows to customize command of {@link GwtCommandType}.
+ * Page allows to customize command of {@link GwtCheCommandType}.
  *
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegate, CommandConfigurationPage {
+public class GwtCheCommandPagePresenter implements GwtCheCommandPageView.ActionDelegate, CommandConfigurationPage {
 
-    private final GwtCommandPageView view;
+    private final GwtCheCommandPageView view;
 
-    private CommandImpl     editedCommand;
-    private GwtCommandModel editedCommandModel;
+    private CommandImpl        editedCommand;
+    private GwtCheCommandModel editedCommandModel;
 
-    // initial value of the 'working directory' parameter
-    private String workingDirectoryInitial;
     // initial value of the 'GWT module' parameter
     private String gwtModuleInitial;
     // initial value of the 'Code Server address' parameter
     private String codeServerAddressInitial;
+    // initial value of the 'Classpath' parameter
+    private String classPathInitial;
 
     private DirtyStateListener listener;
 
     @Inject
-    public GwtCommandPagePresenter(GwtCommandPageView view) {
+    public GwtCheCommandPagePresenter(GwtCheCommandPageView view) {
         this.view = view;
 
         view.setDelegate(this);
@@ -50,27 +50,27 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
     public void resetFrom(CommandImpl command) {
         editedCommand = command;
 
-        editedCommandModel = GwtCommandModel.fromCommandLine(command.getCommandLine());
+        editedCommandModel = GwtCheCommandModel.fromCommandLine(command.getCommandLine());
 
-        workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
         gwtModuleInitial = editedCommandModel.getGwtModule();
         codeServerAddressInitial = editedCommandModel.getCodeServerAddress();
+        classPathInitial = editedCommandModel.getClassPath();
     }
 
     @Override
     public void go(AcceptsOneWidget container) {
         container.setWidget(view);
 
-        view.setWorkingDirectory(editedCommandModel.getWorkingDirectory());
         view.setGwtModule(editedCommandModel.getGwtModule());
         view.setCodeServerAddress(editedCommandModel.getCodeServerAddress());
+        view.setClassPath(editedCommandModel.getClassPath());
     }
 
     @Override
     public boolean isDirty() {
-        return !(workingDirectoryInitial.equals(editedCommandModel.getWorkingDirectory()) &&
-                 gwtModuleInitial.equals(editedCommandModel.getGwtModule()) &&
-                 codeServerAddressInitial.equals(editedCommandModel.getCodeServerAddress()));
+        return !(gwtModuleInitial.equals(editedCommandModel.getGwtModule()) &&
+                 codeServerAddressInitial.equals(editedCommandModel.getCodeServerAddress()) &&
+                 classPathInitial.equals(editedCommandModel.getClassPath()));
     }
 
     @Override
@@ -80,14 +80,6 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
 
     @Override
     public void setFieldStateActionDelegate(FieldStateActionDelegate delegate) {
-    }
-
-    @Override
-    public void onWorkingDirectoryChanged() {
-        editedCommandModel.setWorkingDirectory(view.getWorkingDirectory());
-
-        editedCommand.setCommandLine(editedCommandModel.toCommandLine());
-        listener.onDirtyStateChanged();
     }
 
     @Override
@@ -101,6 +93,14 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
     @Override
     public void onCodeServerAddressChanged() {
         editedCommandModel.setCodeServerAddress(view.getCodeServerAddress());
+
+        editedCommand.setCommandLine(editedCommandModel.toCommandLine());
+        listener.onDirtyStateChanged();
+    }
+
+    @Override
+    public void onClassPathChanged() {
+        editedCommandModel.setClassPath(view.getClassPath());
 
         editedCommand.setCommandLine(editedCommandModel.toCommandLine());
         listener.onDirtyStateChanged();

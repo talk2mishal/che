@@ -15,9 +15,9 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.ide.ext.java.client.command.JavaCommandConfiguration;
-import org.eclipse.che.ide.ext.java.client.command.JavaCommandPagePresenter;
 import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.ext.java.client.command.JavaCommandModel;
+import org.eclipse.che.ide.ext.java.client.command.JavaCommandPagePresenter;
 
 /**
  * Provides a path to the Main class.
@@ -48,9 +48,8 @@ public class MainClassProvider implements CommandPropertyValueProvider {
 
     @Override
     public Promise<String> getValue() {
-        JavaCommandConfiguration commandConfiguration = javaCommandPagePresenter.getConfiguration();
+        JavaCommandModel editedJavaCommandModel = javaCommandPagePresenter.getEditedCommandModel();
 
-        return commandConfiguration == null ? Promises.resolve("") : Promises.resolve(commandConfiguration.getMainClass());
+        return editedJavaCommandModel == null ? Promises.resolve("") : Promises.resolve(editedJavaCommandModel.getMainClass());
     }
-
 }

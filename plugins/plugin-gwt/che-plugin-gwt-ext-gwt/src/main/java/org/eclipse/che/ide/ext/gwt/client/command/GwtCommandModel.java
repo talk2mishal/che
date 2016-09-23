@@ -10,54 +10,73 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
-
-import java.util.Map;
+import org.eclipse.che.ide.CommandLine;
 
 /**
- * Represents GWT command.
+ * Model of the command line for launching GWT Code Server.
  *
  * @author Artem Zatsarynnyi
  */
-public class GwtCommandConfiguration extends AbstractCommandConfiguration {
+class GwtCommandModel {
 
     private String workingDirectory;
     private String gwtModule;
     private String codeServerAddress;
 
-    protected GwtCommandConfiguration(CommandType type, String name, Map<String, String> attributes) {
-        super(type, name, attributes);
-        workingDirectory = "";
-        gwtModule = "";
-        codeServerAddress = "";
-    }
-
-    public String getWorkingDirectory() {
-        return workingDirectory;
-    }
-
-    public void setWorkingDirectory(String workingDirectory) {
+    GwtCommandModel(String workingDirectory, String gwtModule, String codeServerAddress) {
         this.workingDirectory = workingDirectory;
-    }
-
-    public String getGwtModule() {
-        return gwtModule;
-    }
-
-    public void setGwtModule(String gwtModule) {
         this.gwtModule = gwtModule;
-    }
-
-    public String getCodeServerAddress() {
-        return codeServerAddress;
-    }
-
-    public void setCodeServerAddress(String codeServerAddress) {
         this.codeServerAddress = codeServerAddress;
     }
 
-    @Override
-    public String toCommandLine() {
+    /** Crates {@link GwtCommandModel} instance from the given command line. */
+    static GwtCommandModel fromCommandLine(String commandLine) {
+        final CommandLine cmd = new CommandLine(commandLine);
+
+        String workingDirectory = null;
+        String gwtModule = null;
+        String codeServerAddress = null;
+
+        if (cmd.hasArgument("-f")) {
+            workingDirectory = cmd.getArgument(cmd.indexOf("-f") + 1);
+        }
+
+        for (String arg : cmd.getArguments()) {
+            if (arg.startsWith("-Dgwt.module=")) {
+                gwtModule = arg.split("=")[1];
+            } else if (arg.startsWith("-Dgwt.bindAddress=")) {
+                codeServerAddress = arg.split("=")[1];
+            }
+        }
+
+        return new GwtCommandModel(workingDirectory, gwtModule != null ? gwtModule : "", codeServerAddress);
+    }
+
+    String getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    void setWorkingDirectory(String workingDirectory) {
+        this.workingDirectory = workingDirectory;
+    }
+
+    String getGwtModule() {
+        return gwtModule;
+    }
+
+    void setGwtModule(String gwtModule) {
+        this.gwtModule = gwtModule;
+    }
+
+    String getCodeServerAddress() {
+        return codeServerAddress;
+    }
+
+    void setCodeServerAddress(String codeServerAddress) {
+        this.codeServerAddress = codeServerAddress;
+    }
+
+    String toCommandLine() {
         final StringBuilder cmd = new StringBuilder(GwtCommandType.COMMAND_TEMPLATE);
         if (!workingDirectory.trim().isEmpty()) {
             cmd.append(" -f ").append(workingDirectory.trim());
@@ -68,6 +87,7 @@ public class GwtCommandConfiguration extends AbstractCommandConfiguration {
         if (!codeServerAddress.trim().isEmpty()) {
             cmd.append(" -Dgwt.bindAddress=").append(codeServerAddress.trim());
         }
+
         return cmd.toString();
     }
 }

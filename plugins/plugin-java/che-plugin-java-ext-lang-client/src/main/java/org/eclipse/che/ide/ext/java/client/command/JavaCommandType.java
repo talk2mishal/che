@@ -21,13 +21,11 @@ import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvi
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,19 +40,17 @@ public class JavaCommandType implements CommandType {
 
     private static final String ID = "java";
 
-    private final JavaResources                                               resources;
-    private final CurrentProjectPathProvider                                  currentProjectPathProvider;
-    private final SourcepathProvider                                          sourcepathProvider;
-    private final OutputDirProvider                                           outputDirProvider;
-    private final ClasspathProvider                                           classpathProvider;
-    private final JavaLocalizationConstant                                    localizationConstants;
-    private final JavaCommandConfigurationFactory                             configurationFactory;
-    private final Collection<CommandConfigurationPage<? extends CommandImpl>> pages;
+    private final JavaResources                  resources;
+    private final CurrentProjectPathProvider     currentProjectPathProvider;
+    private final SourcepathProvider             sourcepathProvider;
+    private final OutputDirProvider              outputDirProvider;
+    private final ClasspathProvider              classpathProvider;
+    private final JavaLocalizationConstant       localizationConstants;
+    private final List<CommandConfigurationPage> pages;
 
     @Inject
     public JavaCommandType(JavaResources resources,
                            JavaCommandPagePresenter page,
-                           JavaCommandConfigurationFactory javaCommandConfigurationFactory,
                            CurrentProjectPathProvider currentProjectPathProvider,
                            SourcepathProvider sourcepathProvider,
                            OutputDirProvider outputDirProvider,
@@ -67,7 +63,6 @@ public class JavaCommandType implements CommandType {
         this.outputDirProvider = outputDirProvider;
         this.classpathProvider = classpathProvider;
         this.localizationConstants = localizationConstants;
-        configurationFactory = javaCommandConfigurationFactory;
         pages = new LinkedList<>();
         pages.add(page);
 
@@ -95,13 +90,8 @@ public class JavaCommandType implements CommandType {
     }
 
     @Override
-    public Collection<CommandConfigurationPage<? extends CommandImpl>> getConfigurationPages() {
+    public List<CommandConfigurationPage> getConfigurationPages() {
         return pages;
-    }
-
-    @Override
-    public CommandConfigurationFactory<JavaCommandConfiguration> getConfigurationFactory() {
-        return configurationFactory;
     }
 
     @Override

@@ -25,11 +25,11 @@ import com.google.inject.Inject;
 import org.eclipse.che.ide.ext.plugins.client.PluginsLocalizationConstant;
 
 /**
- * The implementation of {@link CommandPageView}.
+ * The implementation of {@link GwtCheCommandPageView}.
  *
  * @author Artem Zatsarynnyi
  */
-public class CommandPageViewImpl implements CommandPageView {
+public class GwtCheCommandPageViewImpl implements GwtCheCommandPageView {
 
     private static final CommandPageViewImplUiBinder UI_BINDER = GWT.create(CommandPageViewImplUiBinder.class);
 
@@ -47,7 +47,7 @@ public class CommandPageViewImpl implements CommandPageView {
     private ActionDelegate delegate;
 
     @Inject
-    public CommandPageViewImpl(PluginsLocalizationConstant locale) {
+    public GwtCheCommandPageViewImpl(PluginsLocalizationConstant locale) {
         this.locale = locale;
         rootElement = UI_BINDER.createAndBindUi(this);
     }
@@ -128,6 +128,6 @@ public class CommandPageViewImpl implements CommandPageView {
         }.schedule(0);
     }
 
-    interface CommandPageViewImplUiBinder extends UiBinder<FlowPanel, CommandPageViewImpl> {
+    interface CommandPageViewImplUiBinder extends UiBinder<FlowPanel, GwtCheCommandPageViewImpl> {
     }
 }

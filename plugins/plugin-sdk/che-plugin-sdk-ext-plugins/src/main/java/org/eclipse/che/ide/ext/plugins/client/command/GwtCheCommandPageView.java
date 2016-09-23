@@ -15,12 +15,12 @@ import com.google.inject.ImplementedBy;
 import org.eclipse.che.ide.api.mvp.View;
 
 /**
- * The view of {@link CommandPagePresenter}.
+ * The view of {@link GwtCheCommandPagePresenter}.
  *
  * @author Artem Zatsarynnyi
  */
-@ImplementedBy(CommandPageViewImpl.class)
-public interface CommandPageView extends View<CommandPageView.ActionDelegate> {
+@ImplementedBy(GwtCheCommandPageViewImpl.class)
+public interface GwtCheCommandPageView extends View<GwtCheCommandPageView.ActionDelegate> {
 
     /** Returns GWT module name. */
     String getGwtModule();

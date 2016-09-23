@@ -13,6 +13,7 @@ package org.eclipse.che.ide.ext.plugins.client.command;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,96 +24,91 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /** @author Artem Zatsarynnyi */
 @RunWith(MockitoJUnitRunner.class)
-public class GwtPagePresenterTest {
+public class GwtChePagePresenterTest {
 
     private static final String GWT_MODULE          = "org.eclipse.CHE";
-    private static final String CODE_SERVER_ADDRESS = "127.0.0.1";
-    private static final String CHE_CLASS_PATH = "class_path";
+    private static final String CODE_SERVER_ADDRESS = "0.0.0.0";
+    private static final String CHE_CLASS_PATH      = "class_path";
+    private static final String COMMAND_LINE        = "java -classpath \"" + CHE_CLASS_PATH +
+                                                      "\" com.google.gwt.dev.codeserver.CodeServer " + GWT_MODULE +
+                                                      " -noincremental -noprecompile -bindAddress " + CODE_SERVER_ADDRESS;
 
     @Mock
-    private CommandPageView            gwtCommandPageView;
+    private GwtCheCommandPageView view;
     @Mock
-    private GwtCheCommandConfiguration configuration;
+    private CommandImpl           command;
 
     @InjectMocks
-    private CommandPagePresenter gwtCommandPagePresenter;
+    private GwtCheCommandPagePresenter presenter;
 
     @Before
     public void setUp() {
-        when(configuration.getGwtModule()).thenReturn(GWT_MODULE);
-        when(configuration.getCodeServerAddress()).thenReturn(CODE_SERVER_ADDRESS);
-        when(configuration.getClassPath()).thenReturn(CHE_CLASS_PATH);
+        when(command.getCommandLine()).thenReturn(COMMAND_LINE);
 
-        gwtCommandPagePresenter.resetFrom(configuration);
+        presenter.resetFrom(command);
     }
 
     @Test
     public void testResetting() throws Exception {
-        verify(configuration).getGwtModule();
-        verify(configuration).getCodeServerAddress();
-        verify(configuration).getClassPath();
+        verify(command).getCommandLine();
     }
 
     @Test
     public void testGo() throws Exception {
         AcceptsOneWidget container = Mockito.mock(AcceptsOneWidget.class);
 
-        gwtCommandPagePresenter.go(container);
+        presenter.go(container);
 
-        verify(container).setWidget(eq(gwtCommandPageView));
-        verify(configuration, times(2)).getGwtModule();
-        verify(configuration, times(2)).getCodeServerAddress();
-        verify(configuration, times(2)).getClassPath();
-        verify(gwtCommandPageView).setGwtModule(eq(GWT_MODULE));
-        verify(gwtCommandPageView).setCodeServerAddress(eq(CODE_SERVER_ADDRESS));
-        verify(gwtCommandPageView).setClassPath(eq(CHE_CLASS_PATH));
+        verify(container).setWidget(eq(view));
+        verify(view).setGwtModule(eq(GWT_MODULE));
+        verify(view).setCodeServerAddress(eq(CODE_SERVER_ADDRESS));
+        verify(view).setClassPath(eq(CHE_CLASS_PATH));
     }
 
     @Test
     public void testOnGwtModuleChanged() throws Exception {
-        when(gwtCommandPageView.getGwtModule()).thenReturn(GWT_MODULE);
+        when(view.getGwtModule()).thenReturn(GWT_MODULE);
 
         final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
-        gwtCommandPagePresenter.setDirtyStateListener(listener);
+        presenter.setDirtyStateListener(listener);
 
-        gwtCommandPagePresenter.onGwtModuleChanged();
+        presenter.onGwtModuleChanged();
 
-        verify(gwtCommandPageView).getGwtModule();
-        verify(configuration).setGwtModule(eq(GWT_MODULE));
+        verify(view).getGwtModule();
+        verify(command).setCommandLine(eq(COMMAND_LINE));
         verify(listener).onDirtyStateChanged();
     }
 
     @Test
     public void testOnCodeServerAddressChanged() throws Exception {
-        when(gwtCommandPageView.getCodeServerAddress()).thenReturn(CODE_SERVER_ADDRESS);
+        when(view.getCodeServerAddress()).thenReturn(CODE_SERVER_ADDRESS);
 
         final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
-        gwtCommandPagePresenter.setDirtyStateListener(listener);
+        presenter.setDirtyStateListener(listener);
 
-        gwtCommandPagePresenter.onCodeServerAddressChanged();
+        presenter.onCodeServerAddressChanged();
 
-        verify(gwtCommandPageView).getCodeServerAddress();
-        verify(configuration).setCodeServerAddress(eq(CODE_SERVER_ADDRESS));
+        verify(view).getCodeServerAddress();
+        verify(command).setCommandLine(eq(COMMAND_LINE));
         verify(listener).onDirtyStateChanged();
     }
 
     @Test
     public void testOnClassPathChanged() throws Exception {
-        when(gwtCommandPageView.getClassPath()).thenReturn(CHE_CLASS_PATH);
+        when(view.getClassPath()).thenReturn(CHE_CLASS_PATH);
 
         final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
-        gwtCommandPagePresenter.setDirtyStateListener(listener);
+        presenter.setDirtyStateListener(listener);
 
-        gwtCommandPagePresenter.onClassPathChanged();
+        presenter.onClassPathChanged();
 
-        verify(gwtCommandPageView).getClassPath();
-        verify(configuration).setClassPath(eq(CHE_CLASS_PATH));
+        verify(view).getClassPath();
+        verify(command).setCommandLine(eq(COMMAND_LINE));
         verify(listener).onDirtyStateChanged();
     }
 }

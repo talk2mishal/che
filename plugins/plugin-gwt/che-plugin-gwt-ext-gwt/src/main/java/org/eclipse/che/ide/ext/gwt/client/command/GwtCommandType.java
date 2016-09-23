@@ -16,7 +16,6 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.gwt.client.GwtResources;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
@@ -24,7 +23,6 @@ import org.eclipse.che.ide.extension.machine.client.command.valueproviders.Curre
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,24 +39,21 @@ public class GwtCommandType implements CommandType {
 
     private static final String ID = "gwt";
 
-    private final GwtResources                   resources;
-    private final CurrentProjectPathProvider     currentProjectPathProvider;
-    private final DevMachineHostNameProvider     devMachineHostNameProvider;
-    private final GwtCommandConfigurationFactory configurationFactory;
+    private final GwtResources               resources;
+    private final CurrentProjectPathProvider currentProjectPathProvider;
+    private final DevMachineHostNameProvider devMachineHostNameProvider;
 
-    private final Collection<CommandConfigurationPage<? extends CommandImpl>> pages;
+    private final List<CommandConfigurationPage> pages;
 
     @Inject
     public GwtCommandType(GwtResources resources,
                           GwtCommandPagePresenter page,
-                          GwtCommandConfigurationFactory gwtCommandConfigurationFactory,
                           CurrentProjectPathProvider currentProjectPathProvider,
                           DevMachineHostNameProvider devMachineHostNameProvider,
                           IconRegistry iconRegistry) {
         this.resources = resources;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.devMachineHostNameProvider = devMachineHostNameProvider;
-        configurationFactory = gwtCommandConfigurationFactory;
         pages = new LinkedList<>();
         pages.add(page);
 
@@ -86,13 +81,8 @@ public class GwtCommandType implements CommandType {
     }
 
     @Override
-    public Collection<CommandConfigurationPage<? extends CommandImpl>> getConfigurationPages() {
+    public List<CommandConfigurationPage> getConfigurationPages() {
         return pages;
-    }
-
-    @Override
-    public CommandConfigurationFactory<GwtCommandConfiguration> getConfigurationFactory() {
-        return configurationFactory;
     }
 
     @Override

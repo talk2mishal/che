@@ -106,7 +106,7 @@ public class CommandManagerImpl implements CommandConfigurationManager {
         return add(command);
     }
 
-    private Promise<CommandImpl> add(CommandImpl command) {
+    private Promise<CommandImpl> add(final CommandImpl command) {
         final CommandDto commandDto = dtoFactory.createDto(CommandDto.class)
                                                 .withName(getUniqueCommandName(command.getType(), command.getName()))
                                                 .withCommandLine(command.getCommandLine())
@@ -128,7 +128,7 @@ public class CommandManagerImpl implements CommandConfigurationManager {
     }
 
     @Override
-    public Promise<CommandImpl> update(String commandName, CommandImpl command) {
+    public Promise<CommandImpl> update(final String commandName, final CommandImpl command) {
         final CommandDto commandDto = dtoFactory.createDto(CommandDto.class)
                                                 .withName(getUniqueCommandName(command.getType(), command.getName()))
                                                 .withCommandLine(command.getCommandLine())
@@ -152,7 +152,7 @@ public class CommandManagerImpl implements CommandConfigurationManager {
     }
 
     @Override
-    public Promise<Void> remove(String commandName) {
+    public Promise<Void> remove(final String commandName) {
         return workspaceServiceClient.deleteCommand(appContext.getWorkspaceId(), commandName).then(new Function<WorkspaceDto, Void>() {
             @Override
             public Void apply(WorkspaceDto arg) throws FunctionException {
