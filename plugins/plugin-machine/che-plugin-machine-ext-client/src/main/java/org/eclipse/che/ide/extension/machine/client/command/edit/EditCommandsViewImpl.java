@@ -315,7 +315,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     @Override
     public void selectNextItem() {
         final CommandImpl nextItem;
-        final List<CommandImpl> configurations = categories.get(selectConfiguration.getType());
+        final List<CommandImpl> configurations = categories.get(getTypeById(selectConfiguration.getType()));
 
         int selectPosition = configurations.indexOf(selectConfiguration);
         if (configurations.size() < 2 || selectPosition == -1) {
