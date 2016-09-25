@@ -12,8 +12,8 @@ package org.eclipse.che.ide.extension.machine.client.actions;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.google.web.bindery.event.shared.EventBus;
+
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
 import org.eclipse.che.ide.api.action.ActionEvent;
@@ -21,8 +21,8 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 
 import java.util.Collections;
 
@@ -34,11 +34,11 @@ import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspect
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class ExecuteSelectedCommandAction extends AbstractPerspectiveAction implements
-        WorkspaceStartedEvent.Handler, WorkspaceStoppedEvent.Handler {
+public class ExecuteSelectedCommandAction extends AbstractPerspectiveAction implements WorkspaceStartedEvent.Handler,
+                                                                                       WorkspaceStoppedEvent.Handler {
 
     private final SelectCommandComboBox selectCommandAction;
-    private final CommandManager             commandManager;
+    private final CommandManager        commandManager;
 
     private boolean workspaceRunning = false;
 
@@ -53,6 +53,7 @@ public class ExecuteSelectedCommandAction extends AbstractPerspectiveAction impl
               localizationConstant.executeSelectedCommandControlDescription(),
               null,
               resources.execute());
+
         this.selectCommandAction = selectCommandAction;
         this.commandManager = commandManager;
 

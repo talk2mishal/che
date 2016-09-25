@@ -36,11 +36,10 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationManager;
+import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
-import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsPresenter;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStateEvent;
 import org.eclipse.che.ide.ui.dropdown.DropDownListFactory;
 import org.eclipse.che.ide.ui.dropdown.DropDownWidget;
@@ -67,7 +66,7 @@ import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspect
  */
 @Singleton
 public class SelectCommandComboBox extends AbstractPerspectiveAction implements CustomComponentAction,
-                                                                                EditCommandsPresenter.ConfigurationChangedListener,
+                                                                                CommandManager.CommandChangedListener,
                                                                                 WsAgentStateHandler,
                                                                                 MachineStateEvent.Handler,
                                                                                 WorkspaceStartedEvent.Handler,
@@ -80,7 +79,7 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
     private final MachineResources            resources;
     private final Map<String, Machine>        registeredMachineMap;
     private final ActionManager               actionManager;
-    private final CommandConfigurationManager commandConfigurationManager;
+    private final CommandManager              commandManager;
     private final MachineServiceClient        machineServiceClient;
     private final CommandTypeRegistry         commandTypeRegistry;
     private final DropDownWidget              commandsListWidget;
@@ -98,19 +97,19 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
                                  ActionManager actionManager,
                                  EventBus eventBus,
                                  DropDownListFactory dropDownListFactory,
-                                 CommandConfigurationManager commandConfigurationManager,
+                                 CommandManager commandManager,
                                  MachineServiceClient machineServiceClient,
                                  CommandTypeRegistry commandTypeRegistry,
-                                 EditCommandsPresenter editCommandsPresenter,
                                  AppContext appContext) {
         super(Collections.singletonList(PROJECT_PERSPECTIVE_ID),
               locale.selectCommandControlTitle(),
               locale.selectCommandControlDescription(),
               null, null);
+
         this.locale = locale;
         this.resources = resources;
         this.actionManager = actionManager;
-        this.commandConfigurationManager = commandConfigurationManager;
+        this.commandManager = commandManager;
         this.machineServiceClient = machineServiceClient;
         this.commandTypeRegistry = commandTypeRegistry;
         this.workspaceId = appContext.getWorkspaceId();
@@ -121,7 +120,7 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
         this.machinesListWidget = dropDownListFactory.createDropDown(GROUP_MACHINES);
         this.commandsListWidget = dropDownListFactory.createDropDown(GROUP_COMMANDS);
 
-        editCommandsPresenter.addConfigurationsChangedListener(this);
+        commandManager.addCommandChangedListener(this);
 
         commandActions = new DefaultActionGroup(GROUP_COMMANDS, false, actionManager);
         actionManager.registerAction(GROUP_COMMANDS, commandActions);
@@ -207,7 +206,7 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
      *         command that should be selected after loading all commands
      */
     private void loadCommands(@Nullable final CommandImpl commandToSelect) {
-        setCommandConfigurations(commandConfigurationManager.getCommands(), commandToSelect);
+        setCommandConfigurations(commandManager.getCommands(), commandToSelect);
     }
 
     /**
@@ -281,17 +280,17 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
     }
 
     @Override
-    public void onConfigurationAdded(CommandImpl command) {
+    public void onCommandAdded(CommandImpl command) {
         loadCommands(null);
     }
 
     @Override
-    public void onConfigurationRemoved(CommandImpl command) {
+    public void onCommandRemoved(CommandImpl command) {
         loadCommands(null);
     }
 
     @Override
-    public void onConfigurationsUpdated(CommandImpl command) {
+    public void onCommandUpdated(CommandImpl command) {
         loadCommands(command);
     }
 
@@ -445,5 +444,4 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
             return (getMachineCategory(firstMachineConfig)).compareToIgnoreCase(getMachineCategory(secondMachineConfig));
         }
     }
-
 }

@@ -10,78 +10,40 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import org.eclipse.che.api.core.model.machine.Machine;
-import org.eclipse.che.api.machine.shared.dto.MachineProcessDto;
-import org.eclipse.che.api.promises.client.Function;
-import org.eclipse.che.api.promises.client.FunctionException;
-import org.eclipse.che.api.promises.client.Operation;
-import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
-import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
-import org.eclipse.che.ide.api.machine.MachineServiceClient;
-import org.eclipse.che.ide.api.notification.NotificationManager;
-import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
-import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandOutputConsole;
-import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
-import org.eclipse.che.ide.util.UUID;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
 
-import java.util.Iterator;
-
-import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
-import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Manager for command operations.
+ * Facade for command related operations.
  *
  * @author Artem Zatsarynnyi
- * @author Valeriy Svydenko
  */
-@Singleton
-public class CommandManager {
+public interface CommandManager {
 
-    private final MachineServiceClient                 machineServiceClient;
-    private final ProcessesPanelPresenter              processesPanelPresenter;
-    private final CommandConsoleFactory                commandConsoleFactory;
-    private final NotificationManager                  notificationManager;
-    private final MachineLocalizationConstant          localizationConstant;
-    private final AppContext                           appContext;
-    private final CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
+    List<CommandImpl> getCommands();
 
-    @Inject
-    public CommandManager(MachineServiceClient machineServiceClient,
-                          ProcessesPanelPresenter processesPanelPresenter,
-                          CommandConsoleFactory commandConsoleFactory,
-                          NotificationManager notificationManager,
-                          MachineLocalizationConstant localizationConstant,
-                          AppContext appContext,
-                          CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry) {
-        this.machineServiceClient = machineServiceClient;
-        this.processesPanelPresenter = processesPanelPresenter;
-        this.commandConsoleFactory = commandConsoleFactory;
-        this.notificationManager = notificationManager;
-        this.localizationConstant = localizationConstant;
-        this.appContext = appContext;
-        this.commandPropertyValueProviderRegistry = commandPropertyValueProviderRegistry;
-    }
+    Promise<CommandImpl> create(String type);
+
+    Promise<CommandImpl> create(String name, String commandLine, String type, Map<String, String> attributes);
 
     /**
-     * Executes the the given {@code command} on the developer machine.
-     *
-     * @param command
-     *         command to execute
+     * Returns Command because it's name may be different from the original name.
+     * Note that updated command's name may differ from the original name.
      */
-    public void execute(CommandImpl command) {
-        final Machine devMachine = appContext.getDevMachine().getDescriptor();
-        executeCommand(command, devMachine);
-    }
+    Promise<CommandImpl> update(String commandName, CommandImpl command);
+
+    Promise<Void> remove(String commandName);
+
+    List<CommandConfigurationPage> getPages(String type);
+
+    List<CommandProducer> getApplicableProducers();
 
     /**
      * Executes the given {@code command} on the specified {@code machine}.
@@ -91,92 +53,25 @@ public class CommandManager {
      * @param machine
      *         machine to execute the command
      */
-    public void executeCommand(final CommandImpl command, final Machine machine) {
-        if (machine == null) {
-            notificationManager.notify(localizationConstant.failedToExecuteCommand(),
-                                       localizationConstant.noDevMachine(),
-                                       FAIL,
-                                       FLOAT_MODE);
-            return;
-        }
-
-        final String outputChannel = "process:output:" + UUID.uuid();
-
-        final CommandOutputConsole console = commandConsoleFactory.create(command, machine);
-        console.listenToOutput(outputChannel);
-        processesPanelPresenter.addCommandOutput(machine.getId(), console);
-
-        substituteProperties(command.getCommandLine()).then(new Operation<String>() {
-            @Override
-            public void apply(String arg) throws OperationException {
-                Promise<MachineProcessDto> processPromise = machineServiceClient.executeCommand(machine.getWorkspaceId(),
-                                                                                                machine.getId(),
-                                                                                                command,
-                                                                                                outputChannel);
-                processPromise.then(new Operation<MachineProcessDto>() {
-                    @Override
-                    public void apply(MachineProcessDto process) throws OperationException {
-                        console.attachToProcess(process);
-                    }
-                });
-            }
-        });
-    }
+    void executeCommand(CommandImpl command, Machine machine);
 
     /**
      * Substitutes all properties with the appropriate values in the given {@code commandLine}.
      *
      * @see CommandPropertyValueProvider
      */
-    public Promise<String> substituteProperties(String commandLine) {
-        Promise<String> promise = Promises.resolve(null);
-        CommandLineContainer commandLineContainer = new CommandLineContainer(commandLine);
-        return replaceParameters(promise, commandLineContainer, commandPropertyValueProviderRegistry.getProviders().iterator());
-    }
+    Promise<String> substituteProperties(String commandLine);
 
-    private Promise<String> replaceParameters(Promise<String> promise,
-                                              CommandLineContainer commandLineContainer,
-                                              Iterator<CommandPropertyValueProvider> iterator) {
-        if (!iterator.hasNext()) {
-            return promise;
-        }
+    void addCommandChangedListener(CommandChangedListener listener);
 
-        final CommandPropertyValueProvider provider = iterator.next();
+    void removeCommandChangedListener(CommandChangedListener listener);
 
-        Promise<String> derivedPromise = promise.thenPromise(proceedRefactoringMove(commandLineContainer, provider));
+    /** Listener that will be called when command changed. */
+    interface CommandChangedListener {
+        void onCommandAdded(CommandImpl command);
 
-        return replaceParameters(derivedPromise, commandLineContainer, iterator);
-    }
+        void onCommandRemoved(CommandImpl command);
 
-    private Function<String, Promise<String>> proceedRefactoringMove(final CommandLineContainer commandLineContainer,
-                                                                     final CommandPropertyValueProvider provider) {
-        return new Function<String, Promise<String>>() {
-            @Override
-            public Promise<String> apply(String arg) throws FunctionException {
-                return provider.getValue().thenPromise(new Function<String, Promise<String>>() {
-                    @Override
-                    public Promise<String> apply(String arg) throws FunctionException {
-                        commandLineContainer.setCommandLine(commandLineContainer.getCommandLine().replace(provider.getKey(), arg));
-                        return Promises.resolve(commandLineContainer.getCommandLine());
-                    }
-                });
-            }
-        };
-    }
-
-    private class CommandLineContainer {
-        private String commandLine;
-
-        CommandLineContainer(String commandLine) {
-            this.commandLine = commandLine;
-        }
-
-        public String getCommandLine() {
-            return commandLine;
-        }
-
-        public void setCommandLine(String commandLine) {
-            this.commandLine = commandLine;
-        }
+        void onCommandUpdated(CommandImpl command);
     }
 }

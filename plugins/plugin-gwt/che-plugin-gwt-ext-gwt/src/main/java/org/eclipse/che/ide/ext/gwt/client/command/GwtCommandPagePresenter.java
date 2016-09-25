@@ -67,6 +67,13 @@ public class GwtCommandPagePresenter implements GwtCommandPageView.ActionDelegat
     }
 
     @Override
+    public void onSave() {
+        workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
+        gwtModuleInitial = editedCommandModel.getGwtModule();
+        codeServerAddressInitial = editedCommandModel.getCodeServerAddress();
+    }
+
+    @Override
     public boolean isDirty() {
         return !(workingDirectoryInitial.equals(editedCommandModel.getWorkingDirectory()) &&
                  gwtModuleInitial.equals(editedCommandModel.getGwtModule()) &&

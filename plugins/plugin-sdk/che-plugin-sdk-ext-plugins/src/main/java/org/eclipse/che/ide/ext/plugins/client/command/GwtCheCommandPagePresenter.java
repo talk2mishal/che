@@ -67,6 +67,13 @@ public class GwtCheCommandPagePresenter implements GwtCheCommandPageView.ActionD
     }
 
     @Override
+    public void onSave() {
+        gwtModuleInitial = editedCommandModel.getGwtModule();
+        codeServerAddressInitial = editedCommandModel.getCodeServerAddress();
+        classPathInitial = editedCommandModel.getClassPath();
+    }
+
+    @Override
     public boolean isDirty() {
         return !(gwtModuleInitial.equals(editedCommandModel.getGwtModule()) &&
                  codeServerAddressInitial.equals(editedCommandModel.getCodeServerAddress()) &&

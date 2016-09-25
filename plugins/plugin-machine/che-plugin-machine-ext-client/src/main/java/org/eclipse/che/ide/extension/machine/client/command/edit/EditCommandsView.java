@@ -12,11 +12,10 @@ package org.eclipse.che.ide.extension.machine.client.command.edit;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
-
-import org.eclipse.che.commons.annotation.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -52,16 +51,16 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     void setData(Map<CommandType, List<CommandImpl>> categories);
 
     /** Returns command name. */
-    String getConfigurationName();
+    String getCommandName();
 
     /** Sets command name. */
-    void setConfigurationName(String name);
-
-    /** Sets preview Url. */
-    void setConfigurationPreviewUrl(String previewUrl);
+    void setCommandName(String name);
 
     /** Returns preview Url. */
-    String getConfigurationPreviewUrl();
+    String getCommandPreviewUrl();
+
+    /** Sets preview Url. */
+    void setCommandPreviewUrl(String previewUrl);
 
     /** Sets visible state of the 'Preview URL' panel. */
     void setPreviewUrlState(boolean enabled);
@@ -79,12 +78,12 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     @Nullable
     String getSelectedCommandType();
 
-    /** Select command with the given ID. */
-    void setSelectedConfiguration(CommandImpl config);
-
-    /** Returns the selected command configuration. */
+    /** Returns the command which is currently selected. */
     @Nullable
-    CommandImpl getSelectedConfiguration();
+    CommandImpl getSelectedCommand();
+
+    /** Select the specified command. */
+    void setSelectedCommand(CommandImpl command);
 
     /** Sets the focus on the 'Close' button. */
     void setCloseButtonInFocus();
@@ -116,19 +115,16 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
         /** Called when 'Remove' button is clicked. */
         void onRemoveClicked(CommandImpl selectedConfiguration);
 
-        /** Called when 'Execute' button is clicked. */
-        void onExecuteClicked();
-
         /** Performs any actions appropriate in response to the user having clicked the Enter key. */
         void onEnterClicked();
 
         /**
-         * Called when some command configuration is selected.
+         * Called when some command has been selected.
          *
-         * @param configuration
-         *         selected command configuration
+         * @param command
+         *         selected command
          */
-        void onConfigurationSelected(CommandImpl configuration);
+        void onCommandSelected(CommandImpl command);
 
         /** Called when configuration name has been changed. */
         void onNameChanged();

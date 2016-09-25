@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command;
 
+import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
@@ -59,7 +60,7 @@ public class CommandManagerTest {
         when(appContext.getDevMachine()).thenReturn(devMachine);
         when(devMachine.getId()).thenReturn(null);
 
-        commandManager.execute(mock(CommandImpl.class));
+        commandManager.executeCommand(mock(CommandImpl.class), mock(Machine.class));
 
         verify(localizationConstant).noDevMachine();
         notificationManager.notify(anyString());

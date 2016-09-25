@@ -25,7 +25,7 @@ import org.eclipse.che.ide.api.outputconsole.OutputConsole;
 import org.eclipse.che.ide.api.parts.Perspective;
 import org.eclipse.che.ide.extension.machine.client.RecipeScriptDownloadServiceClient;
 import org.eclipse.che.ide.extension.machine.client.RecipeScriptDownloadServiceClientImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationManager;
+import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManagerImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistryImpl;
@@ -100,7 +100,7 @@ public class MachineGinModule extends AbstractGinModule {
         bind(ProcessesPanelView.class).to(ProcessesPanelViewImpl.class).in(Singleton.class);
 
         bind(CommandTypeRegistry.class).to(CommandTypeRegistryImpl.class).in(Singleton.class);
-        bind(CommandConfigurationManager.class).to(CommandManagerImpl.class).in(Singleton.class);
+        bind(CommandManager.class).to(CommandManagerImpl.class).in(Singleton.class);
         bind(EditCommandsView.class).to(EditCommandsViewImpl.class).in(Singleton.class);
 
         bind(TargetsView.class).to(TargetsViewImpl.class).in(Singleton.class);

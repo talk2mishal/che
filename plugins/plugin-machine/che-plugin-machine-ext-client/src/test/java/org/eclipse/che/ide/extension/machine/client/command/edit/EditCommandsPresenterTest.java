@@ -18,11 +18,9 @@ import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.CoreLocalizationConstant;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,9 +33,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -55,8 +51,6 @@ public class EditCommandsPresenterTest {
     @Mock
     private EditCommandsView            view;
     @Mock
-    private CommandConfigurationManager commandConfigurationManager;
-    @Mock
     private CommandManager              commandManager;
     @Mock
     private CommandTypeRegistry         commandTypeRegistry;
@@ -68,7 +62,7 @@ public class EditCommandsPresenterTest {
     private CoreLocalizationConstant    coreLocale;
 
     @Mock
-    private Promise<List<CommandImpl>>                                     commandsPromise;
+    private Promise<List<CommandImpl>>                                    commandsPromise;
     @Mock
     private Promise<CommandImpl>                                          commandPromise;
     @Mock
@@ -86,12 +80,12 @@ public class EditCommandsPresenterTest {
 
     @Before
     public void setUp() {
-        presenter.editedCommandOriginName = COMMAND_NAME;
+        presenter.editedCommandNameInitial = COMMAND_NAME;
 
-//        when(commandConfigurationManager.getCommands()).thenReturn(commandsPromise);
+//        when(commandManager.getCommands()).thenReturn(commandsPromise);
 //        when(commandsPromise.then((Function<List<CommandDto>, List<CommandImpl>>)anyObject())).thenReturn(commandConfigurationPromise);
 //        when(commandConfigurationPromise.then((Operation<List<CommandImpl>>)anyObject())).thenReturn(commandConfigurationPromise);
-        when(commandConfigurationManager.update(anyString(), anyObject())).thenReturn(commandPromise);
+        when(commandManager.update(anyString(), anyObject())).thenReturn(commandPromise);
     }
 
     @Test
@@ -105,7 +99,7 @@ public class EditCommandsPresenterTest {
 
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
-        verify(commandConfigurationManager).getCommands();
+        verify(commandManager).getCommands();
 
 //        verify(commandsPromise).then(commandsCaptor.capture());
 //        commandsCaptor.getValue().apply(commands);
@@ -118,8 +112,8 @@ public class EditCommandsPresenterTest {
         verify(view).setCloseButtonInFocus();
 
         verify(view, never()).close();
-        verify(commandConfigurationManager, never()).update(anyString(), anyObject());
-        verify(commandConfigurationManager, never()).remove(anyString());
+        verify(commandManager, never()).update(anyString(), anyObject());
+        verify(commandManager, never()).remove(anyString());
     }
 
     @Test
@@ -129,9 +123,9 @@ public class EditCommandsPresenterTest {
         presenter.onEnterClicked();
 
         verify(view).close();
-        verify(commandConfigurationManager, never()).getCommands();
-        verify(commandConfigurationManager, never()).update(anyString(), anyObject());
-        verify(commandConfigurationManager, never()).remove(anyString());
+        verify(commandManager, never()).getCommands();
+        verify(commandManager, never()).update(anyString(), anyObject());
+        verify(commandManager, never()).remove(anyString());
     }
 
     @Test
@@ -147,7 +141,7 @@ public class EditCommandsPresenterTest {
 //        when(command.withCommandLine(anyString())).thenReturn(command);
 //        when(command.withType(anyString())).thenReturn(command);
 //        when(command.withAttributes(anyMap())).thenReturn(command);
-        when(view.getSelectedConfiguration()).thenReturn(commandConfiguration);
+        when(view.getSelectedCommand()).thenReturn(commandConfiguration);
 //        when(commandConfiguration.getType()).thenReturn(mock(CommandType.class));
         when(commandConfiguration.getName()).thenReturn(COMMAND_NAME);
 
@@ -157,13 +151,13 @@ public class EditCommandsPresenterTest {
         presenter.onEnterClicked();
 
 //        verify(dtoFactory).createDto(CommandDto.class);
-        verify(commandConfigurationManager).update(anyString(), eq(commandConfiguration));
+        verify(commandManager).update(anyString(), eq(commandConfiguration));
 //        verify(commandPromise).then(workspaceCaptor.capture());
 //        workspaceCaptor.getValue().apply(workspace);
 
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
-        verify(commandConfigurationManager).getCommands();
+        verify(commandManager).getCommands();
 
 //        verify(commandsPromise).then(commandsCaptor.capture());
 //        commandsCaptor.getValue().apply(commands);

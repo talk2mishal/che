@@ -38,6 +38,9 @@ public interface CommandConfigurationPage extends Presenter {
     @Override
     void go(final AcceptsOneWidget container);
 
+    /** Called when currently edited command has been saved. */
+    void onSave();
+
     /**
      * Whether the page has been changed or not?
      *

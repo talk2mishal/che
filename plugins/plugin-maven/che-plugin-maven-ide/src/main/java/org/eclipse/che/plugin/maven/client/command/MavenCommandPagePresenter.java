@@ -33,7 +33,7 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
     // initial value of the 'working directory' parameter
     private String workingDirectoryInitial;
     // initial value of the 'arguments' parameter
-    private String commandLineInitial;
+    private String argumentsInitial;
 
     private DirtyStateListener listener;
 
@@ -51,7 +51,7 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
         editedCommandModel = MavenCommandModel.fromCommandLine(command.getCommandLine());
 
         workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
-        commandLineInitial = editedCommandModel.getArguments();
+        argumentsInitial = editedCommandModel.getArguments();
     }
 
     @Override
@@ -63,9 +63,15 @@ public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDel
     }
 
     @Override
+    public void onSave() {
+        workingDirectoryInitial = editedCommandModel.getWorkingDirectory();
+        argumentsInitial = editedCommandModel.getArguments();
+    }
+
+    @Override
     public boolean isDirty() {
         return !(workingDirectoryInitial.equals(editedCommandModel.getWorkingDirectory()) &&
-                 commandLineInitial.equals(editedCommandModel.getArguments()));
+                 argumentsInitial.equals(editedCommandModel.getArguments()));
     }
 
     @Override

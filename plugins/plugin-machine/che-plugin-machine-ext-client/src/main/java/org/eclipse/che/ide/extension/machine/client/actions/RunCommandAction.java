@@ -14,9 +14,10 @@ import com.google.inject.Inject;
 
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
+import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.util.loging.Log;
 
 
@@ -24,24 +25,25 @@ import org.eclipse.che.ide.util.loging.Log;
  * Allows to run predefined command without UI.
  *
  * @author Max Shaposhnik
- *
  */
 public class RunCommandAction extends Action {
 
     public static final String NAME_PARAM_ID = "name";
 
-    private final SelectCommandComboBox selectCommandAction;
+    private final SelectCommandComboBox       selectCommandAction;
     private final CommandManager              commandManager;
+    private final AppContext                  appContext;
     private final MachineLocalizationConstant localizationConstant;
-
 
     @Inject
     public RunCommandAction(SelectCommandComboBox selectCommandAction,
                             MachineLocalizationConstant localizationConstant,
-                            CommandManager commandManager) {
+                            CommandManager commandManager,
+                            AppContext appContext) {
         this.selectCommandAction = selectCommandAction;
         this.localizationConstant = localizationConstant;
         this.commandManager = commandManager;
+        this.appContext = appContext;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class RunCommandAction extends Action {
 
         final CommandImpl command = selectCommandAction.getCommandByName(name);
         if (command != null) {
-            commandManager.execute(command);
+            commandManager.executeCommand(command, appContext.getDevMachine().getDescriptor());
         }
     }
 

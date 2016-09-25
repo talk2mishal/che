@@ -12,7 +12,6 @@ package org.eclipse.che.ide.extension.machine.client.command.edit;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Operation;
@@ -25,8 +24,6 @@ import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.actions.SelectCommandComboBox;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
@@ -40,10 +37,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Presenter for managing commands.
@@ -57,76 +52,67 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     public static final String PREVIEW_URL_ATTR = "previewUrl";
 
-    private final EditCommandsView                  view;
-    private final CommandConfigurationManager       commandConfigurationManager;
-    private final CommandManager                    commandManager;
-    private final CommandTypeRegistry               commandTypeRegistry;
-    private final DialogFactory                     dialogFactory;
-    private final MachineLocalizationConstant       machineLocale;
-    private final CoreLocalizationConstant          coreLocale;
-    private final Provider<SelectCommandComboBox>   selectCommandActionProvider;
-    private final Set<ConfigurationChangedListener> configurationChangedListeners;
+    private final EditCommandsView            view;
+    private final CommandManager              commandManager;
+    private final CommandTypeRegistry         commandTypeRegistry;
+    private final DialogFactory               dialogFactory;
+    private final MachineLocalizationConstant machineLocale;
+    private final CoreLocalizationConstant    coreLocale;
 
-    /** Initial name of the currently edited command. */
-    String                    editedCommandOriginName;
-    String                    editedCommandOriginPreviewUrl;
+    // initial name of the currently edited command
+    String editedCommandNameInitial;
+    // initial preview URL of the currently edited command
+    String editedCommandPreviewUrlInitial;
+
     CommandProcessingCallback commandProcessingCallback;
 
     private CommandConfigurationPage editedPage;
-    /** Command that being edited. */
+    // command that being edited
     private CommandImpl              editedCommand;
 
     @Inject
     protected EditCommandsPresenter(EditCommandsView view,
-                                    CommandConfigurationManager commandConfigurationManager,
+                                    CommandManager commandManager,
                                     CommandTypeRegistry commandTypeRegistry,
                                     DialogFactory dialogFactory,
                                     MachineLocalizationConstant machineLocale,
-                                    CoreLocalizationConstant coreLocale,
-                                    Provider<SelectCommandComboBox> selectCommandActionProvider,
-                                    CommandManager commandManager) {
+                                    CoreLocalizationConstant coreLocale) {
         this.view = view;
-        this.commandConfigurationManager = commandConfigurationManager;
         this.commandManager = commandManager;
         this.commandTypeRegistry = commandTypeRegistry;
         this.dialogFactory = dialogFactory;
         this.machineLocale = machineLocale;
         this.coreLocale = coreLocale;
-        this.selectCommandActionProvider = selectCommandActionProvider;
         this.view.setDelegate(this);
-        configurationChangedListeners = new HashSet<>();
     }
 
     @Override
     public void onCloseClicked() {
-        final CommandImpl selectedConfiguration = view.getSelectedConfiguration();
         onNameChanged();
-        if (selectedConfiguration != null && isViewModified()) {
-            onConfigurationSelected(selectedConfiguration);
-        }
-        view.close();
-    }
 
-    private void selectCommandOnToolbar(CommandImpl commandToSelect) {
-        selectCommandActionProvider.get().setSelectedCommand(commandToSelect);
+        final CommandImpl selectedCommand = view.getSelectedCommand();
+        if (selectedCommand != null && isViewModified()) {
+            onCommandSelected(selectedCommand);
+        }
+
+        view.close();
     }
 
     @Override
     public void onSaveClicked() {
-        final CommandImpl selectedConfiguration;
-        if (view.getSelectedConfiguration() == null) {
+        final CommandImpl selectedCommand = view.getSelectedCommand();
+        if (selectedCommand == null) {
             return;
         }
 
         onNameChanged();
-        selectedConfiguration = view.getSelectedConfiguration();
 
-        updateCommand(selectedConfiguration).then(new Operation<CommandImpl>() {
+        updateCommand(selectedCommand).then(new Operation<CommandImpl>() {
             @Override
             public void apply(CommandImpl arg) throws OperationException {
                 commandProcessingCallback = getCommandProcessingCallback();
-                fetchCommands();
-                fireConfigurationUpdated(selectedConfiguration);
+
+                updateView();
             }
         }).catchError(new Operation<PromiseError>() {
             @Override
@@ -137,20 +123,28 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     }
 
     private Promise<CommandImpl> updateCommand(final CommandImpl selectedConfiguration) {
-        if (editedCommandOriginName.trim().equals(selectedConfiguration.getName())) {
-            return commandConfigurationManager.update(selectedConfiguration.getName(), selectedConfiguration);
-        } else {
-            return commandConfigurationManager.update(selectedConfiguration.getName(), selectedConfiguration).then(
+        if (editedCommandNameInitial.trim().equals(selectedConfiguration.getName())) {
+            return commandManager.update(selectedConfiguration.getName(), selectedConfiguration).then(
                     new Operation<CommandImpl>() {
                         @Override
                         public void apply(CommandImpl arg) throws OperationException {
+                            editedPage.onSave();
+                        }
+                    });
+        } else {
+            return commandManager.update(selectedConfiguration.getName(), selectedConfiguration).then(
+                    new Operation<CommandImpl>() {
+                        @Override
+                        public void apply(CommandImpl arg) throws OperationException {
+                            editedPage.onSave();
+
                             final String newName = arg.getName();
 
                             onNameChanged();
 
-                            if (selectedConfiguration.equals(view.getSelectedConfiguration())) {
+                            if (selectedConfiguration.equals(view.getSelectedCommand())) {
                                 //update selected configuration name
-                                view.getSelectedConfiguration().setName(newName);
+                                view.getSelectedCommand().setName(newName);
                             }
                         }
                     });
@@ -160,36 +154,37 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     @Override
     public void onCancelClicked() {
         commandProcessingCallback = getCommandProcessingCallback();
-        fetchCommands();
-    }
-
-    @Override
-    public void onDuplicateClicked() {
-        final CommandImpl selectedConfiguration = view.getSelectedConfiguration();
-
-        if (selectedConfiguration != null) {
-            createNewCommand(selectedConfiguration.getType(),
-                             selectedConfiguration.getCommandLine(),
-                             selectedConfiguration.getName(),
-                             selectedConfiguration.getAttributes());
-        }
+        updateView();
     }
 
     @Override
     public void onAddClicked() {
         final String selectedType = view.getSelectedCommandType();
+
         if (selectedType != null) {
             createNewCommand(selectedType, null, null, null);
         }
     }
 
+    @Override
+    public void onDuplicateClicked() {
+        final CommandImpl selectedCommand = view.getSelectedCommand();
+
+        if (selectedCommand != null) {
+            createNewCommand(selectedCommand.getType(),
+                             selectedCommand.getCommandLine(),
+                             selectedCommand.getName(),
+                             selectedCommand.getAttributes());
+        }
+    }
+
     private void createNewCommand(final String type,
-                                  final String customCommand,
-                                  final String customName,
+                                  final String commandLine,
+                                  final String name,
                                   final Map<String, String> attributes) {
         if (!isViewModified()) {
             reset();
-            createCommand(type, customCommand, customName, attributes);
+            createCommand(type, commandLine, name, attributes);
             return;
         }
 
@@ -200,7 +195,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                     @Override
                     public void apply(CommandImpl arg) throws OperationException {
                         reset();
-                        createCommand(type, customCommand, customName, attributes);
+                        createCommand(type, commandLine, name, attributes);
                     }
                 });
             }
@@ -209,33 +204,33 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         final ConfirmCallback discardCallback = new ConfirmCallback() {
             @Override
             public void accepted() {
-                fetchCommands();
+                updateView();
                 reset();
-                createCommand(type, customCommand, customName, attributes);
+                createCommand(type, commandLine, name, attributes);
             }
         };
 
-        final ChoiceDialog dialog = dialogFactory.createChoiceDialog(
+        ChoiceDialog dialog = dialogFactory.createChoiceDialog(
                 machineLocale.editCommandsSaveChangesTitle(),
                 machineLocale.editCommandsSaveChangesConfirmation(editedCommand.getName()),
                 coreLocale.save(),
                 machineLocale.editCommandsSaveChangesDiscard(),
                 saveCallback,
                 discardCallback);
+
         dialog.show();
     }
 
-    private void createCommand(String type, String customCommand, String customName, Map<String, String> attributes) {
-        commandConfigurationManager.create(customName,
-                                           customCommand,
-                                           type,
-                                           attributes).then(new Operation<CommandImpl>() {
+    private void createCommand(String type, String commandLine, String name, Map<String, String> attributes) {
+        commandManager.create(name,
+                              commandLine,
+                              type,
+                              attributes).then(new Operation<CommandImpl>() {
             @Override
             public void apply(CommandImpl command) throws OperationException {
-                fetchCommands();
+                updateView();
 
-                fireConfigurationAdded(command);
-                view.setSelectedConfiguration(command);
+                view.setSelectedCommand(command);
             }
         });
     }
@@ -249,13 +244,12 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         final ConfirmCallback confirmCallback = new ConfirmCallback() {
             @Override
             public void accepted() {
-                commandConfigurationManager.remove(selectedConfiguration.getName()).then(new Operation<Void>() {
+                commandManager.remove(selectedConfiguration.getName()).then(new Operation<Void>() {
                     @Override
                     public void apply(Void arg) throws OperationException {
                         view.selectNextItem();
                         commandProcessingCallback = getCommandProcessingCallback();
-                        fetchCommands();
-                        fireConfigurationRemoved(selectedConfiguration);
+                        updateView();
                     }
                 }).catchError(new Operation<PromiseError>() {
                     @Override
@@ -275,22 +269,6 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     }
 
     @Override
-    public void onExecuteClicked() {
-        final CommandImpl selectedConfiguration = view.getSelectedConfiguration();
-        if (selectedConfiguration == null) {
-            return;
-        }
-
-        if (isViewModified()) {
-            dialogFactory.createMessageDialog("", machineLocale.editCommandsExecuteMessage(), null).show();
-            return;
-        }
-
-        commandManager.execute(selectedConfiguration);
-        view.close();
-    }
-
-    @Override
     public void onEnterClicked() {
         if (view.isCancelButtonInFocus()) {
             onCancelClicked();
@@ -307,19 +285,19 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     private void reset() {
         editedCommand = null;
-        editedCommandOriginName = null;
-        editedCommandOriginPreviewUrl = null;
+        editedCommandNameInitial = null;
+        editedCommandPreviewUrlInitial = null;
         editedPage = null;
 
-        view.setConfigurationName("");
-        view.setConfigurationPreviewUrl("");
+        view.setCommandName("");
+        view.setCommandPreviewUrl("");
         view.clearCommandConfigurationsContainer();
     }
 
     @Override
-    public void onConfigurationSelected(final CommandImpl configuration) {
+    public void onCommandSelected(final CommandImpl command) {
         if (!isViewModified()) {
-            handleCommandSelection(configuration);
+            handleCommandSelection(command);
             return;
         }
 
@@ -329,9 +307,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 updateCommand(editedCommand).then(new Operation<CommandImpl>() {
                     @Override
                     public void apply(CommandImpl arg) throws OperationException {
-                        fetchCommands();
-                        fireConfigurationUpdated(editedCommand);
-                        handleCommandSelection(configuration);
+                        updateView();
+
+                        handleCommandSelection(command);
                     }
                 });
             }
@@ -341,18 +319,19 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             @Override
             public void accepted() {
                 reset();
-                fetchCommands();
-                handleCommandSelection(configuration);
+                updateView();
+                handleCommandSelection(command);
             }
         };
 
-        final ChoiceDialog dialog = dialogFactory.createChoiceDialog(
+        ChoiceDialog dialog = dialogFactory.createChoiceDialog(
                 machineLocale.editCommandsSaveChangesTitle(),
                 machineLocale.editCommandsSaveChangesConfirmation(editedCommand.getName()),
                 coreLocale.save(),
                 machineLocale.editCommandsSaveChangesDiscard(),
                 saveCallback,
                 discardCallback);
+
         dialog.show();
     }
 
@@ -363,15 +342,15 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         return null;
     }
 
-    private void handleCommandSelection(CommandImpl configuration) {
-        editedCommand = configuration;
-        editedCommandOriginName = configuration.getName();
-        editedCommandOriginPreviewUrl = getPreviewUrlOrNull(configuration);
+    private void handleCommandSelection(CommandImpl command) {
+        editedCommand = command;
+        editedCommandNameInitial = command.getName();
+        editedCommandPreviewUrlInitial = getPreviewUrlOrNull(command);
 
-        view.setConfigurationName(configuration.getName());
-        view.setConfigurationPreviewUrl(getPreviewUrlOrNull(configuration));
+        view.setCommandName(command.getName());
+        view.setCommandPreviewUrl(getPreviewUrlOrNull(command));
 
-        final Collection<CommandConfigurationPage> pages = commandConfigurationManager.getPages(configuration.getType());
+        final Collection<CommandConfigurationPage> pages = commandManager.getPages(command.getType());
         for (CommandConfigurationPage page : pages) {
             editedPage = page;
 
@@ -385,7 +364,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 }
             });
 
-            page.resetFrom(configuration);
+            page.resetFrom(command);
             page.go(view.getCommandConfigurationsContainer());
 
             // TODO: for now only the 1'st page is showing but need to show all the pages
@@ -395,12 +374,12 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     @Override
     public void onNameChanged() {
-        CommandImpl selectedConfiguration = view.getSelectedConfiguration();
-        if (selectedConfiguration == null || !selectedConfiguration.equals(editedCommand)) {
+        CommandImpl selectedCommand = view.getSelectedCommand();
+        if (selectedCommand == null || !selectedCommand.equals(editedCommand)) {
             return;
         }
 
-        selectedConfiguration.setName(view.getConfigurationName());
+        selectedCommand.setName(view.getCommandName());
 
         view.setCancelButtonState(isViewModified());
         view.setSaveButtonState(isViewModified());
@@ -408,58 +387,59 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     @Override
     public void onPreviewUrlChanged() {
-        CommandImpl selectedConfiguration = view.getSelectedConfiguration();
-        if (selectedConfiguration == null || !selectedConfiguration.equals(editedCommand)) {
+        CommandImpl selectedCommand = view.getSelectedCommand();
+        if (selectedCommand == null || !selectedCommand.equals(editedCommand)) {
             return;
         }
-        selectedConfiguration.getAttributes().put(PREVIEW_URL_ATTR, view.getConfigurationPreviewUrl());
+
+        selectedCommand.getAttributes().put(PREVIEW_URL_ATTR, view.getCommandPreviewUrl());
         view.setCancelButtonState(isViewModified());
         view.setSaveButtonState(isViewModified());
     }
 
     /** Show dialog. */
     public void show() {
-        fetchCommands();
-
         view.show();
+
+        updateView();
     }
 
-    /** Fetch commands from server and update view. */
-    private void fetchCommands() {
-        final String originName = editedCommandOriginName;
+    private void updateView() {
+        final String originName = editedCommandNameInitial;
 
         reset();
 
         view.setCancelButtonState(false);
         view.setSaveButtonState(false);
 
-        List<CommandImpl> commands = commandConfigurationManager.getCommands();
+        List<CommandImpl> commands = commandManager.getCommands();
 
-        final Map<CommandType, List<CommandImpl>> categories = new HashMap<>();
+        final Map<CommandType, List<CommandImpl>> typeToCommands = new HashMap<>();
 
         for (CommandType type : commandTypeRegistry.getCommandTypes()) {
-            final List<CommandImpl> settingsCategory = new ArrayList<>();
-            for (CommandImpl configuration : commands) {
-                if (type.getId().equals(configuration.getType())) {
-                    settingsCategory.add(configuration);
+            final List<CommandImpl> commandsByType = new ArrayList<>();
 
-                    if (configuration.getName().equals(originName)) {
-                        view.setSelectedConfiguration(configuration);
+            for (CommandImpl command : commands) {
+                if (type.getId().equals(command.getType())) {
+                    commandsByType.add(command);
+
+                    if (command.getName().equals(originName)) {
+                        view.setSelectedCommand(command);
                     }
                 }
             }
 
-            Collections.sort(settingsCategory, new Comparator<CommandImpl>() {
+            Collections.sort(commandsByType, new Comparator<CommandImpl>() {
                 @Override
                 public int compare(CommandImpl o1, CommandImpl o2) {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
 
-            categories.put(type, settingsCategory);
+            typeToCommands.put(type, commandsByType);
         }
 
-        view.setData(categories);
+        view.setData(typeToCommands);
         view.setFilterState(!commands.isEmpty());
 
         if (commandProcessingCallback != null) {
@@ -472,27 +452,10 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         if (editedCommand == null || editedPage == null) {
             return false;
         }
+
         return editedPage.isDirty()
-               || !editedCommandOriginName.equals(view.getConfigurationName())
-               || !Strings.nullToEmpty(editedCommandOriginPreviewUrl).equals(Strings.nullToEmpty(view.getConfigurationPreviewUrl()));
-    }
-
-    private void fireConfigurationAdded(CommandImpl command) {
-        for (ConfigurationChangedListener listener : configurationChangedListeners) {
-            listener.onConfigurationAdded(command);
-        }
-    }
-
-    private void fireConfigurationRemoved(CommandImpl command) {
-        for (ConfigurationChangedListener listener : configurationChangedListeners) {
-            listener.onConfigurationRemoved(command);
-        }
-    }
-
-    private void fireConfigurationUpdated(CommandImpl command) {
-        for (ConfigurationChangedListener listener : configurationChangedListeners) {
-            listener.onConfigurationsUpdated(command);
-        }
+               || !editedCommandNameInitial.equals(view.getCommandName())
+               || !Strings.nullToEmpty(editedCommandPreviewUrlInitial).equals(Strings.nullToEmpty(view.getCommandPreviewUrl()));
     }
 
     private CommandProcessingCallback getCommandProcessingCallback() {
@@ -504,31 +467,13 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         };
     }
 
-    public void addConfigurationsChangedListener(ConfigurationChangedListener listener) {
-        configurationChangedListeners.add(listener);
-    }
-
-    public void removeConfigurationsChangedListener(ConfigurationChangedListener listener) {
-        configurationChangedListeners.remove(listener);
-    }
-
     @Override
     public void updatePreviewURLState(boolean isVisible) {
         view.setPreviewUrlState(isVisible);
-    }
-
-    /** Listener that will be called when command configuration changed. */
-    public interface ConfigurationChangedListener {
-        void onConfigurationAdded(CommandImpl command);
-
-        void onConfigurationRemoved(CommandImpl command);
-
-        void onConfigurationsUpdated(CommandImpl command);
     }
 
     interface CommandProcessingCallback {
         /** Called when handling of command is completed successfully. */
         void onCompleted();
     }
-
 }

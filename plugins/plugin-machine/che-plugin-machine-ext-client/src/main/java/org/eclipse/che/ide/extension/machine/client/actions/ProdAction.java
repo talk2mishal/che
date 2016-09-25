@@ -15,7 +15,7 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
 import org.eclipse.che.ide.api.action.ActionEvent;
-import org.eclipse.che.ide.extension.machine.client.command.CommandConfigurationManager;
+import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
 import org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspective;
@@ -25,16 +25,16 @@ import java.util.Collections;
 @Singleton
 public class ProdAction extends AbstractPerspectiveAction {
 
-    private final CommandConfigurationManager commandConfigurationManager;
+    private final CommandManager commandManager;
 
     private final CommandProducer commandProducer;
 
     @Inject
-    public ProdAction(CommandConfigurationManager commandConfigurationManager) {
+    public ProdAction(CommandManager commandManager) {
         super(Collections.singletonList(ProjectPerspective.PROJECT_PERSPECTIVE_ID), "prod", "", null, null);
-        this.commandConfigurationManager = commandConfigurationManager;
+        this.commandManager = commandManager;
 
-        commandProducer = commandConfigurationManager.getApplicableProducers().get(0);
+        commandProducer = commandManager.getApplicableProducers().get(0);
     }
 
     @Override
@@ -48,9 +48,9 @@ public class ProdAction extends AbstractPerspectiveAction {
     public void actionPerformed(ActionEvent event) {
         CommandImpl command = commandProducer.createCommand();
 
-        commandConfigurationManager.create(command.getName(),
-                                           command.getCommandLine(),
-                                           command.getType(),
-                                           command.getAttributes());
+        commandManager.create(command.getName(),
+                              command.getCommandLine(),
+                              command.getType(),
+                              command.getAttributes());
     }
 }

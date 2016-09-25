@@ -55,6 +55,11 @@ public class CustomPagePresenter implements CustomPageView.ActionDelegate, Comma
     }
 
     @Override
+    public void onSave() {
+        commandLineInitial = editedCommand.getCommandLine();
+    }
+
+    @Override
     public boolean isDirty() {
         return !commandLineInitial.equals(editedCommand.getCommandLine());
     }

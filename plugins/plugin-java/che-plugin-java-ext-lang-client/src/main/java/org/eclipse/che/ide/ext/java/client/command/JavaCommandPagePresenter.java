@@ -74,6 +74,12 @@ public class JavaCommandPagePresenter implements JavaCommandPageView.ActionDeleg
     }
 
     @Override
+    public void onSave() {
+        mainClassInitial = editedCommandModel.getMainClass();
+        commandLineInitial = editedCommandModel.getCommandLine();
+    }
+
+    @Override
     public boolean isDirty() {
         return !commandLineInitial.equals(editedCommandModel.getCommandLine()) ||
                !mainClassInitial.equals(editedCommandModel.getMainClass());
