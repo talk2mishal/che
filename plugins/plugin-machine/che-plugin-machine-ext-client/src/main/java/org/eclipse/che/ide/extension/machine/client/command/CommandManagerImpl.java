@@ -33,10 +33,6 @@ import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandOutputConsole;
 import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
@@ -211,21 +207,21 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @Override
-    public Promise<Void> remove(final String commandName) {
-        return workspaceServiceClient.deleteCommand(appContext.getWorkspaceId(), commandName).then(new Function<WorkspaceDto, Void>() {
+    public Promise<Void> remove(final String name) {
+        return workspaceServiceClient.deleteCommand(appContext.getWorkspaceId(), name).then(new Function<WorkspaceDto, Void>() {
             @Override
             public Void apply(WorkspaceDto arg) throws FunctionException {
-                fireCommandRemoved(commands.remove(commandName));
+                fireCommandRemoved(commands.remove(name));
                 return null;
             }
         });
     }
 
     @Override
-    public List<CommandConfigurationPage> getPages(String type) {
+    public List<CommandPage> getPages(String type) {
         final CommandType commandType = commandTypeRegistry.getCommandTypeById(type);
 
-        return commandType.getConfigurationPages();
+        return commandType.getPages();
     }
 
     @Override

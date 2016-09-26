@@ -20,7 +20,7 @@ import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

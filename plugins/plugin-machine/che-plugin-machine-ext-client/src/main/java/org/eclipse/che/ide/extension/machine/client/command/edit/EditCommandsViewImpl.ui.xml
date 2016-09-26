@@ -141,7 +141,7 @@
                     <g:Label width="50px" text="{machineLocale.editCommandsViewNameText}" addStyleNames="{style.label}"/>
                     <g:TextBox width="100%" height="14px" ui:field="commandName" tabIndex="0"/>
                 </g:FlowPanel>
-                <g:SimplePanel ui:field="contentPanel" addStyleNames="{style.commandDefinitionBody}"/>
+                <g:SimplePanel ui:field="commandPageContainer" addStyleNames="{style.commandDefinitionBody}"/>
                 <g:FlowPanel ui:field="previewUrlPanel" addStyleNames="{style.commandDefinitionHeader}">
                     <g:Label width="auto" text="Preview URL" addStyleNames="{style.label}"/>
                     <g:TextBox width="100%" height="14px" ui:field="commandPreviewUrl" tabIndex="0"/>

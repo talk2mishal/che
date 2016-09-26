@@ -38,8 +38,8 @@ import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStateEvent;
 import org.eclipse.che.ide.ui.dropdown.DropDownListFactory;
 import org.eclipse.che.ide.ui.dropdown.DropDownWidget;
@@ -206,20 +206,20 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
      *         command that should be selected after loading all commands
      */
     private void loadCommands(@Nullable final CommandImpl commandToSelect) {
-        setCommandConfigurations(commandManager.getCommands(), commandToSelect);
+        setCommands(commandManager.getCommands(), commandToSelect);
     }
 
     /**
-     * Sets command configurations to the list.
+     * Sets commands to the widget.
      *
      * @param commands
-     *         collection of command configurations to set
+     *         commands to set
      * @param commandToSelect
      *         command that should be selected or {@code null} if none
      */
-    private void setCommandConfigurations(List<CommandImpl> commands,
-                                          @Nullable CommandImpl commandToSelect) {
+    private void setCommands(List<CommandImpl> commands, @Nullable CommandImpl commandToSelect) {
         this.commands.clear();
+
         commandActions.removeAll();
 
         final DefaultActionGroup commandsList = (DefaultActionGroup)actionManager.getAction(GROUP_COMMANDS_LIST);

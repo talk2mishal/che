@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command.api;
+package org.eclipse.che.ide.extension.machine.client.command;
 
 /**
  * Can produce commands of concrete type from the current context.

@@ -13,7 +13,7 @@ package org.eclipse.che.plugin.maven.client.command;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.plugin.maven.client.MavenResources;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class MavenCommandTypeTest {
 
     @Test
     public void shouldReturnPages() throws Exception {
-        final Collection<CommandConfigurationPage> pages = mavenCommandType.getConfigurationPages();
+        final Collection<CommandPage> pages = mavenCommandType.getPages();
 
         assertTrue(pages.contains(mavenCommandPagePresenter));
     }

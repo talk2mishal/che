@@ -24,13 +24,13 @@ import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage.DirtyStateListener;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage.FieldStateActionDelegate;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage.DirtyStateListener;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage.FieldStateActionDelegate;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,9 +66,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     CommandProcessingCallback commandProcessingCallback;
 
-    private CommandConfigurationPage editedPage;
+    private CommandPage editedPage;
     // command that being edited
-    private CommandImpl              editedCommand;
+    private CommandImpl editedCommand;
 
     @Inject
     protected EditCommandsPresenter(EditCommandsView view,
@@ -291,7 +291,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
         view.setCommandName("");
         view.setCommandPreviewUrl("");
-        view.clearCommandConfigurationsContainer();
+        view.clearCommandPageContainer();
     }
 
     @Override
@@ -350,8 +350,8 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         view.setCommandName(command.getName());
         view.setCommandPreviewUrl(getPreviewUrlOrNull(command));
 
-        final Collection<CommandConfigurationPage> pages = commandManager.getPages(command.getType());
-        for (CommandConfigurationPage page : pages) {
+        final Collection<CommandPage> pages = commandManager.getPages(command.getType());
+        for (CommandPage page : pages) {
             editedPage = page;
 
             page.setFieldStateActionDelegate(this);
@@ -365,10 +365,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             });
 
             page.resetFrom(command);
-            page.go(view.getCommandConfigurationsContainer());
+            page.go(view.getCommandPageContainer());
 
-            // TODO: for now only the 1'st page is showing but need to show all the pages
-            break;
+            break; // for now, only the 1'st page is showing
         }
     }
 

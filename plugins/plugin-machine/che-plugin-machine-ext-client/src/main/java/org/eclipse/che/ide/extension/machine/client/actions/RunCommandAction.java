@@ -17,7 +17,7 @@ import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.eclipse.che.ide.util.loging.Log;
 
 

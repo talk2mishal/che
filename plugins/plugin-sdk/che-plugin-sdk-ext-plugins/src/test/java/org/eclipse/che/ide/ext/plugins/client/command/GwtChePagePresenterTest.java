@@ -12,8 +12,8 @@ package org.eclipse.che.ide.ext.plugins.client.command;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +74,7 @@ public class GwtChePagePresenterTest {
     public void testOnGwtModuleChanged() throws Exception {
         when(view.getGwtModule()).thenReturn(GWT_MODULE);
 
-        final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
+        final CommandPage.DirtyStateListener listener = mock(CommandPage.DirtyStateListener.class);
         presenter.setDirtyStateListener(listener);
 
         presenter.onGwtModuleChanged();
@@ -88,7 +88,7 @@ public class GwtChePagePresenterTest {
     public void testOnCodeServerAddressChanged() throws Exception {
         when(view.getCodeServerAddress()).thenReturn(CODE_SERVER_ADDRESS);
 
-        final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
+        final CommandPage.DirtyStateListener listener = mock(CommandPage.DirtyStateListener.class);
         presenter.setDirtyStateListener(listener);
 
         presenter.onCodeServerAddressChanged();
@@ -102,7 +102,7 @@ public class GwtChePagePresenterTest {
     public void testOnClassPathChanged() throws Exception {
         when(view.getClassPath()).thenReturn(CHE_CLASS_PATH);
 
-        final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
+        final CommandPage.DirtyStateListener listener = mock(CommandPage.DirtyStateListener.class);
         presenter.setDirtyStateListener(listener);
 
         presenter.onClassPathChanged();

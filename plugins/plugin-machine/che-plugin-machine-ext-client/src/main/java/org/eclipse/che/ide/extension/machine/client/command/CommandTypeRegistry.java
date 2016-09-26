@@ -11,7 +11,6 @@
 package org.eclipse.che.ide.extension.machine.client.command;
 
 import org.eclipse.che.commons.annotation.Nullable;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
 
 import java.util.Collection;
 

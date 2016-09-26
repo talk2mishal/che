@@ -15,9 +15,9 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectRelativePathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.ServerPortProvider;
@@ -44,7 +44,7 @@ public class MavenCommandType implements CommandType {
     private final MavenTestCommandProducer           mavenTestCommandProducer;
     private final CurrentProjectPathProvider         currentProjectPathProvider;
     private final CurrentProjectRelativePathProvider currentProjectRelativePathProvider;
-    private final List<CommandConfigurationPage>     pages;
+    private final List<CommandPage>                  pages;
 
     @Inject
     public MavenCommandType(MavenResources resources,
@@ -85,7 +85,7 @@ public class MavenCommandType implements CommandType {
     }
 
     @Override
-    public List<CommandConfigurationPage> getConfigurationPages() {
+    public List<CommandPage> getPages() {
         return pages;
     }
 

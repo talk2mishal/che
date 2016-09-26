@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 
 /**
  * Page allows to customize Maven command.
@@ -23,7 +23,7 @@ import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDelegate, CommandConfigurationPage {
+public class MavenCommandPagePresenter implements MavenCommandPageView.ActionDelegate, CommandPage {
 
     private final MavenCommandPageView view;
 

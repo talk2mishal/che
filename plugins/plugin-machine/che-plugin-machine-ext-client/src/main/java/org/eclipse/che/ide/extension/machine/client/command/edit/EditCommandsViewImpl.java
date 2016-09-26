@@ -46,8 +46,8 @@ import org.eclipse.che.ide.CoreLocalizationConstant;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.ui.list.CategoriesList;
 import org.eclipse.che.ide.ui.list.Category;
 import org.eclipse.che.ide.ui.list.CategoryRenderer;
@@ -86,7 +86,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     @UiField
     TextBox                     commandPreviewUrl;
     @UiField
-    SimplePanel                 contentPanel;
+    SimplePanel                 commandPageContainer;
     @UiField
     FlowPanel                   savePanel;
     @UiField
@@ -174,7 +174,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
         savePanel.setVisible(false);
         previewUrlPanel.setVisible(false);
-        contentPanel.clear();
+        commandPageContainer.clear();
 
         createButtons();
         resetFilter();
@@ -307,8 +307,8 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                 selectText(commandName.getElement());
             }
         } else {
-            contentPanel.clear();
-            contentPanel.add(hintLabel);
+            commandPageContainer.clear();
+            commandPageContainer.add(hintLabel);
             savePanel.setVisible(false);
             previewUrlPanel.setVisible(false);
         }
@@ -335,10 +335,10 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     }
 
     @Override
-    public void setData(Map<CommandType, List<CommandImpl>> categories) {
-        this.categories = categories;
+    public void setData(Map<CommandType, List<CommandImpl>> commandsByTypes) {
+        this.categories = commandsByTypes;
 
-        renderCategoriesList(categories);
+        renderCategoriesList(commandsByTypes);
     }
 
     private void createButtons() {
@@ -411,13 +411,13 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     }
 
     @Override
-    public AcceptsOneWidget getCommandConfigurationsContainer() {
-        return contentPanel;
+    public AcceptsOneWidget getCommandPageContainer() {
+        return commandPageContainer;
     }
 
     @Override
-    public void clearCommandConfigurationsContainer() {
-        contentPanel.clear();
+    public void clearCommandPageContainer() {
+        commandPageContainer.clear();
     }
 
     public String getCommandName() {

@@ -20,9 +20,9 @@ import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
@@ -40,13 +40,13 @@ public class JavaCommandType implements CommandType {
 
     private static final String ID = "java";
 
-    private final JavaResources                  resources;
-    private final CurrentProjectPathProvider     currentProjectPathProvider;
-    private final SourcepathProvider             sourcepathProvider;
-    private final OutputDirProvider              outputDirProvider;
-    private final ClasspathProvider              classpathProvider;
-    private final JavaLocalizationConstant       localizationConstants;
-    private final List<CommandConfigurationPage> pages;
+    private final JavaResources              resources;
+    private final CurrentProjectPathProvider currentProjectPathProvider;
+    private final SourcepathProvider         sourcepathProvider;
+    private final OutputDirProvider          outputDirProvider;
+    private final ClasspathProvider          classpathProvider;
+    private final JavaLocalizationConstant   localizationConstants;
+    private final List<CommandPage>          pages;
 
     @Inject
     public JavaCommandType(JavaResources resources,
@@ -90,7 +90,7 @@ public class JavaCommandType implements CommandType {
     }
 
     @Override
-    public List<CommandConfigurationPage> getConfigurationPages() {
+    public List<CommandPage> getPages() {
         return pages;
     }
 

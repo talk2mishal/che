@@ -21,8 +21,8 @@ import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.ext.java.client.resource.SourceFolderMarker;
 import org.eclipse.che.ide.ext.java.client.util.JavaUtil;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
 
 import static org.eclipse.che.ide.api.resources.Resource.FILE;
 import static org.eclipse.che.ide.ext.java.client.util.JavaUtil.isJavaFile;

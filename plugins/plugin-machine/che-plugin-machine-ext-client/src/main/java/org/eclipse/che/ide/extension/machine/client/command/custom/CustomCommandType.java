@@ -14,9 +14,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class CustomCommandType implements CommandType {
 
     private final MachineResources resources;
 
-    private final List<CommandConfigurationPage> pages;
+    private final List<CommandPage> pages;
 
     @Inject
     public CustomCommandType(MachineResources resources, CustomPagePresenter page) {
@@ -67,7 +67,7 @@ public class CustomCommandType implements CommandType {
     }
 
     @Override
-    public List<CommandConfigurationPage> getConfigurationPages() {
+    public List<CommandPage> getPages() {
         return pages;
     }
 

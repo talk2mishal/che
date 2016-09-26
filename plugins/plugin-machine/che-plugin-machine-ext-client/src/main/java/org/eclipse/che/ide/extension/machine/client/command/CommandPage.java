@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command.api;
+package org.eclipse.che.ide.extension.machine.client.command;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
@@ -20,7 +20,7 @@ import org.eclipse.che.ide.api.mvp.Presenter;
  * @author Artem Zatsarynnyi
  * @author Valeriy Svydenko
  */
-public interface CommandConfigurationPage extends Presenter {
+public interface CommandPage extends Presenter {
 
     /**
      * Resets the page with the given {@code command}.

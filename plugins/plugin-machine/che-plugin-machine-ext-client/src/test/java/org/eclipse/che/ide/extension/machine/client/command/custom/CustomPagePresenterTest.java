@@ -12,8 +12,8 @@ package org.eclipse.che.ide.extension.machine.client.command.custom;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +70,7 @@ public class CustomPagePresenterTest {
         String commandLine = "commandLine";
         when(arbitraryPageView.getCommandLine()).thenReturn(commandLine);
 
-        final CommandConfigurationPage.DirtyStateListener listener = mock(CommandConfigurationPage.DirtyStateListener.class);
+        final CommandPage.DirtyStateListener listener = mock(CommandPage.DirtyStateListener.class);
         arbitraryPagePresenter.setDirtyStateListener(listener);
 
         arbitraryPagePresenter.onCommandLineChanged();

@@ -17,7 +17,7 @@ import com.google.gwt.inject.client.multibindings.GinMultibinder;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
 import org.eclipse.che.ide.api.resources.ResourceInterceptor;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.project.ResolvingProjectStateHolder;
 import org.eclipse.che.plugin.maven.client.command.MavenCommandType;
 import org.eclipse.che.plugin.maven.client.editor.PomEditorConfigurationFactory;

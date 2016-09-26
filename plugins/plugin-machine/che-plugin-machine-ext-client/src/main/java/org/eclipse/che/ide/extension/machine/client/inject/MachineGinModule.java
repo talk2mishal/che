@@ -29,7 +29,7 @@ import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManagerImpl;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistryImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.custom.CustomCommandType;
 import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsView;
 import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsViewImpl;

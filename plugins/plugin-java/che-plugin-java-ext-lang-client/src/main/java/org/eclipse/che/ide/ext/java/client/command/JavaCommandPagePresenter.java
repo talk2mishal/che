@@ -18,8 +18,8 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.ext.java.client.command.mainclass.SelectNodePresenter;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandConfigurationPage;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 import org.eclipse.che.ide.resource.Path;
 
 /**
@@ -29,7 +29,7 @@ import org.eclipse.che.ide.resource.Path;
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class JavaCommandPagePresenter implements JavaCommandPageView.ActionDelegate, CommandConfigurationPage {
+public class JavaCommandPagePresenter implements JavaCommandPageView.ActionDelegate, CommandPage {
 
     private final JavaCommandPageView view;
     private final SelectNodePresenter selectNodePresenter;

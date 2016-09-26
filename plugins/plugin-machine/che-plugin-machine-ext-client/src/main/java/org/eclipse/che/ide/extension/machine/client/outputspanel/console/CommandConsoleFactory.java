@@ -14,7 +14,7 @@ import com.google.inject.name.Named;
 
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.ide.api.outputconsole.OutputConsole;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
 
 /** @author Artem Zatsarynnyi */
 public interface CommandConsoleFactory {

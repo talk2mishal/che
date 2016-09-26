@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command.api;
+package org.eclipse.che.ide.extension.machine.client.command;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
@@ -36,8 +36,8 @@ public interface CommandType {
     /** Returns the icon for displaying in the UI. */
     SVGResource getIcon();
 
-    /** Returns the {@link CommandConfigurationPage}s that allow to edit commands of concrete type. */
-    List<CommandConfigurationPage> getConfigurationPages();
+    /** Returns the {@link CommandPage}s that allow to edit commands of concrete type. */
+    List<CommandPage> getPages();
 
     String getCommandTemplate();
 

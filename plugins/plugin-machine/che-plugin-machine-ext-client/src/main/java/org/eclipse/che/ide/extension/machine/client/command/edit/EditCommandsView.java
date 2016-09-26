@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.mvp.View;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.api.CommandType;
+import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 
 import java.util.List;
 import java.util.Map;
@@ -36,19 +36,19 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Select next configuration. */
     void selectNextItem();
 
-    /** Returns the component used for command configurations display. */
-    AcceptsOneWidget getCommandConfigurationsContainer();
+    /** Returns the container for displaying page for editing command. */
+    AcceptsOneWidget getCommandPageContainer();
 
-    /** Clear command configurations panel. */
-    void clearCommandConfigurationsContainer();
+    /** Clear the container for displaying page for editing command. */
+    void clearCommandPageContainer();
 
     /**
-     * Sets command types and command configurations to display.
+     * Sets commands grouped by types to display in the view.
      *
-     * @param categories
-     *         available command type and list of configuration
+     * @param commandsByTypes
+     *         available commands grouped by types
      */
-    void setData(Map<CommandType, List<CommandImpl>> categories);
+    void setData(Map<CommandType, List<CommandImpl>> commandsByTypes);
 
     /** Returns command name. */
     String getCommandName();
@@ -74,7 +74,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Sets enabled state of the filter input field. */
     void setFilterState(boolean enabled);
 
-    /** Returns the selected command type or type of the selected command configuration. */
+    /** Returns type of the selected command or {@code null} if no command is selected. */
     @Nullable
     String getSelectedCommandType();
 
