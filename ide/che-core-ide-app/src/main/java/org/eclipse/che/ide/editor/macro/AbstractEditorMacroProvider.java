@@ -14,7 +14,7 @@ import com.google.common.annotations.Beta;
 
 import org.eclipse.che.ide.api.editor.EditorAgent;
 import org.eclipse.che.ide.api.editor.EditorPartPresenter;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 
 /**
  * Base macro provider which belongs to the current opened editor. Provides easy access to the opened virtual file

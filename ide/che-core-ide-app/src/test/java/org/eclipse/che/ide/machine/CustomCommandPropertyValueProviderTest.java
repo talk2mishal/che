@@ -14,6 +14,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.ide.command.macros.CustomCommandPropertyValueProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

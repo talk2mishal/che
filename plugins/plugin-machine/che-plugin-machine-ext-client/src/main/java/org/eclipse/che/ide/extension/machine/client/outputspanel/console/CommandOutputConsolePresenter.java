@@ -26,8 +26,8 @@ import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.machine.CommandOutputMessageUnmarshaller;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.processes.ProcessFinishedEvent;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
@@ -104,7 +104,7 @@ public class CommandOutputConsolePresenter implements CommandOutputConsole, Outp
 
         final String previewUrl = command.getAttributes().get(PREVIEW_URL_ATTR);
         if (!isNullOrEmpty(previewUrl)) {
-            commandManager.substituteProperties(previewUrl).then(new Operation<String>() {
+            commandManager.substituteMacroses(previewUrl).then(new Operation<String>() {
                 @Override
                 public void apply(String arg) throws OperationException {
                     view.showPreviewUrl(arg);

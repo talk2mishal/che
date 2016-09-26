@@ -36,10 +36,10 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
-import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStateEvent;
 import org.eclipse.che.ide.ui.dropdown.DropDownListFactory;
 import org.eclipse.che.ide.ui.dropdown.DropDownWidget;
@@ -59,7 +59,7 @@ import static org.eclipse.che.ide.extension.machine.client.MachineExtension.GROU
 import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspective.PROJECT_PERSPECTIVE_ID;
 
 /**
- * Action that allows user to select command from list of all commands.
+ * Action allows user to select target machine and command to execute.
  *
  * @author Artem Zatsarynnyi
  * @author Oleksii Orel
@@ -200,7 +200,7 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
     }
 
     /**
-     * Load all saved commands.
+     * Load all commands to the widget.
      *
      * @param commandToSelect
      *         command that should be selected after loading all commands
@@ -266,7 +266,7 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
     }
 
     @Nullable
-    public Machine getSelectedMachine() {
+    Machine getSelectedMachine() {
         if (machinesListWidget.getSelectedId() == null) {
             return null;
         }
@@ -285,15 +285,16 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
     }
 
     @Override
-    public void onCommandRemoved(CommandImpl command) {
-        loadCommands(null);
-    }
-
-    @Override
     public void onCommandUpdated(CommandImpl command) {
         loadCommands(command);
     }
 
+    @Override
+    public void onCommandRemoved(CommandImpl command) {
+        loadCommands(null);
+    }
+
+    /** Load all machines to the widget. */
     private void loadMachines() {
         machineServiceClient.getMachines(workspaceId).then(new Operation<List<MachineDto>>() {
             @Override

@@ -14,9 +14,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class CustomCommandType implements CommandType {
     }
 
     @Override
-    public String getCommandTemplate() {
+    public String getCommandLineTemplate() {
         return COMMAND_TEMPLATE;
     }
 

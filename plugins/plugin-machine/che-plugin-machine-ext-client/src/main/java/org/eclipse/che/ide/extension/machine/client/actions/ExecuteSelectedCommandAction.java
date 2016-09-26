@@ -21,8 +21,8 @@ import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandImpl;
 
 import java.util.Collections;
 

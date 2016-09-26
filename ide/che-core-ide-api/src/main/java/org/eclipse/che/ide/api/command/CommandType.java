@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.api.command;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
@@ -36,10 +36,14 @@ public interface CommandType {
     /** Returns the icon for displaying in the UI. */
     SVGResource getIcon();
 
-    /** Returns the {@link CommandPage}s that allow to edit commands of concrete type. */
+    /** Returns the {@link CommandPage}s for editing command. */
     List<CommandPage> getPages();
 
-    String getCommandTemplate();
+    /**
+     * Returns the command line that should be used for the newly
+     * created command when user creates it from the 'Commands' dialog.
+     */
+    String getCommandLineTemplate();
 
     /** Returns the {@link CommandProducer}s that can produce commands of concrete type from the current context. */
     List<? extends CommandProducer> getProducers();

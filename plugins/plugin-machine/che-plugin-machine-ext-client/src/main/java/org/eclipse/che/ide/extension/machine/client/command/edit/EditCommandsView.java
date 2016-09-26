@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.mvp.View;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandType;
 
 import java.util.List;
 import java.util.Map;

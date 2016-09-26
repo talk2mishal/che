@@ -8,14 +8,14 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.machine.macro;
+package org.eclipse.che.ide.command.macros;
 
 import com.google.common.annotations.Beta;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;

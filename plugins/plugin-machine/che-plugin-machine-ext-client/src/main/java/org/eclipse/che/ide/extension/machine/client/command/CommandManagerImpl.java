@@ -25,14 +25,18 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
-import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
 import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandConsoleFactory;
 import org.eclipse.che.ide.extension.machine.client.outputspanel.console.CommandOutputConsole;
 import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPanelPresenter;
@@ -45,9 +49,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
-import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * Implementation of {@link CommandManager}.
@@ -64,8 +65,6 @@ public class CommandManagerImpl implements CommandManager {
     private final MachineServiceClient                 machineServiceClient;
     private final DtoFactory                           dtoFactory;
     private final CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
-    private final NotificationManager                  notificationManager;
-    private final MachineLocalizationConstant          localizationConstants;
     private final CommandConsoleFactory                commandConsoleFactory;
     private final ProcessesPanelPresenter              processesPanelPresenter;
 
@@ -80,8 +79,6 @@ public class CommandManagerImpl implements CommandManager {
                               DtoFactory dtoFactory,
                               EventBus eventBus,
                               CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry,
-                              NotificationManager notificationManager,
-                              MachineLocalizationConstant localizationConstants,
                               CommandConsoleFactory commandConsoleFactory,
                               ProcessesPanelPresenter processesPanelPresenter) {
         this.commandTypeRegistry = commandTypeRegistry;
@@ -90,8 +87,6 @@ public class CommandManagerImpl implements CommandManager {
         this.machineServiceClient = machineServiceClient;
         this.dtoFactory = dtoFactory;
         this.commandPropertyValueProviderRegistry = commandPropertyValueProviderRegistry;
-        this.notificationManager = notificationManager;
-        this.localizationConstants = localizationConstants;
         this.commandConsoleFactory = commandConsoleFactory;
         this.processesPanelPresenter = processesPanelPresenter;
 
@@ -130,7 +125,7 @@ public class CommandManagerImpl implements CommandManager {
         attributes.put(PREVIEW_URL_ATTR, commandType.getPreviewUrlTemplate());
 
         final CommandImpl command = new CommandImpl(getUniqueCommandName(type, null),
-                                                    commandType.getCommandTemplate(),
+                                                    commandType.getCommandLineTemplate(),
                                                     type,
                                                     attributes);
         return add(command);
@@ -144,7 +139,7 @@ public class CommandManagerImpl implements CommandManager {
         attr.put(PREVIEW_URL_ATTR, commandType.getPreviewUrlTemplate());
 
         final CommandImpl command = new CommandImpl(getUniqueCommandName(type, name),
-                                                    commandLine != null ? commandLine : commandType.getCommandTemplate(),
+                                                    commandLine != null ? commandLine : commandType.getCommandLineTemplate(),
                                                     type,
                                                     attr);
         return add(command);
@@ -241,21 +236,13 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public void executeCommand(final CommandImpl command, final Machine machine) {
-        if (machine == null) {
-            notificationManager.notify(localizationConstants.failedToExecuteCommand(),
-                                       localizationConstants.noDevMachine(),
-                                       FAIL,
-                                       FLOAT_MODE);
-            return;
-        }
-
         final String outputChannel = "process:output:" + UUID.uuid();
 
         final CommandOutputConsole console = commandConsoleFactory.create(command, machine);
         console.listenToOutput(outputChannel);
         processesPanelPresenter.addCommandOutput(machine.getId(), console);
 
-        substituteProperties(command.getCommandLine()).then(new Operation<String>() {
+        substituteMacroses(command.getCommandLine()).then(new Operation<String>() {
             @Override
             public void apply(String arg) throws OperationException {
                 Promise<MachineProcessDto> processPromise = machineServiceClient.executeCommand(machine.getWorkspaceId(),
@@ -273,7 +260,7 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @Override
-    public Promise<String> substituteProperties(String commandLine) {
+    public Promise<String> substituteMacroses(String commandLine) {
         Promise<String> promise = Promises.resolve(null);
         CommandLineContainer commandLineContainer = new CommandLineContainer(commandLine);
         return replaceParameters(promise, commandLineContainer, commandPropertyValueProviderRegistry.getProviders().iterator());

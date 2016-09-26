@@ -8,24 +8,21 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.api.machine;
-
-import org.eclipse.che.api.promises.client.Promise;
+package org.eclipse.che.ide.api.command;
 
 /**
- * Properties may be used in a command as a substitution.
- * <p>Actual value will be substituted before sending a command for execution to the server.
+ * Can produce commands from the current context.
  *
  * @author Artem Zatsarynnyi
  */
-public interface CommandPropertyValueProvider {
+public interface CommandProducer {
 
-    /** Get key. The format is ${key.name}. */
-    String getKey();
+    /** Returns the text that will be used as related action's title. */
+    String getName();
 
-    /** Returns the macros description. */
-    String getDescription();
+    /** Whether the producer can produce command from the current context? */
+    boolean isApplicable();
 
-    /** Get value. */
-    Promise<String> getValue();
+    /** Creates command from the current context of application. */
+    CommandImpl createCommand();
 }

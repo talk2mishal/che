@@ -14,8 +14,8 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandImpl;
 
 /**
  * Page allows to edit arbitrary command.

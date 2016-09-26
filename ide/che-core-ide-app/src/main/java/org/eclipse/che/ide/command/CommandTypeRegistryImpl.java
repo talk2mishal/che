@@ -8,11 +8,13 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.command;
 
 import com.google.inject.Inject;
 
 import org.eclipse.che.commons.annotation.Nullable;
+import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.Collection;

@@ -17,7 +17,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;
 

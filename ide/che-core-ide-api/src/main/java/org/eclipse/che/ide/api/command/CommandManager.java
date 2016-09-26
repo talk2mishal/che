@@ -8,11 +8,11 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.command;
+package org.eclipse.che.ide.api.command;
 
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.api.promises.client.Promise;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -67,22 +67,22 @@ public interface CommandManager {
     void executeCommand(CommandImpl command, Machine machine);
 
     /**
-     * Substitutes all properties with the appropriate values in the given {@code commandLine}.
+     * Substitutes all macroses with the appropriate values in the given {@code commandLine}.
      *
      * @see CommandPropertyValueProvider
      */
-    Promise<String> substituteProperties(String commandLine);
+    Promise<String> substituteMacroses(String commandLine);
 
     void addCommandChangedListener(CommandChangedListener listener);
 
     void removeCommandChangedListener(CommandChangedListener listener);
 
-    /** Listener that will be called when command changed. */
+    /** Listener that will be called when command has been changed. */
     interface CommandChangedListener {
         void onCommandAdded(CommandImpl command);
 
-        void onCommandRemoved(CommandImpl command);
-
         void onCommandUpdated(CommandImpl command);
+
+        void onCommandRemoved(CommandImpl command);
     }
 }

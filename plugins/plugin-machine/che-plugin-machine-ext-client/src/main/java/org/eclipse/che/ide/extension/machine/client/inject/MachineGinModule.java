@@ -18,18 +18,16 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
 import org.eclipse.che.api.machine.shared.Constants;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
 import org.eclipse.che.ide.api.machine.MachineManager;
 import org.eclipse.che.ide.api.outputconsole.OutputConsole;
 import org.eclipse.che.ide.api.parts.Perspective;
 import org.eclipse.che.ide.extension.machine.client.RecipeScriptDownloadServiceClient;
 import org.eclipse.che.ide.extension.machine.client.RecipeScriptDownloadServiceClientImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
 import org.eclipse.che.ide.extension.machine.client.command.CommandManagerImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.CommandTypeRegistryImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.custom.CustomCommandType;
 import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsView;
 import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsViewImpl;
@@ -99,7 +97,6 @@ public class MachineGinModule extends AbstractGinModule {
 
         bind(ProcessesPanelView.class).to(ProcessesPanelViewImpl.class).in(Singleton.class);
 
-        bind(CommandTypeRegistry.class).to(CommandTypeRegistryImpl.class).in(Singleton.class);
         bind(CommandManager.class).to(CommandManagerImpl.class).in(Singleton.class);
         bind(EditCommandsView.class).to(EditCommandsViewImpl.class).in(Singleton.class);
 

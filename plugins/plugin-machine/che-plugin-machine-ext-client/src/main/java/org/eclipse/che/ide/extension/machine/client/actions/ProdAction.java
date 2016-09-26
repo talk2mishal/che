@@ -15,9 +15,9 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
 import org.eclipse.che.ide.api.action.ActionEvent;
-import org.eclipse.che.ide.extension.machine.client.command.CommandManager;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspective;
 
 import java.util.Collections;

@@ -8,10 +8,9 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.machine.macro;
+package org.eclipse.che.ide.command.macros;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,35 +18,36 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.core.model.machine.Server;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
-import org.eclipse.che.ide.machine.CustomCommandPropertyValueProvider;
 
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
- * Provider which is responsible for the retrieving the hostname (reference) of the registered server.
+ * Provider which is responsible for the retrieving the address of the registered server.
  * <p>
- * Macro provided: <code>${server.[port].hostname}</code>
+ * Macro provided: <code>${server.[port]}</code>
  *
  * @author Vlad Zhukovskyi
  * @see AbstractServerMacroProvider
  * @see DevMachine
- * @see Server#getRef()
+ * @see Server#getAddress()
  * @since 4.7.0
  */
 @Beta
 @Singleton
-public class ServerHostNameMacroProvider extends AbstractServerMacroProvider {
+public class ServerMacroProvider extends AbstractServerMacroProvider {
 
-    public static final String KEY = "${server.%.hostname}";
+    public static final String KEY = "${server.%}";
 
     @Inject
-    public ServerHostNameMacroProvider(CommandPropertyValueProviderRegistry providerRegistry,
-                                       EventBus eventBus,
-                                       AppContext appContext) {
+    public ServerMacroProvider(CommandPropertyValueProviderRegistry providerRegistry,
+                               EventBus eventBus,
+                               AppContext appContext) {
         super(providerRegistry, eventBus, appContext);
     }
 
@@ -58,13 +58,12 @@ public class ServerHostNameMacroProvider extends AbstractServerMacroProvider {
 
         for (Map.Entry<String, ? extends Server> entry : devMachine.getDescriptor().getRuntime().getServers().entrySet()) {
 
-            if (Strings.isNullOrEmpty(entry.getValue().getRef())) {
-                continue;
-            }
+            final String prefix = isNullOrEmpty(entry.getValue().getProtocol()) ? "" : entry.getValue().getProtocol() + "://";
+            final String value = prefix + entry.getValue().getAddress() + (isNullOrEmpty(prefix) ? "" : "/");
 
             CommandPropertyValueProvider macroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", entry.getKey()),
-                                                                                                entry.getValue().getRef(),
-                                                                                                "Returns hostname of a server registered by name");
+                                                                                                value,
+                                                                                                "Returns protocol, hostname and port of an internal server");
 
             providers.add(macroProvider);
 
@@ -73,8 +72,8 @@ public class ServerHostNameMacroProvider extends AbstractServerMacroProvider {
                 final String port = entry.getKey().substring(0, entry.getKey().length() - 4);
 
                 CommandPropertyValueProvider shortMacroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", port),
-                                                                                                         entry.getValue().getRef(),
-                                                                                                         "Returns hostname of a server registered by name");
+                                                                                                         value,
+                                                                                                         "Returns protocol, hostname and port of an internal server");
 
                 providers.add(shortMacroProvider);
             }

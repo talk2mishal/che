@@ -20,9 +20,9 @@ import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
@@ -95,7 +95,7 @@ public class JavaCommandType implements CommandType {
     }
 
     @Override
-    public String getCommandTemplate() {
+    public String getCommandLineTemplate() {
         return "cd " + currentProjectPathProvider.getKey() +
                " && javac -classpath " + classpathProvider.getKey() +
                " -sourcepath " + sourcepathProvider.getKey() +

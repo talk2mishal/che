@@ -29,6 +29,9 @@ import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.auth.OAuthServiceClient;
 import org.eclipse.che.ide.api.auth.OAuthServiceClientImpl;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.component.Component;
 import org.eclipse.che.ide.api.component.WsAgentComponent;
 import org.eclipse.che.ide.api.data.tree.NodeInterceptor;
@@ -58,13 +61,10 @@ import org.eclipse.che.ide.api.git.GitServiceClient;
 import org.eclipse.che.ide.api.git.GitServiceClientImpl;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.api.keybinding.KeyBindingAgent;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.machine.MachineServiceClientImpl;
 import org.eclipse.che.ide.api.machine.RecipeServiceClient;
 import org.eclipse.che.ide.api.machine.RecipeServiceClientImpl;
-import org.eclipse.che.ide.ui.loaders.PopupLoaderFactory;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.oauth.OAuth2Authenticator;
 import org.eclipse.che.ide.api.oauth.OAuth2AuthenticatorRegistry;
@@ -113,6 +113,8 @@ import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.ide.api.workspace.WorkspaceServiceClientImpl;
 import org.eclipse.che.ide.client.StartUpActionsProcessor;
 import org.eclipse.che.ide.client.WorkspaceStateRestorer;
+import org.eclipse.che.ide.command.CommandTypeRegistryImpl;
+import org.eclipse.che.ide.command.macros.CommandPropertyValueProviderRegistryImpl;
 import org.eclipse.che.ide.context.AppContextImpl;
 import org.eclipse.che.ide.editor.EditorAgentImpl;
 import org.eclipse.che.ide.editor.EditorRegistryImpl;
@@ -146,7 +148,6 @@ import org.eclipse.che.ide.jsonrpc.impl.WebSocketJsonRpcRequestTransmitter;
 import org.eclipse.che.ide.jsonrpc.impl.WebSocketJsonRpcResponseDispatcher;
 import org.eclipse.che.ide.jsonrpc.impl.WebSocketJsonRpcResponseTransmitter;
 import org.eclipse.che.ide.keybinding.KeyBindingManager;
-import org.eclipse.che.ide.machine.CommandPropertyValueProviderRegistryImpl;
 import org.eclipse.che.ide.menu.MainMenuView;
 import org.eclipse.che.ide.menu.MainMenuViewImpl;
 import org.eclipse.che.ide.menu.StatusPanelGroupView;
@@ -239,6 +240,7 @@ import org.eclipse.che.ide.ui.dialogs.message.MessageDialogViewImpl;
 import org.eclipse.che.ide.ui.dropdown.DropDownListFactory;
 import org.eclipse.che.ide.ui.dropdown.DropDownWidget;
 import org.eclipse.che.ide.ui.dropdown.DropDownWidgetImpl;
+import org.eclipse.che.ide.ui.loaders.PopupLoaderFactory;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 import org.eclipse.che.ide.ui.multisplitpanel.SubPanel;
 import org.eclipse.che.ide.ui.multisplitpanel.SubPanelFactory;
@@ -478,6 +480,7 @@ public class CoreGinModule extends AbstractGinModule {
         bind(SelectionAgent.class).to(SelectionAgentImpl.class).asEagerSingleton();
         bind(WorkspaceAgent.class).to(WorkspacePresenter.class).in(Singleton.class);
         bind(IconRegistry.class).to(IconRegistryImpl.class).in(Singleton.class);
+
         // UI Model
         bind(EditorMultiPartStack.class).to(EditorMultiPartStackPresenter.class).in(Singleton.class);
         bind(ActionManager.class).to(ActionManagerImpl.class).in(Singleton.class);
@@ -485,9 +488,12 @@ public class CoreGinModule extends AbstractGinModule {
         GinMultibinder<NodeInterceptor> nodeInterceptors = GinMultibinder.newSetBinder(binder(), NodeInterceptor.class);
         nodeInterceptors.addBinding().to(DefaultNodeInterceptor.class);
 
-        // Machine
+        // Command API
+        bind(CommandTypeRegistry.class).to(CommandTypeRegistryImpl.class).in(Singleton.class);
+
         bind(CommandPropertyValueProviderRegistry.class).to(CommandPropertyValueProviderRegistryImpl.class).in(Singleton.class);
-        GinMultibinder<CommandPropertyValueProvider> macroProviders = GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class);
+        GinMultibinder<CommandPropertyValueProvider> macroProviders = GinMultibinder.newSetBinder(binder(),
+                                                                                                  CommandPropertyValueProvider.class);
         macroProviders.addBinding().to(EditorCurrentFileNameProvider.class);
         macroProviders.addBinding().to(EditorCurrentFilePathProvider.class);
         macroProviders.addBinding().to(EditorCurrentFileRelativePathProvider.class);

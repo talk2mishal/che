@@ -16,9 +16,9 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.plugins.client.PluginsResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandProducer;
-import org.eclipse.che.ide.extension.machine.client.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collections;
@@ -79,7 +79,7 @@ public class GwtCheCommandType implements CommandType {
     }
 
     @Override
-    public String getCommandTemplate() {
+    public String getCommandLineTemplate() {
         return COMMAND_TEMPLATE.replace("$GWT_MODULE", IDE_GWT_MODULE)
                                .replace("$CHE_CLASSPATH", '"' + resources.cheClassPath().getText() + '"') + " -bindAddress 0.0.0.0";
     }

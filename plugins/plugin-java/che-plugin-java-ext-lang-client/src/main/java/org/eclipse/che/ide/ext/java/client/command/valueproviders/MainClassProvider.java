@@ -15,7 +15,7 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.ide.api.machine.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 import org.eclipse.che.ide.ext.java.client.command.JavaCommandModel;
 import org.eclipse.che.ide.ext.java.client.command.JavaCommandPagePresenter;
 

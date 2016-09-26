@@ -12,8 +12,8 @@ package org.eclipse.che.ide.ext.plugins.client.command;
 
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
-import org.eclipse.che.ide.extension.machine.client.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

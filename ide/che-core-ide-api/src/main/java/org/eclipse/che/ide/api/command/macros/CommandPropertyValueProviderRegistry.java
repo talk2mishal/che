@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.api.machine;
+package org.eclipse.che.ide.api.command.macros;
 
 import java.util.List;
 import java.util.Set;

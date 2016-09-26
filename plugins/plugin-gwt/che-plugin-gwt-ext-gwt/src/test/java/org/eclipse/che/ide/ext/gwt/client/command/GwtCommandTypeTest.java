@@ -12,7 +12,7 @@ package org.eclipse.che.ide.ext.gwt.client.command;
 
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.gwt.client.GwtResources;
-import org.eclipse.che.ide.extension.machine.client.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class GwtCommandTypeTest {
 
     @Test
     public void shouldReturnCommandTemplate() throws Exception {
-        gwtCommandType.getCommandTemplate();
+        gwtCommandType.getCommandLineTemplate();
 
         verify(currentProjectPathProvider).getKey();
         verify(devMachineHostNameProvider).getKey();
