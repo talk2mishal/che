@@ -24,6 +24,7 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.api.machine.DevMachine;
@@ -87,6 +88,8 @@ public class ProcessesPanelPresenterTest {
     private CommandConsoleFactory         commandConsoleFactory;
     @Mock
     private ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory;
+    @Mock
+    private CommandTypeRegistry           commandTypeRegistry;
     @Mock
     private DialogFactory                 dialogFactory;
     @Mock
@@ -166,7 +169,8 @@ public class ProcessesPanelPresenterTest {
                                                 terminalFactory,
                                                 commandConsoleFactory,
                                                 dialogFactory,
-                                                consoleTreeContextMenuFactory);
+                                                consoleTreeContextMenuFactory,
+                                                commandTypeRegistry);
     }
 
     @Test

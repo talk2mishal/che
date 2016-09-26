@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.core.model.machine.Machine;
+import org.eclipse.che.api.core.model.machine.MachineProcess;
 import org.eclipse.che.api.machine.shared.dto.MachineDto;
 import org.eclipse.che.api.machine.shared.dto.MachineProcessDto;
 import org.eclipse.che.api.promises.client.Operation;
@@ -26,6 +27,8 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
@@ -39,7 +42,6 @@ import org.eclipse.che.ide.api.workspace.event.EnvironmentOutputEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppedEvent;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.extension.machine.client.MachineResources;
-import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.EntityFactory;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.TerminalFactory;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStateEvent;
@@ -101,6 +103,7 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
     private final CommandConsoleFactory         commandConsoleFactory;
     private final DialogFactory                 dialogFactory;
     private final ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory;
+    private final CommandTypeRegistry           commandTypeRegistry;
     private final Map<String, ProcessTreeNode>  machineNodes;
 
     ProcessTreeNode rootNode;
@@ -121,7 +124,8 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                                    TerminalFactory terminalFactory,
                                    CommandConsoleFactory commandConsoleFactory,
                                    DialogFactory dialogFactory,
-                                   ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory) {
+                                   ConsoleTreeContextMenuFactory consoleTreeContextMenuFactory,
+                                   CommandTypeRegistry commandTypeRegistry) {
         this.view = view;
         this.localizationConstant = localizationConstant;
         this.resources = resources;
@@ -134,6 +138,7 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
         this.commandConsoleFactory = commandConsoleFactory;
         this.dialogFactory = dialogFactory;
         this.consoleTreeContextMenuFactory = consoleTreeContextMenuFactory;
+        this.commandTypeRegistry = commandTypeRegistry;
 
         machineNodes = new HashMap<>();
         rootNodes = new ArrayList<>();
@@ -709,11 +714,14 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                         continue;
                     }
 
-                    final CommandOutputConsole console = commandConsoleFactory.create(new CommandImpl(machineProcessDto), machine);
-                    console.listenToOutput(machineProcessDto.getOutputChannel());
-                    console.attachToProcess(machineProcessDto);
+                    // hide the processes which are launched by command of unknown type
+                    if (isProcessLaunchedByCommandOfKnownType(machineProcessDto)) {
+                        final CommandOutputConsole console = commandConsoleFactory.create(new CommandImpl(machineProcessDto), machine);
+                        console.listenToOutput(machineProcessDto.getOutputChannel());
+                        console.attachToProcess(machineProcessDto);
 
-                    addCommandOutput(machine.getId(), console);
+                        addCommandOutput(machine.getId(), console);
+                    }
                 }
             }
         }).catchError(new Operation<PromiseError>() {
@@ -722,6 +730,10 @@ public class ProcessesPanelPresenter extends BasePresenter implements ProcessesP
                 notificationManager.notify(localizationConstant.failedToGetProcesses(machine.getId()));
             }
         });
+    }
+
+    private boolean isProcessLaunchedByCommandOfKnownType(MachineProcess machineProcess) {
+        return commandTypeRegistry.getCommandTypeById(machineProcess.getType()) != null;
     }
 
     @Override
