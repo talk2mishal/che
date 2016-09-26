@@ -17,8 +17,9 @@ import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.util.loging.Log;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class CommandTypeRegistryImpl implements CommandTypeRegistry {
     }
 
     @Override
-    public Collection<CommandType> getCommandTypes() {
-        return commandTypes.values();
+    public List<CommandType> getCommandTypes() {
+        return new ArrayList<>(commandTypes.values());
     }
 }

@@ -12,7 +12,7 @@ package org.eclipse.che.ide.api.command;
 
 import org.eclipse.che.commons.annotation.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Registry for command types.
@@ -32,5 +32,5 @@ public interface CommandTypeRegistry {
     CommandType getCommandTypeById(String id);
 
     /** Returns all registered {@link CommandType}s. */
-    Collection<CommandType> getCommandTypes();
+    List<CommandType> getCommandTypes();
 }

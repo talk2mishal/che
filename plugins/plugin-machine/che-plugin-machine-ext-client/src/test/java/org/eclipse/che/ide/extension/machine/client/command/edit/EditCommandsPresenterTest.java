@@ -16,11 +16,12 @@ import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.CoreLocalizationConstant;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandManager;
+import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.api.command.CommandManager;
-import org.eclipse.che.ide.api.command.CommandTypeRegistry;
-import org.eclipse.che.ide.api.command.CommandImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +49,7 @@ import static org.mockito.Mockito.when;
 public class EditCommandsPresenterTest {
 
     private static String COMMAND_NAME = "commandName";
+    private static String COMMAND_TYPE = "commandType";
 
     @Mock
     private EditCommandsView            view;
@@ -62,6 +65,9 @@ public class EditCommandsPresenterTest {
     private CoreLocalizationConstant    coreLocale;
 
     @Mock
+    private CommandImpl command;
+
+    @Mock
     private Promise<List<CommandImpl>>                                    commandsPromise;
     @Mock
     private Promise<CommandImpl>                                          commandPromise;
@@ -70,10 +76,9 @@ public class EditCommandsPresenterTest {
     @Captor
     private ArgumentCaptor<Function<List<CommandDto>, List<CommandImpl>>> commandsCaptor;
     @Captor
-    private ArgumentCaptor<Operation<List<CommandImpl>>>                  commandConfigurationCaptor;
+    private ArgumentCaptor<Operation<CommandImpl>>                        commandCaptor;
     @Captor
     private ArgumentCaptor<Operation<WorkspaceDto>>                       workspaceCaptor;
-
 
     @InjectMocks
     private EditCommandsPresenter presenter;
@@ -82,35 +87,34 @@ public class EditCommandsPresenterTest {
     public void setUp() {
         presenter.editedCommandNameInitial = COMMAND_NAME;
 
-//        when(commandManager.getCommands()).thenReturn(commandsPromise);
-//        when(commandsPromise.then((Function<List<CommandDto>, List<CommandImpl>>)anyObject())).thenReturn(commandConfigurationPromise);
-//        when(commandConfigurationPromise.then((Operation<List<CommandImpl>>)anyObject())).thenReturn(commandConfigurationPromise);
         when(commandManager.update(anyString(), anyObject())).thenReturn(commandPromise);
+
+        CommandType commandType = mock(CommandType.class);
+        when(commandType.getId()).thenReturn(COMMAND_TYPE);
+        List<CommandType> commandTypes = new ArrayList<>(1);
+        commandTypes.add(commandType);
+        when(commandTypeRegistry.getCommandTypes()).thenReturn(commandTypes);
+
+        when(command.getType()).thenReturn(COMMAND_TYPE);
+        when(command.getName()).thenReturn(COMMAND_NAME);
+        List<CommandImpl> commands = new ArrayList<>(1);
+        commands.add(command);
+        when(commandManager.getCommands()).thenReturn(commands);
     }
 
     @Test
     public void onEnterClickedWhenCancelButtonInFocus() throws Exception {
         when(view.isCancelButtonInFocus()).thenReturn(true);
-        CommandImpl commandConfiguration = mock(CommandImpl.class);
-        List<CommandImpl> commands = new ArrayList<>(1);
-        commands.add(commandConfiguration);
 
         presenter.onEnterClicked();
 
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
         verify(commandManager).getCommands();
-
-//        verify(commandsPromise).then(commandsCaptor.capture());
-//        commandsCaptor.getValue().apply(commands);
-
-        verify(commandConfigurationPromise).then(commandConfigurationCaptor.capture());
-        commandConfigurationCaptor.getValue().apply(commands);
-
+        verify(view).setSelectedCommand(eq(command));
         verify(view).setData(anyObject());
         verify(view).setFilterState(anyBoolean());
         verify(view).setCloseButtonInFocus();
-
         verify(view, never()).close();
         verify(commandManager, never()).update(anyString(), anyObject());
         verify(commandManager, never()).remove(anyString());
@@ -132,39 +136,22 @@ public class EditCommandsPresenterTest {
     public void onEnterClickedWhenSaveButtonInFocus() throws Exception {
         when(view.isCancelButtonInFocus()).thenReturn(false);
         when(view.isCloseButtonInFocus()).thenReturn(false);
-        CommandImpl commandConfiguration = mock(CommandImpl.class);
-//        List<CommandDto> commands = new ArrayList<>(1);
-        List<CommandImpl> commands = new ArrayList<>(1);
-//        commands.add(command);
-        commands.add(commandConfiguration);
-//        when(command.withName(anyString())).thenReturn(command);
-//        when(command.withCommandLine(anyString())).thenReturn(command);
-//        when(command.withType(anyString())).thenReturn(command);
-//        when(command.withAttributes(anyMap())).thenReturn(command);
-        when(view.getSelectedCommand()).thenReturn(commandConfiguration);
-//        when(commandConfiguration.getType()).thenReturn(mock(CommandType.class));
-        when(commandConfiguration.getName()).thenReturn(COMMAND_NAME);
 
-//        when(commandPromise.thenPromise(any(Function.class))).thenReturn(commandPromise);
+        when(view.getSelectedCommand()).thenReturn(command);
+
         when(commandPromise.then((Operation)anyObject())).thenReturn(commandPromise);
 
         presenter.onEnterClicked();
 
-//        verify(dtoFactory).createDto(CommandDto.class);
-        verify(commandManager).update(anyString(), eq(commandConfiguration));
-//        verify(commandPromise).then(workspaceCaptor.capture());
-//        workspaceCaptor.getValue().apply(workspace);
+        verify(commandManager).update(anyString(), eq(command));
+
+        verify(commandPromise, times(2)).then(commandCaptor.capture());
+        commandCaptor.getValue().apply(command);
 
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
         verify(commandManager).getCommands();
-
-//        verify(commandsPromise).then(commandsCaptor.capture());
-//        commandsCaptor.getValue().apply(commands);
-
-        verify(commandConfigurationPromise).then(commandConfigurationCaptor.capture());
-        commandConfigurationCaptor.getValue().apply(commands);
-
+        verify(view).setSelectedCommand(eq(command));
         verify(view).setData(anyObject());
         verify(view).setFilterState(anyBoolean());
         verify(view).setCloseButtonInFocus();

@@ -19,11 +19,6 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.CoreLocalizationConstant;
-import org.eclipse.che.ide.api.dialogs.ChoiceDialog;
-import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
-import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
-import org.eclipse.che.ide.api.dialogs.DialogFactory;
-import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.command.CommandPage;
@@ -31,9 +26,13 @@ import org.eclipse.che.ide.api.command.CommandPage.DirtyStateListener;
 import org.eclipse.che.ide.api.command.CommandPage.FieldStateActionDelegate;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
+import org.eclipse.che.ide.api.dialogs.ChoiceDialog;
+import org.eclipse.che.ide.api.dialogs.ConfirmCallback;
+import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
+import org.eclipse.che.ide.api.dialogs.DialogFactory;
+import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -350,13 +349,13 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         view.setCommandName(command.getName());
         view.setCommandPreviewUrl(getPreviewUrlOrNull(command));
 
-        final Collection<CommandPage> pages = commandManager.getPages(command.getType());
-        for (CommandPage page : pages) {
-            editedPage = page;
+        final List<CommandPage> pages = commandManager.getPages(command.getType());
+        if (!pages.isEmpty()) {
+            editedPage = pages.get(0); // for now, show only the 1'st page
 
-            page.setFieldStateActionDelegate(this);
+            editedPage.setFieldStateActionDelegate(this);
 
-            page.setDirtyStateListener(new DirtyStateListener() {
+            editedPage.setDirtyStateListener(new DirtyStateListener() {
                 @Override
                 public void onDirtyStateChanged() {
                     view.setCancelButtonState(isViewModified());
@@ -364,16 +363,14 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 }
             });
 
-            page.resetFrom(command);
-            page.go(view.getCommandPageContainer());
-
-            break; // for now, only the 1'st page is showing
+            editedPage.resetFrom(command);
+            editedPage.go(view.getCommandPageContainer());
         }
     }
 
     @Override
     public void onNameChanged() {
-        CommandImpl selectedCommand = view.getSelectedCommand();
+        final CommandImpl selectedCommand = view.getSelectedCommand();
         if (selectedCommand == null || !selectedCommand.equals(editedCommand)) {
             return;
         }
@@ -386,7 +383,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
 
     @Override
     public void onPreviewUrlChanged() {
-        CommandImpl selectedCommand = view.getSelectedCommand();
+        final CommandImpl selectedCommand = view.getSelectedCommand();
         if (selectedCommand == null || !selectedCommand.equals(editedCommand)) {
             return;
         }
