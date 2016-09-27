@@ -13,11 +13,12 @@ package org.eclipse.che.ide.extension.machine.client.command.custom;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.extension.machine.client.MachineResources;
 import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
-import org.vectomatic.dom.svg.ui.SVGResource;
+import org.eclipse.che.ide.api.icon.Icon;
+import org.eclipse.che.ide.api.icon.IconRegistry;
+import org.eclipse.che.ide.extension.machine.client.MachineResources;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,16 +35,14 @@ public class CustomCommandType implements CommandType {
     private static final String ID               = "custom";
     private static final String COMMAND_TEMPLATE = "echo \"hello\"";
 
-    private final MachineResources resources;
-
     private final List<CommandPage> pages;
 
     @Inject
-    public CustomCommandType(MachineResources resources, CustomPagePresenter page) {
-        this.resources = resources;
-
+    public CustomCommandType(MachineResources resources, IconRegistry iconRegistry, CustomPagePresenter page) {
         pages = new LinkedList<>();
         pages.add(page);
+
+        iconRegistry.registerIcon(new Icon(ID + ".commands.category.icon", resources.customCommandType()));
     }
 
     @Override
@@ -59,11 +58,6 @@ public class CustomCommandType implements CommandType {
     @Override
     public String getDescription() {
         return "Arbitrary command";
-    }
-
-    @Override
-    public SVGResource getIcon() {
-        return resources.customCommandTypeSubElementIcon();
     }
 
     @Override

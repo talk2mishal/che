@@ -132,13 +132,13 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @Override
-    public Promise<CommandImpl> create(String name, String commandLine, String type, Map<String, String> attributes) {
+    public Promise<CommandImpl> create(String desirableName, String commandLine, String type, Map<String, String> attributes) {
         final CommandType commandType = commandTypeRegistry.getCommandTypeById(type);
 
         Map<String, String> attr = (attributes != null) ? attributes : new HashMap<String, String>();
         attr.put(PREVIEW_URL_ATTR, commandType.getPreviewUrlTemplate());
 
-        final CommandImpl command = new CommandImpl(getUniqueCommandName(type, name),
+        final CommandImpl command = new CommandImpl(getUniqueCommandName(type, desirableName),
                                                     commandLine != null ? commandLine : commandType.getCommandLineTemplate(),
                                                     type,
                                                     attr);

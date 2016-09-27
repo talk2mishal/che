@@ -12,8 +12,8 @@ package org.eclipse.che.plugin.maven.client.command;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
-import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.plugin.maven.client.MavenResources;
 import org.junit.Test;
@@ -41,13 +41,6 @@ public class MavenCommandTypeTest {
 
     @InjectMocks
     private MavenCommandType mavenCommandType;
-
-    @Test
-    public void shouldReturnIcon() throws Exception {
-        mavenCommandType.getIcon();
-
-        verify(mavenResources).mavenCommandType();
-    }
 
     @Test
     public void shouldReturnPages() throws Exception {

@@ -37,9 +37,9 @@ public interface CommandManager {
     /**
      * Creates new command with the specified arguments.
      * <p><b>Note</b> that name of the created command may differ from
-     * the specified {@code name} in order to prevent name duplication.
+     * the specified {@code desirableName} in order to prevent name duplication.
      */
-    Promise<CommandImpl> create(String name, String commandLine, String type, Map<String, String> attributes);
+    Promise<CommandImpl> create(String desirableName, String commandLine, String type, Map<String, String> attributes);
 
     /**
      * Updates the command with the specified {@code name} by replacing it with the given {@code command}.

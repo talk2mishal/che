@@ -13,15 +13,14 @@ package org.eclipse.che.ide.ext.gwt.client.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.api.icon.Icon;
-import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.ext.gwt.client.GwtResources;
 import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.icon.Icon;
+import org.eclipse.che.ide.api.icon.IconRegistry;
+import org.eclipse.che.ide.ext.gwt.client.GwtResources;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
-import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,7 +38,6 @@ public class GwtCommandType implements CommandType {
 
     private static final String ID = "gwt";
 
-    private final GwtResources               resources;
     private final CurrentProjectPathProvider currentProjectPathProvider;
     private final DevMachineHostNameProvider devMachineHostNameProvider;
 
@@ -51,7 +49,6 @@ public class GwtCommandType implements CommandType {
                           CurrentProjectPathProvider currentProjectPathProvider,
                           DevMachineHostNameProvider devMachineHostNameProvider,
                           IconRegistry iconRegistry) {
-        this.resources = resources;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.devMachineHostNameProvider = devMachineHostNameProvider;
         pages = new LinkedList<>();
@@ -73,11 +70,6 @@ public class GwtCommandType implements CommandType {
     @Override
     public String getDescription() {
         return "Command for launching GWT Super Dev Mode";
-    }
-
-    @Override
-    public SVGResource getIcon() {
-        return resources.gwtCommandType();
     }
 
     @Override

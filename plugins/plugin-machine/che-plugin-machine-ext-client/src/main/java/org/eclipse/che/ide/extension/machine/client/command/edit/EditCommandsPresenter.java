@@ -229,21 +229,22 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             public void apply(CommandImpl command) throws OperationException {
                 updateView();
 
-                view.setSelectedCommand(command);
+                view.setSelectedCommand(command.getName());
             }
         });
     }
 
     @Override
-    public void onRemoveClicked(final CommandImpl selectedConfiguration) {
-        if (selectedConfiguration == null) {
+    public void onRemoveClicked() {
+        final CommandImpl selectedCommand = view.getSelectedCommand();
+        if (selectedCommand == null) {
             return;
         }
 
         final ConfirmCallback confirmCallback = new ConfirmCallback() {
             @Override
             public void accepted() {
-                commandManager.remove(selectedConfiguration.getName()).then(new Operation<Void>() {
+                commandManager.remove(selectedCommand.getName()).then(new Operation<Void>() {
                     @Override
                     public void apply(Void arg) throws OperationException {
                         view.selectNextItem();
@@ -259,11 +260,12 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             }
         };
 
-        final ConfirmDialog confirmDialog = dialogFactory.createConfirmDialog(
+        ConfirmDialog confirmDialog = dialogFactory.createConfirmDialog(
                 machineLocale.editCommandsViewRemoveTitle(),
-                machineLocale.editCommandsRemoveConfirmation(selectedConfiguration.getName()),
+                machineLocale.editCommandsRemoveConfirmation(selectedCommand.getName()),
                 confirmCallback,
                 null);
+
         confirmDialog.show();
     }
 
@@ -420,7 +422,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                     commandsByType.add(command);
 
                     if (command.getName().equals(originName)) {
-                        view.setSelectedCommand(command);
+                        view.setSelectedCommand(command.getName());
                     }
                 }
             }

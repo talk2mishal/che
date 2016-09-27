@@ -43,11 +43,11 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.CoreLocalizationConstant;
+import org.eclipse.che.ide.api.command.CommandImpl;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
-import org.eclipse.che.ide.api.command.CommandImpl;
-import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.ui.list.CategoriesList;
 import org.eclipse.che.ide.ui.list.Category;
 import org.eclipse.che.ide.ui.list.CategoryRenderer;
@@ -71,67 +71,50 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     private static final EditCommandsViewImplUiBinder UI_BINDER = GWT.create(EditCommandsViewImplUiBinder.class);
 
     private final EditCommandResources     commandResources;
-    private final IconRegistry             iconRegistry;
     private final CoreLocalizationConstant coreLocale;
-    private final Label                    hintLabel;
+    private final IconRegistry             iconRegistry;
+
+    private final Label hintLabel;
+
+    private final CategoryRenderer<CommandImpl>               commandRenderer;
+    private final Category.CategoryEventDelegate<CommandImpl> commandEventDelegate;
 
     @UiField(provided = true)
     MachineLocalizationConstant machineLocale;
     @UiField
+    TextBox                     filterInputField;
+    @UiField
     SimplePanel                 categoriesPanel;
     @UiField
-    TextBox                     filterInputField;
+    FlowPanel                   namePanel;
     @UiField
     TextBox                     commandName;
     @UiField
-    TextBox                     commandPreviewUrl;
-    @UiField
     SimplePanel                 commandPageContainer;
-    @UiField
-    FlowPanel                   savePanel;
     @UiField
     FlowPanel                   previewUrlPanel;
     @UiField
-    FlowPanel                   overFooter;
+    TextBox                     commandPreviewUrl;
+    @UiField
+    FlowPanel                   buttonsPanel;
 
-    private Button                              cancelButton;
-    private Button                              saveButton;
-    private Button                              closeButton;
-    private ActionDelegate                      delegate;
+    private Button cancelButton;
+    private Button saveButton;
+    private Button closeButton;
+
+    private ActionDelegate delegate;
+
     private CategoriesList                      categoriesList;
     private Map<CommandType, List<CommandImpl>> categories;
-    private String                              selectedType;
-    private CommandImpl                         selectedCommand;
-    private final Category.CategoryEventDelegate<CommandImpl> commandDelegate =
-            new Category.CategoryEventDelegate<CommandImpl>() {
-                @Override
-                public void onListItemClicked(Element listItemBase, CommandImpl itemData) {
-                    selectedType = itemData.getType();
-                    setSelectedCommand(itemData);
-                }
-            };
+
+    private String      selectedType;
+    private CommandImpl selectedCommand;
 
     private String filterTextValue;
 
-    private final CategoryRenderer<CommandImpl> commandRenderer =
-            new CategoryRenderer<CommandImpl>() {
-                @Override
-                public void renderElement(Element element, CommandImpl data) {
-                    UIObject.ensureDebugId(element, "commandsManager-type-" + data.getType());
-                    element.addClassName(commandResources.getCss().categorySubElementHeader());
-                    element.setInnerText(data.getName().trim().isEmpty() ? "<none>" : data.getName());
-                    element.appendChild(renderSubElementButtons(data));
-                }
-
-                @Override
-                public SpanElement renderCategory(Category<CommandImpl> category) {
-                    return renderCategoryHeader(category.getTitle());
-                }
-            };
-
     @Inject
     protected EditCommandsViewImpl(org.eclipse.che.ide.Resources resources,
-                                   EditCommandResources commandResources,
+                                   final EditCommandResources commandResources,
                                    MachineLocalizationConstant machineLocale,
                                    CoreLocalizationConstant coreLocale,
                                    IconRegistry iconRegistry) {
@@ -139,6 +122,30 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         this.machineLocale = machineLocale;
         this.coreLocale = coreLocale;
         this.iconRegistry = iconRegistry;
+
+        commandRenderer = new CategoryRenderer<CommandImpl>() {
+            @Override
+            public void renderElement(Element element, CommandImpl data) {
+                UIObject.ensureDebugId(element, "commandsManager-type-" + data.getType());
+
+                element.addClassName(commandResources.getCss().categorySubElementHeader());
+                element.setInnerText(data.getName().trim().isEmpty() ? "<none>" : data.getName());
+                element.appendChild(createCommandButtons());
+            }
+
+            @Override
+            public SpanElement renderCategory(Category<CommandImpl> category) {
+                return renderCategoryHeader(category.getTitle());
+            }
+        };
+
+        commandEventDelegate = new Category.CategoryEventDelegate<CommandImpl>() {
+            @Override
+            public void onListItemClicked(Element listItemBase, CommandImpl itemData) {
+                selectedType = itemData.getType();
+                setSelectedCommand(itemData.getName());
+            }
+        };
 
         categories = new HashMap<>();
 
@@ -164,17 +171,16 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                         resetFilter();
                         break;
                     case KeyboardEvent.KeyCode.DELETE:
-                        delegate.onRemoveClicked(selectedCommand);
+                        delegate.onRemoveClicked();
                         break;
                 }
             }
         }, KeyDownEvent.getType());
-
         categoriesPanel.add(categoriesList);
 
-        savePanel.setVisible(false);
-        previewUrlPanel.setVisible(false);
+        namePanel.setVisible(false);
         commandPageContainer.clear();
+        previewUrlPanel.setVisible(false);
 
         createButtons();
         resetFilter();
@@ -188,31 +194,28 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                 return type;
             }
         }
+
         return null;
     }
 
-    private SpanElement renderSubElementButtons(CommandImpl command) {
-        SpanElement categorySubElement = Document.get().createSpanElement();
-        categorySubElement.setClassName(commandResources.getCss().buttonArea());
-
-        SpanElement removeCommandButtonElement = Document.get().createSpanElement();
-        categorySubElement.appendChild(removeCommandButtonElement);
-        removeCommandButtonElement.appendChild(this.commandResources.removeCommandButton().getSvg().getElement());
-        Event.sinkEvents(removeCommandButtonElement, Event.ONCLICK);
-        Event.setEventListener(removeCommandButtonElement, new EventListener() {
+    /** Creates and returns buttons for duplicating and removing command. */
+    private SpanElement createCommandButtons() {
+        final SpanElement removeCommandButton = Document.get().createSpanElement();
+        removeCommandButton.appendChild(commandResources.removeCommandButton().getSvg().getElement());
+        Event.sinkEvents(removeCommandButton, Event.ONCLICK);
+        Event.setEventListener(removeCommandButton, new EventListener() {
             @Override
             public void onBrowserEvent(Event event) {
                 if (Event.ONCLICK == event.getTypeInt()) {
                     event.stopPropagation();
-                    setSelectedCommand(selectedCommand);
-                    delegate.onRemoveClicked(selectedCommand);
+                    setSelectedCommand(selectedCommand.getName());
+                    delegate.onRemoveClicked();
                 }
             }
         });
 
-        SpanElement duplicateCommandButton = Document.get().createSpanElement();
-        categorySubElement.appendChild(duplicateCommandButton);
-        duplicateCommandButton.appendChild(this.commandResources.duplicateCommandButton().getSvg().getElement());
+        final SpanElement duplicateCommandButton = Document.get().createSpanElement();
+        duplicateCommandButton.appendChild(commandResources.duplicateCommandButton().getSvg().getElement());
         Event.sinkEvents(duplicateCommandButton, Event.ONCLICK);
         Event.setEventListener(duplicateCommandButton, new EventListener() {
             @Override
@@ -224,7 +227,13 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             }
         });
 
-        return categorySubElement;
+        final SpanElement buttonsPanel = Document.get().createSpanElement();
+        buttonsPanel.setClassName(commandResources.getCss().buttonArea());
+
+        buttonsPanel.appendChild(removeCommandButton);
+        buttonsPanel.appendChild(duplicateCommandButton);
+
+        return buttonsPanel;
     }
 
     private SpanElement renderCategoryHeader(final String commandId) {
@@ -249,7 +258,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             public void onBrowserEvent(Event event) {
                 if (Event.ONCLICK == event.getTypeInt()) {
                     event.stopPropagation();
-                    savePanel.setVisible(true);
+                    namePanel.setVisible(true);
                     previewUrlPanel.setVisible(true);
                     selectedType = commandId;
                     delegate.onAddClicked();
@@ -258,7 +267,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             }
         });
 
-        Icon icon = iconRegistry.getIconIfExist(commandId + ".commands.category.icon");
+        final Icon icon = iconRegistry.getIconIfExist(commandId + ".commands.category.icon");
         if (icon != null) {
             final SVGImage iconSVG = icon.getSVGImage();
             if (iconSVG != null) {
@@ -294,7 +303,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                 }
             }
 
-            Category<CommandImpl> category = new Category<>(type.getId(), commandRenderer, commands, commandDelegate);
+            Category<CommandImpl> category = new Category<>(type.getId(), commandRenderer, commands, commandEventDelegate);
             categoriesToRender.add(category);
         }
 
@@ -309,7 +318,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         } else {
             commandPageContainer.clear();
             commandPageContainer.add(hintLabel);
-            savePanel.setVisible(false);
+            namePanel.setVisible(false);
             previewUrlPanel.setVisible(false);
         }
     }
@@ -317,10 +326,10 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     @Override
     public void selectNextItem() {
         final CommandImpl nextItem;
-        final List<CommandImpl> configurations = categories.get(getTypeById(selectedCommand.getType()));
+        final List<CommandImpl> commands = categories.get(getTypeById(selectedCommand.getType()));
 
-        int selectPosition = configurations.indexOf(selectedCommand);
-        if (configurations.size() < 2 || selectPosition == -1) {
+        int selectPosition = commands.indexOf(selectedCommand);
+        if (commands.size() < 2 || selectPosition == -1) {
             nextItem = null;
         } else {
             if (selectPosition > 0) {
@@ -328,8 +337,9 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             } else {
                 selectPosition++;
             }
-            nextItem = configurations.get(selectPosition);
+            nextItem = commands.get(selectPosition);
         }
+
         categoriesList.selectElement(nextItem);
         selectedCommand = nextItem;
     }
@@ -349,7 +359,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             }
         });
         saveButton.addStyleName(Window.resources.windowCss().primaryButton());
-        overFooter.add(saveButton);
+        buttonsPanel.add(saveButton);
 
         cancelButton = createButton(coreLocale.cancel(), "window-edit-configurations-cancel", new ClickHandler() {
             @Override
@@ -357,7 +367,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                 delegate.onCancelClicked();
             }
         });
-        overFooter.add(cancelButton);
+        buttonsPanel.add(cancelButton);
 
         closeButton = createButton(coreLocale.close(), "window-edit-configurations-close",
                                    new ClickHandler() {
@@ -470,14 +480,29 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     }
 
     @Override
-    public void setSelectedCommand(CommandImpl command) {
+    public void setSelectedCommand(String commandName) {
+        final CommandImpl command = getCommandByName(commandName);
+
         selectedCommand = command;
 
         if (command != null) {
-            savePanel.setVisible(true);
+            namePanel.setVisible(true);
             previewUrlPanel.setVisible(true);
             delegate.onCommandSelected(command);
         }
+    }
+
+    @Nullable
+    private CommandImpl getCommandByName(String name) {
+        for (List<CommandImpl> commands : categories.values()) {
+            for (CommandImpl command : commands) {
+                if (name.equals(command.getName())) {
+                    return command;
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -510,7 +535,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
     @Override
     protected void onClose() {
-        setSelectedCommand(selectedCommand);
+        setSelectedCommand(selectedCommand.getName());
     }
 
     @Override

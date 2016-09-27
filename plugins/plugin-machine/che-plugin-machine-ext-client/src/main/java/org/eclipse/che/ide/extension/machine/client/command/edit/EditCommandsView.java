@@ -33,7 +33,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Close view. */
     void close();
 
-    /** Select next configuration. */
+    /** Select next command. */
     void selectNextItem();
 
     /** Returns the container for displaying page for editing command. */
@@ -83,7 +83,7 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     CommandImpl getSelectedCommand();
 
     /** Select the specified command. */
-    void setSelectedCommand(CommandImpl command);
+    void setSelectedCommand(String commandName);
 
     /** Sets the focus on the 'Close' button. */
     void setCloseButtonInFocus();
@@ -113,9 +113,9 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
         void onDuplicateClicked();
 
         /** Called when 'Remove' button is clicked. */
-        void onRemoveClicked(CommandImpl selectedConfiguration);
+        void onRemoveClicked();
 
-        /** Performs any actions appropriate in response to the user having clicked the Enter key. */
+        /** Called when 'Enter' key pressed. */
         void onEnterClicked();
 
         /**

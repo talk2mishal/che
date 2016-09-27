@@ -13,6 +13,9 @@ package org.eclipse.che.ide.ext.java.client.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.java.client.JavaLocalizationConstant;
@@ -20,11 +23,7 @@ import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProvider;
-import org.eclipse.che.ide.api.command.CommandPage;
-import org.eclipse.che.ide.api.command.CommandProducer;
-import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
-import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -40,7 +39,6 @@ public class JavaCommandType implements CommandType {
 
     private static final String ID = "java";
 
-    private final JavaResources              resources;
     private final CurrentProjectPathProvider currentProjectPathProvider;
     private final SourcepathProvider         sourcepathProvider;
     private final OutputDirProvider          outputDirProvider;
@@ -57,7 +55,6 @@ public class JavaCommandType implements CommandType {
                            ClasspathProvider classpathProvider,
                            IconRegistry iconRegistry,
                            JavaLocalizationConstant localizationConstants) {
-        this.resources = resources;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.sourcepathProvider = sourcepathProvider;
         this.outputDirProvider = outputDirProvider;
@@ -82,11 +79,6 @@ public class JavaCommandType implements CommandType {
     @Override
     public String getDescription() {
         return localizationConstants.commandLineDescription();
-    }
-
-    @Override
-    public SVGResource getIcon() {
-        return resources.javaCategoryIcon();
     }
 
     @Override

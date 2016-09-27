@@ -13,16 +13,15 @@ package org.eclipse.che.plugin.maven.client.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.api.icon.Icon;
-import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.icon.Icon;
+import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectRelativePathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.ServerPortProvider;
 import org.eclipse.che.plugin.maven.client.MavenResources;
-import org.vectomatic.dom.svg.ui.SVGResource;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,7 +39,6 @@ public class MavenCommandType implements CommandType {
     private static final String COMMAND_TEMPLATE = "mvn clean install";
     private static final String DEF_PORT         = "8080";
 
-    private final MavenResources                     resources;
     private final MavenTestCommandProducer           mavenTestCommandProducer;
     private final CurrentProjectPathProvider         currentProjectPathProvider;
     private final CurrentProjectRelativePathProvider currentProjectRelativePathProvider;
@@ -53,7 +51,6 @@ public class MavenCommandType implements CommandType {
                             CurrentProjectPathProvider currentProjectPathProvider,
                             CurrentProjectRelativePathProvider currentProjectRelativePathProvider,
                             IconRegistry iconRegistry) {
-        this.resources = resources;
         this.mavenTestCommandProducer = mavenTestCommandProducer;
         this.currentProjectPathProvider = currentProjectPathProvider;
         this.currentProjectRelativePathProvider = currentProjectRelativePathProvider;
@@ -77,11 +74,6 @@ public class MavenCommandType implements CommandType {
     @Override
     public String getDescription() {
         return "Command for executing Maven command line";
-    }
-
-    @Override
-    public SVGResource getIcon() {
-        return resources.mavenCommandType();
     }
 
     @Override

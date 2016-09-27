@@ -13,13 +13,12 @@ package org.eclipse.che.ide.ext.plugins.client.command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.api.icon.Icon;
-import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.ext.plugins.client.PluginsResources;
 import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
-import org.vectomatic.dom.svg.ui.SVGResource;
+import org.eclipse.che.ide.api.icon.Icon;
+import org.eclipse.che.ide.api.icon.IconRegistry;
+import org.eclipse.che.ide.ext.plugins.client.PluginsResources;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -66,11 +65,6 @@ public class GwtCheCommandType implements CommandType {
     @Override
     public String getDescription() {
         return "Command for launching GWT Super Dev Mode for the Che project sources";
-    }
-
-    @Override
-    public SVGResource getIcon() {
-        return resources.gwtCheCommandType();
     }
 
     @Override

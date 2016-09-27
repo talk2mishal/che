@@ -45,7 +45,6 @@ import org.eclipse.che.ide.extension.machine.client.actions.RestartMachineAction
 import org.eclipse.che.ide.extension.machine.client.actions.RunCommandAction;
 import org.eclipse.che.ide.extension.machine.client.actions.SelectCommandComboBox;
 import org.eclipse.che.ide.extension.machine.client.actions.SwitchPerspectiveAction;
-import org.eclipse.che.ide.extension.machine.client.command.custom.CustomCommandType;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.ServerPortProvider;
 import org.eclipse.che.ide.extension.machine.client.machine.MachineStatusNotifier;
 import org.eclipse.che.ide.extension.machine.client.processes.actions.CloseConsoleAction;
@@ -93,8 +92,6 @@ public class MachineExtension {
                             final ProcessesPanelPresenter processesPanelPresenter,
                             final Provider<ServerPortProvider> machinePortProvider,
                             final PerspectiveManager perspectiveManager,
-                            final IconRegistry iconRegistry,
-                            final CustomCommandType arbitraryCommandType,
                             final Provider<MachineStatusNotifier> machineStatusNotifierProvider,
                             final ProjectExplorerPresenter projectExplorerPresenter) {
         this.perspectiveManager = perspectiveManager;
@@ -142,8 +139,6 @@ public class MachineExtension {
                 maximizeTerminal();
             }
         });
-
-        iconRegistry.registerIcon(new Icon(arbitraryCommandType.getId() + ".commands.category.icon", machineResources.customCommandType()));
     }
 
     /**
@@ -151,7 +146,7 @@ public class MachineExtension {
      */
     private void maximizeTerminal() {
         if (maximized) {
-           return;
+            return;
         }
 
         maximized = true;

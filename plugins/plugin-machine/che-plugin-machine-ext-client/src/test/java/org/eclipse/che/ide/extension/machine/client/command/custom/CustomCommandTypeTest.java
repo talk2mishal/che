@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.che.ide.extension.machine.client.command.custom;
 
-import org.eclipse.che.ide.extension.machine.client.MachineResources;
 import org.eclipse.che.ide.api.command.CommandPage;
+import org.eclipse.che.ide.api.icon.IconRegistry;
+import org.eclipse.che.ide.extension.machine.client.MachineResources;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
 
 /** @author Artem Zatsarynnyi */
 @RunWith(MockitoJUnitRunner.class)
@@ -30,17 +30,12 @@ public class CustomCommandTypeTest {
     @Mock
     private MachineResources    machineResources;
     @Mock
+    private IconRegistry        iconRegistry;
+    @Mock
     private CustomPagePresenter arbitraryPagePresenter;
 
     @InjectMocks
     private CustomCommandType arbitraryCommandType;
-
-    @Test
-    public void shouldReturnIcon() throws Exception {
-        arbitraryCommandType.getIcon();
-
-        verify(machineResources).customCommandTypeSubElementIcon();
-    }
 
     @Test
     public void shouldReturnPages() throws Exception {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.che.ide.api.command;
 
-import org.vectomatic.dom.svg.ui.SVGResource;
-
 import java.util.List;
 
 /**
@@ -32,9 +30,6 @@ public interface CommandType {
 
     /** Returns a short description what command of concrete type can do. */
     String getDescription();
-
-    /** Returns the icon for displaying in the UI. */
-    SVGResource getIcon();
 
     /** Returns the {@link CommandPage}s for editing command. */
     List<CommandPage> getPages();

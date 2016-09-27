@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.gwt.client.command;
 
+import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.gwt.client.GwtResources;
-import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
 import org.junit.Test;
@@ -24,7 +24,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /** @author Artem Zatsarynnyi */
@@ -44,13 +43,6 @@ public class GwtCommandTypeTest {
 
     @InjectMocks
     private GwtCommandType gwtCommandType;
-
-    @Test
-    public void shouldReturnIcon() throws Exception {
-        gwtCommandType.getIcon();
-
-        verify(gwtResources, times(2)).gwtCommandType();
-    }
 
     @Test
     public void shouldReturnPages() throws Exception {
