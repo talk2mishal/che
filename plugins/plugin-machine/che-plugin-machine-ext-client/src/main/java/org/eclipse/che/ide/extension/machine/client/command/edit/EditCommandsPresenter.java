@@ -58,6 +58,8 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     private final MachineLocalizationConstant machineLocale;
     private final CoreLocalizationConstant    coreLocale;
 
+    private final Comparator<CommandImpl> commandsComparator;
+
     // initial name of the currently edited command
     String editedCommandNameInitial;
     // initial preview URL of the currently edited command
@@ -83,6 +85,13 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         this.machineLocale = machineLocale;
         this.coreLocale = coreLocale;
         this.view.setDelegate(this);
+
+        commandsComparator = new Comparator<CommandImpl>() {
+            @Override
+            public int compare(CommandImpl o1, CommandImpl o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        };
     }
 
     @Override
@@ -111,7 +120,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             public void apply(CommandImpl arg) throws OperationException {
                 commandProcessingCallback = getCommandProcessingCallback();
 
-                updateView();
+                refreshView();
             }
         }).catchError(new Operation<PromiseError>() {
             @Override
@@ -153,7 +162,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     @Override
     public void onCancelClicked() {
         commandProcessingCallback = getCommandProcessingCallback();
-        updateView();
+        refreshView();
     }
 
     @Override
@@ -182,7 +191,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                                   final String name,
                                   final Map<String, String> attributes) {
         if (!isViewModified()) {
-            reset();
+//            reset();
             createCommand(type, commandLine, name, attributes);
             return;
         }
@@ -193,7 +202,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 updateCommand(editedCommand).then(new Operation<CommandImpl>() {
                     @Override
                     public void apply(CommandImpl arg) throws OperationException {
-                        reset();
+//                        reset();
                         createCommand(type, commandLine, name, attributes);
                     }
                 });
@@ -203,8 +212,8 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         final ConfirmCallback discardCallback = new ConfirmCallback() {
             @Override
             public void accepted() {
-                updateView();
-                reset();
+                refreshView();
+//                reset();
                 createCommand(type, commandLine, name, attributes);
             }
         };
@@ -227,7 +236,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                               attributes).then(new Operation<CommandImpl>() {
             @Override
             public void apply(CommandImpl command) throws OperationException {
-                updateView();
+                refreshView();
 
                 view.setSelectedCommand(command.getName());
             }
@@ -247,9 +256,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 commandManager.remove(selectedCommand.getName()).then(new Operation<Void>() {
                     @Override
                     public void apply(Void arg) throws OperationException {
-                        view.selectNextItem();
+                        view.selectNeighborCommand(selectedCommand);
                         commandProcessingCallback = getCommandProcessingCallback();
-                        updateView();
+                        refreshView();
                     }
                 }).catchError(new Operation<PromiseError>() {
                     @Override
@@ -284,17 +293,6 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         onSaveClicked();
     }
 
-    private void reset() {
-        editedCommand = null;
-        editedCommandNameInitial = null;
-        editedCommandPreviewUrlInitial = null;
-        editedPage = null;
-
-        view.setCommandName("");
-        view.setCommandPreviewUrl("");
-        view.clearCommandPageContainer();
-    }
-
     @Override
     public void onCommandSelected(final CommandImpl command) {
         if (!isViewModified()) {
@@ -308,7 +306,7 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 updateCommand(editedCommand).then(new Operation<CommandImpl>() {
                     @Override
                     public void apply(CommandImpl arg) throws OperationException {
-                        updateView();
+                        refreshView();
 
                         handleCommandSelection(command);
                     }
@@ -319,8 +317,8 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         final ConfirmCallback discardCallback = new ConfirmCallback() {
             @Override
             public void accepted() {
-                reset();
-                updateView();
+//                reset();
+                refreshView();
                 handleCommandSelection(command);
             }
         };
@@ -334,13 +332,6 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
                 discardCallback);
 
         dialog.show();
-    }
-
-    private String getPreviewUrlOrNull(CommandImpl configuration) {
-        if (configuration.getAttributes() != null && configuration.getAttributes().containsKey(PREVIEW_URL_ATTR)) {
-            return configuration.getAttributes().get(PREVIEW_URL_ATTR);
-        }
-        return null;
     }
 
     private void handleCommandSelection(CommandImpl command) {
@@ -368,6 +359,13 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
             editedPage.resetFrom(command);
             editedPage.go(view.getCommandPageContainer());
         }
+    }
+
+    private String getPreviewUrlOrNull(CommandImpl configuration) {
+        if (configuration.getAttributes() != null && configuration.getAttributes().containsKey(PREVIEW_URL_ATTR)) {
+            return configuration.getAttributes().get(PREVIEW_URL_ATTR);
+        }
+        return null;
     }
 
     @Override
@@ -399,51 +397,56 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
     public void show() {
         view.show();
 
-        updateView();
+        refreshView();
     }
 
-    private void updateView() {
-        final String originName = editedCommandNameInitial;
+    private void refreshView() {
+//        final CommandImpl selectedCommand = view.getSelectedCommand();
 
         reset();
 
-        view.setCancelButtonState(false);
-        view.setSaveButtonState(false);
-
-        List<CommandImpl> commands = commandManager.getCommands();
-
-        final Map<CommandType, List<CommandImpl>> typeToCommands = new HashMap<>();
+        List<CommandImpl> allCommands = commandManager.getCommands();
+        Map<CommandType, List<CommandImpl>> typeToCommands = new HashMap<>();
 
         for (CommandType type : commandTypeRegistry.getCommandTypes()) {
-            final List<CommandImpl> commandsByType = new ArrayList<>();
+            final List<CommandImpl> commandsOfType = new ArrayList<>();
 
-            for (CommandImpl command : commands) {
+            for (CommandImpl command : allCommands) {
                 if (type.getId().equals(command.getType())) {
-                    commandsByType.add(command);
-
-                    if (command.getName().equals(originName)) {
-                        view.setSelectedCommand(command.getName());
-                    }
+                    commandsOfType.add(command);
                 }
             }
 
-            Collections.sort(commandsByType, new Comparator<CommandImpl>() {
-                @Override
-                public int compare(CommandImpl o1, CommandImpl o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
-
-            typeToCommands.put(type, commandsByType);
+            Collections.sort(commandsOfType, commandsComparator);
+            typeToCommands.put(type, commandsOfType);
         }
 
         view.setData(typeToCommands);
-        view.setFilterState(!commands.isEmpty());
+        view.setFilterState(!allCommands.isEmpty());
+
+        // try to restore selected command after refreshing
+//        if (selectedCommand != null) {
+//            view.setSelectedCommand(selectedCommand.getName());
+//        }
 
         if (commandProcessingCallback != null) {
             commandProcessingCallback.onCompleted();
             commandProcessingCallback = null;
         }
+    }
+
+    private void reset() {
+        editedCommand = null;
+        editedCommandNameInitial = null;
+        editedCommandPreviewUrlInitial = null;
+        editedPage = null;
+
+        view.setCommandName("");
+        view.clearCommandPageContainer();
+        view.setCommandPreviewUrl("");
+
+        view.setCancelButtonState(false);
+        view.setSaveButtonState(false);
     }
 
     private boolean isViewModified() {

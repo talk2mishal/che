@@ -13,9 +13,9 @@ package org.eclipse.che.ide.extension.machine.client.command.edit;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 
 import org.eclipse.che.commons.annotation.Nullable;
-import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandType;
+import org.eclipse.che.ide.api.mvp.View;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +33,8 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Close view. */
     void close();
 
-    /** Select next command. */
-    void selectNextItem();
+    /** Select the neighbor command of the same type that the current command. */
+    void selectNeighborCommand(CommandImpl command);
 
     /** Returns the container for displaying page for editing command. */
     AcceptsOneWidget getCommandPageContainer();

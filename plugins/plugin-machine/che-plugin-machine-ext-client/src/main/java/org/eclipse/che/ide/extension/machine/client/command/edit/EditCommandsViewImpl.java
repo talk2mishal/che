@@ -135,7 +135,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
             @Override
             public SpanElement renderCategory(Category<CommandImpl> category) {
-                return renderCategoryHeader(category.getTitle());
+                return createCategoryHeaderForCommandType(category.getTitle());
             }
         };
 
@@ -183,19 +183,8 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         previewUrlPanel.setVisible(false);
 
         createButtons();
-        resetFilter();
 
         getWidget().getElement().getStyle().setPadding(0, Style.Unit.PX);
-    }
-
-    private CommandType getTypeById(String commandId) {
-        for (CommandType type : categories.keySet()) {
-            if (type.getId().equals(commandId)) {
-                return type;
-            }
-        }
-
-        return null;
     }
 
     /** Creates and returns buttons for duplicating and removing command. */
@@ -236,19 +225,19 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         return buttonsPanel;
     }
 
-    private SpanElement renderCategoryHeader(final String commandId) {
-        SpanElement categoryHeaderElement = Document.get().createSpanElement();
+    private SpanElement createCategoryHeaderForCommandType(final String commandTypeId) {
+        final SpanElement categoryHeaderElement = Document.get().createSpanElement();
         categoryHeaderElement.setClassName(commandResources.getCss().categoryHeader());
 
-        SpanElement iconElement = Document.get().createSpanElement();
+        final SpanElement iconElement = Document.get().createSpanElement();
         categoryHeaderElement.appendChild(iconElement);
 
-        SpanElement textElement = Document.get().createSpanElement();
-        categoryHeaderElement.appendChild(textElement);
-        CommandType currentCommandType = getTypeById(commandId);
-        textElement.setInnerText(currentCommandType != null ? currentCommandType.getDisplayName() : commandId);
+        final SpanElement nameElement = Document.get().createSpanElement();
+        categoryHeaderElement.appendChild(nameElement);
+        final CommandType currentCommandType = getTypeById(commandTypeId);
+        nameElement.setInnerText(currentCommandType != null ? currentCommandType.getDisplayName() : commandTypeId);
 
-        SpanElement buttonElement = Document.get().createSpanElement();
+        final SpanElement buttonElement = Document.get().createSpanElement();
         buttonElement.appendChild(commandResources.addCommandButton().getSvg().getElement());
         categoryHeaderElement.appendChild(buttonElement);
 
@@ -260,14 +249,14 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                     event.stopPropagation();
                     namePanel.setVisible(true);
                     previewUrlPanel.setVisible(true);
-                    selectedType = commandId;
+                    selectedType = commandTypeId;
                     delegate.onAddClicked();
                     resetFilter();
                 }
             }
         });
 
-        final Icon icon = iconRegistry.getIconIfExist(commandId + ".commands.category.icon");
+        final Icon icon = iconRegistry.getIconIfExist(commandTypeId + ".commands.category.icon");
         if (icon != null) {
             final SVGImage iconSVG = icon.getSVGImage();
             if (iconSVG != null) {
@@ -277,78 +266,6 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         }
 
         return categoryHeaderElement;
-    }
-
-    private void resetFilter() {
-        filterInputField.setText("");//reset filter
-        filterTextValue = "";
-    }
-
-    private void renderCategoriesList(Map<CommandType, List<CommandImpl>> categories) {
-        if (categories == null) {
-            return;
-        }
-
-        final List<Category<?>> categoriesToRender = new ArrayList<>();
-
-        for (CommandType type : categories.keySet()) {
-            List<CommandImpl> commands = new ArrayList<>();
-            if (filterTextValue.isEmpty()) {
-                commands = categories.get(type);
-            } else {  // filtering List
-                for (final CommandImpl configuration : categories.get(type)) {
-                    if (configuration.getName().contains(filterTextValue)) {
-                        commands.add(configuration);
-                    }
-                }
-            }
-
-            Category<CommandImpl> category = new Category<>(type.getId(), commandRenderer, commands, commandEventDelegate);
-            categoriesToRender.add(category);
-        }
-
-        categoriesList.clear();
-        categoriesList.render(categoriesToRender, true);
-
-        if (selectedCommand != null) {
-            categoriesList.selectElement(selectedCommand);
-            if (filterTextValue.isEmpty()) {
-                selectText(commandName.getElement());
-            }
-        } else {
-            commandPageContainer.clear();
-            commandPageContainer.add(hintLabel);
-            namePanel.setVisible(false);
-            previewUrlPanel.setVisible(false);
-        }
-    }
-
-    @Override
-    public void selectNextItem() {
-        final CommandImpl nextItem;
-        final List<CommandImpl> commands = categories.get(getTypeById(selectedCommand.getType()));
-
-        int selectPosition = commands.indexOf(selectedCommand);
-        if (commands.size() < 2 || selectPosition == -1) {
-            nextItem = null;
-        } else {
-            if (selectPosition > 0) {
-                selectPosition--;
-            } else {
-                selectPosition++;
-            }
-            nextItem = commands.get(selectPosition);
-        }
-
-        categoriesList.selectElement(nextItem);
-        selectedCommand = nextItem;
-    }
-
-    @Override
-    public void setData(Map<CommandType, List<CommandImpl>> commandsByTypes) {
-        this.categories = commandsByTypes;
-
-        renderCategoriesList(commandsByTypes);
     }
 
     private void createButtons() {
@@ -391,9 +308,96 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         getFooter().getElement().appendChild(dummyFocusElement);
     }
 
+    private void resetFilter() {
+        filterInputField.setText("");
+        filterTextValue = "";
+    }
+
+    private CommandType getTypeById(String commandId) {
+        for (CommandType type : categories.keySet()) {
+            if (type.getId().equals(commandId)) {
+                return type;
+            }
+        }
+
+        return null;
+    }
+
     /**
-     * Select text.
+     * Render the commands list.
+     * It also takes into account the name filter and restores the selected command.
      */
+    private void renderCategoriesList(Map<CommandType, List<CommandImpl>> categories) {
+        final List<Category<?>> categoriesToRender = new ArrayList<>();
+
+        for (CommandType type : categories.keySet()) {
+            List<CommandImpl> commands = new ArrayList<>();
+            if (filterTextValue.isEmpty()) {
+                commands = categories.get(type);
+            } else {  // filtering List
+                for (final CommandImpl configuration : categories.get(type)) {
+                    if (configuration.getName().contains(filterTextValue)) {
+                        commands.add(configuration);
+                    }
+                }
+            }
+
+            Category<CommandImpl> category = new Category<>(type.getId(), commandRenderer, commands, commandEventDelegate);
+            categoriesToRender.add(category);
+        }
+
+        categoriesList.clear();
+        categoriesList.render(categoriesToRender, true);
+
+        if (selectedCommand != null) {
+            categoriesList.selectElement(selectedCommand);
+            if (filterTextValue.isEmpty()) {
+                selectText(commandName.getElement());
+            }
+        } else {
+            commandPageContainer.clear();
+            commandPageContainer.add(hintLabel);
+            namePanel.setVisible(false);
+            previewUrlPanel.setVisible(false);
+        }
+    }
+
+    @Override
+    public void selectNeighborCommand(CommandImpl command) {
+        final CommandImpl commandToSelect;
+        final List<CommandImpl> commandsOfType = categories.get(getTypeById(command.getType()));
+
+        int selectedCommandIndex = commandsOfType.indexOf(command);
+        if (commandsOfType.size() < 2 || selectedCommandIndex == -1) {
+            commandToSelect = null;
+        } else {
+            if (selectedCommandIndex > 0) {
+                selectedCommandIndex--;
+            } else {
+                selectedCommandIndex++;
+            }
+            commandToSelect = commandsOfType.get(selectedCommandIndex);
+        }
+
+        selectCommand(commandToSelect);
+    }
+
+    /** Set the given command selected in the categories list. */
+    private void selectCommand(CommandImpl command) {
+        selectedCommand = command;
+        selectedType = command.getType();
+
+        categoriesList.selectElement(command);
+    }
+
+    @Override
+    public void setData(Map<CommandType, List<CommandImpl>> commandsByTypes) {
+        this.categories = commandsByTypes;
+
+        renderCategoriesList(commandsByTypes);
+    }
+
+    /** Select all text in the given inputElement. */
     private native void selectText(Element inputElement) /*-{
         inputElement.focus();
         inputElement.setSelectionRange(0, inputElement.value.length);
@@ -408,11 +412,13 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     public void show() {
         super.show();
 
-        selectedType = null;
         selectedCommand = null;
+        selectedType = null;
 
         commandName.setText("");
         commandPreviewUrl.setText("");
+
+        resetFilter();
     }
 
     @Override
