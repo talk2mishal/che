@@ -13,6 +13,7 @@ package org.eclipse.che.ide.extension.machine.client.actions;
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.machine.DevMachine;
 import org.eclipse.che.ide.extension.machine.client.MachineLocalizationConstant;
 import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.command.CommandImpl;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,6 +75,11 @@ public class RunCommandActionTest {
     @Test
     public void actionShouldBePerformed() {
         when(event.getParameters()).thenReturn(Collections.singletonMap(NAME_PROPERTY, "MCI"));
+        final DevMachine devMachine = mock(DevMachine.class);
+        final Machine machine = mock(Machine.class);
+        when(devMachine.getDescriptor()).thenReturn(machine);
+        when(appContext.getDevMachine()).thenReturn(devMachine);
+
         action.actionPerformed(event);
 
         verify(commandManager).executeCommand(eq(command), any(Machine.class));

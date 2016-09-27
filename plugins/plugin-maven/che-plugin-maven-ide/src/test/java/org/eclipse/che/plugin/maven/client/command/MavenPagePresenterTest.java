@@ -33,7 +33,7 @@ public class MavenPagePresenterTest {
 
     private static final String WORK_DIR     = "project";
     private static final String ARGUMENTS    = "clean install";
-    private static final String COMMAND_LINE = "mvn " + ARGUMENTS + " -f " + WORK_DIR;
+    private static final String COMMAND_LINE = "mvn -f " + WORK_DIR + ' ' + ARGUMENTS;
 
     @Mock
     private MavenCommandPageView view;

@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 
 /**
  * Unit tests for the {@link CustomCommandPropertyValueProvider}
@@ -53,6 +53,11 @@ public class CustomCommandPropertyValueProviderTest {
                 assertSame(value, VALUE);
             }
         });
+    }
+
+    @Test
+    public void getDescription() throws Exception {
+        assertSame(provider.getDescription(), DESCRIPTION);
     }
 
 }

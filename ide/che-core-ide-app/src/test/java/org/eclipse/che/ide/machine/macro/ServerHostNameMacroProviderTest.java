@@ -94,7 +94,7 @@ public class ServerHostNameMacroProviderTest {
         final CommandPropertyValueProvider provider1 = iterator.next();
 
         assertTrue(provider1 instanceof CustomCommandPropertyValueProvider);
-        assertEquals(provider1.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT.substring(0, WS_AGENT_PORT.length() - 4)));
+        assertEquals(provider1.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT));
 
         provider1.getValue().then(new Operation<String>() {
             @Override
@@ -106,7 +106,7 @@ public class ServerHostNameMacroProviderTest {
         final CommandPropertyValueProvider provider2 = iterator.next();
 
         assertTrue(provider2 instanceof CustomCommandPropertyValueProvider);
-        assertEquals(provider2.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT));
+        assertEquals(provider2.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT.substring(0, WS_AGENT_PORT.length() - 4)));
 
         provider2.getValue().then(new Operation<String>() {
             @Override

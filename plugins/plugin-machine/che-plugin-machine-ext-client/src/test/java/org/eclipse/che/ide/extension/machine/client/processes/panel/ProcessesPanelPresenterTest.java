@@ -24,6 +24,7 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
 import org.eclipse.che.ide.api.dialogs.ConfirmDialog;
 import org.eclipse.che.ide.api.dialogs.DialogFactory;
@@ -619,6 +620,8 @@ public class ProcessesPanelPresenterTest {
 
         CommandOutputConsole outputConsole = mock(CommandOutputConsole.class);
 
+        CommandType commandType = mock(CommandType.class);
+        when(commandTypeRegistry.getCommandTypeById(anyString())).thenReturn(commandType);
         when(commandConsoleFactory.create(anyObject(),
                                           any(org.eclipse.che.api.core.model.machine.Machine.class))).thenReturn(outputConsole);
 

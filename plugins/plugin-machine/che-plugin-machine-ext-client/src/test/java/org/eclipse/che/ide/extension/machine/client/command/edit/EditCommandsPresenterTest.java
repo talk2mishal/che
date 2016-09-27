@@ -111,7 +111,6 @@ public class EditCommandsPresenterTest {
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
         verify(commandManager).getCommands();
-        verify(view).setSelectedCommand(eq(COMMAND_NAME));
         verify(view).setData(anyObject());
         verify(view).setFilterState(anyBoolean());
         verify(view).setCloseButtonInFocus();
@@ -151,7 +150,6 @@ public class EditCommandsPresenterTest {
         verify(view).setCancelButtonState(false);
         verify(view).setSaveButtonState(false);
         verify(commandManager).getCommands();
-        verify(view).setSelectedCommand(eq(COMMAND_NAME));
         verify(view).setData(anyObject());
         verify(view).setFilterState(anyBoolean());
         verify(view).setCloseButtonInFocus();
