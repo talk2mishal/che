@@ -139,6 +139,7 @@ public class EditCommandsPresenterTest {
         when(view.getSelectedCommand()).thenReturn(command);
 
         when(commandPromise.then((Operation)anyObject())).thenReturn(commandPromise);
+        when(commandPromise.catchError((Operation)anyObject())).thenReturn(commandPromise);
 
         presenter.onEnterClicked();
 
