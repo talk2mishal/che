@@ -114,7 +114,13 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public List<CommandImpl> getCommands() {
-        return new ArrayList<>(commands.values());
+        // return copy of the commands in order to prevent it modification directly
+        List<CommandImpl> list = new ArrayList<>(commands.size());
+        for (CommandImpl command : commands.values()) {
+            list.add(new CommandImpl(command));
+        }
+
+        return list;
     }
 
     @Override

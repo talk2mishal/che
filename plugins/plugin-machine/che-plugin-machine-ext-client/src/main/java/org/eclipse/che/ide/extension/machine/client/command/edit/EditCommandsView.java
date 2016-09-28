@@ -42,6 +42,9 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Clear the container for displaying page for editing command. */
     void clearCommandPageContainer();
 
+    /** Select the specified command. */
+    void selectCommand(CommandImpl command);
+
     /**
      * Sets commands grouped by types to display in the view.
      *
@@ -81,9 +84,6 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
     /** Returns the command which is currently selected. */
     @Nullable
     CommandImpl getSelectedCommand();
-
-    /** Select the specified command. */
-    void setSelectedCommand(String commandName);
 
     /** Sets the focus on the 'Close' button. */
     void setCloseButtonInFocus();

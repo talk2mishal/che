@@ -142,8 +142,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         commandEventDelegate = new Category.CategoryEventDelegate<CommandImpl>() {
             @Override
             public void onListItemClicked(Element listItemBase, CommandImpl itemData) {
-                selectedType = itemData.getType();
-                setSelectedCommand(itemData.getName());
+                onCommandSelected(itemData);
             }
         };
 
@@ -178,10 +177,6 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         }, KeyDownEvent.getType());
         categoriesPanel.add(categoriesList);
 
-        namePanel.setVisible(false);
-        commandPageContainer.clear();
-        previewUrlPanel.setVisible(false);
-
         createButtons();
 
         getWidget().getElement().getStyle().setPadding(0, Style.Unit.PX);
@@ -197,7 +192,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             public void onBrowserEvent(Event event) {
                 if (Event.ONCLICK == event.getTypeInt()) {
                     event.stopPropagation();
-                    setSelectedCommand(selectedCommand.getName());
+                    onCommandSelected(selectedCommand);
                     delegate.onRemoveClicked();
                 }
             }
@@ -355,10 +350,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
                 selectText(commandName.getElement());
             }
         } else {
-            commandPageContainer.clear();
-            commandPageContainer.add(hintLabel);
-            namePanel.setVisible(false);
-            previewUrlPanel.setVisible(false);
+            resetView();
         }
     }
 
@@ -379,11 +371,16 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             commandToSelect = commandsOfType.get(selectedCommandIndex);
         }
 
-        selectCommand(commandToSelect);
+        if (commandToSelect != null) {
+            selectCommand(commandToSelect);
+        } else {
+            resetView();
+        }
     }
 
     /** Set the given command selected in the categories list. */
-    private void selectCommand(CommandImpl command) {
+    @Override
+    public void selectCommand(CommandImpl command) {
         selectedCommand = command;
         selectedType = command.getType();
 
@@ -412,13 +409,23 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     public void show() {
         super.show();
 
+        resetView();
+        resetFilter();
+    }
+
+    /** Reset view's state to default. */
+    private void resetView() {
         selectedCommand = null;
         selectedType = null;
 
         commandName.setText("");
         commandPreviewUrl.setText("");
 
-        resetFilter();
+        namePanel.setVisible(false);
+        previewUrlPanel.setVisible(false);
+
+        commandPageContainer.clear();
+        commandPageContainer.add(hintLabel);
     }
 
     @Override
@@ -485,30 +492,14 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         return selectedCommand;
     }
 
-    @Override
-    public void setSelectedCommand(String commandName) {
-        final CommandImpl command = getCommandByName(commandName);
-
+    private void onCommandSelected(CommandImpl command) {
+        selectedType = command.getType();
         selectedCommand = command;
 
-        if (command != null) {
-            namePanel.setVisible(true);
-            previewUrlPanel.setVisible(true);
-            delegate.onCommandSelected(command);
-        }
-    }
+        namePanel.setVisible(true);
+        previewUrlPanel.setVisible(true);
 
-    @Nullable
-    private CommandImpl getCommandByName(String name) {
-        for (List<CommandImpl> commands : categories.values()) {
-            for (CommandImpl command : commands) {
-                if (name.equals(command.getName())) {
-                    return command;
-                }
-            }
-        }
-
-        return null;
+        delegate.onCommandSelected(command);
     }
 
     @Override
@@ -541,7 +532,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
 
     @Override
     protected void onClose() {
-        setSelectedCommand(selectedCommand.getName());
+        delegate.onCloseClicked();
     }
 
     @Override

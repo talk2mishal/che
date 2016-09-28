@@ -48,15 +48,15 @@ public class CommandImpl implements Command {
         this.name = name;
         this.commandLine = commandLine;
         this.type = type;
-        this.attributes = attributes;
+        this.attributes = new HashMap<>(attributes);
     }
 
-    /** Creates new command from the given {@link Command}. */
+    /** Creates copy of the given {@link Command}. */
     public CommandImpl(Command command) {
         this.name = command.getName();
         this.commandLine = command.getCommandLine();
         this.type = command.getType();
-        this.attributes = command.getAttributes();
+        this.attributes = new HashMap<>(command.getAttributes());
     }
 
     @Override
