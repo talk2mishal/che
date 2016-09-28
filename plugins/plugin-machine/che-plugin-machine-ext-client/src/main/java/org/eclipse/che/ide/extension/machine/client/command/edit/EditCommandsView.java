@@ -126,10 +126,10 @@ public interface EditCommandsView extends View<EditCommandsView.ActionDelegate> 
          */
         void onCommandSelected(CommandImpl command);
 
-        /** Called when configuration name has been changed. */
+        /** Called when command name has been changed. */
         void onNameChanged();
 
-        /** Called when configuration preview url has been changed. */
+        /** Called when preview url has been changed. */
         void onPreviewUrlChanged();
     }
 }

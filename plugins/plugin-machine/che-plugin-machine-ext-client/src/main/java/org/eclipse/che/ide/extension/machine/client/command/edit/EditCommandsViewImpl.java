@@ -264,7 +264,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
     }
 
     private void createButtons() {
-        saveButton = createButton(coreLocale.save(), "window-edit-configurations-save", new ClickHandler() {
+        saveButton = createButton(coreLocale.save(), "window-edit-commands-save", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 delegate.onSaveClicked();
@@ -273,7 +273,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         saveButton.addStyleName(Window.resources.windowCss().primaryButton());
         buttonsPanel.add(saveButton);
 
-        cancelButton = createButton(coreLocale.cancel(), "window-edit-configurations-cancel", new ClickHandler() {
+        cancelButton = createButton(coreLocale.cancel(), "window-edit-commands-cancel", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 delegate.onCancelClicked();
@@ -281,7 +281,7 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
         });
         buttonsPanel.add(cancelButton);
 
-        closeButton = createButton(coreLocale.close(), "window-edit-configurations-close",
+        closeButton = createButton(coreLocale.close(), "window-edit-commands-close",
                                    new ClickHandler() {
                                        @Override
                                        public void onClick(ClickEvent event) {
@@ -330,9 +330,9 @@ public class EditCommandsViewImpl extends Window implements EditCommandsView {
             if (filterTextValue.isEmpty()) {
                 commands = categories.get(type);
             } else {  // filtering List
-                for (final CommandImpl configuration : categories.get(type)) {
-                    if (configuration.getName().contains(filterTextValue)) {
-                        commands.add(configuration);
+                for (final CommandImpl command : categories.get(type)) {
+                    if (command.getName().contains(filterTextValue)) {
+                        commands.add(command);
                     }
                 }
             }

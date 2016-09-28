@@ -122,14 +122,14 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         });
     }
 
-    private Promise<CommandImpl> updateCommand(final CommandImpl selectedConfiguration) {
-        return commandManager.update(editedCommandNameInitial, selectedConfiguration)
+    private Promise<CommandImpl> updateCommand(final CommandImpl command) {
+        return commandManager.update(editedCommandNameInitial, command)
                              .then(new Operation<CommandImpl>() {
                                  @Override
                                  public void apply(CommandImpl updatedCommand) throws OperationException {
                                      editedPage.onSave();
 
-                                     if (!selectedConfiguration.getName().equals(updatedCommand.getName())) {
+                                     if (!command.getName().equals(updatedCommand.getName())) {
                                          onNameChanged();
                                      }
                                  }
@@ -331,9 +331,9 @@ public class EditCommandsPresenter implements EditCommandsView.ActionDelegate, F
         }
     }
 
-    private String getPreviewUrlOrNull(CommandImpl configuration) {
-        if (configuration.getAttributes() != null && configuration.getAttributes().containsKey(PREVIEW_URL_ATTR)) {
-            return configuration.getAttributes().get(PREVIEW_URL_ATTR);
+    private String getPreviewUrlOrNull(CommandImpl command) {
+        if (command.getAttributes() != null && command.getAttributes().containsKey(PREVIEW_URL_ATTR)) {
+            return command.getAttributes().get(PREVIEW_URL_ATTR);
         }
         return null;
     }

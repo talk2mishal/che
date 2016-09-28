@@ -172,9 +172,9 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
 
         final String selectedCommandName = commandsListWidget.getSelectedName();
 
-        for (CommandImpl configuration : commands) {
-            if (configuration.getName().equals(selectedCommandName)) {
-                return configuration;
+        for (CommandImpl command : commands) {
+            if (command.getName().equals(selectedCommandName)) {
+                return command;
             }
         }
         return null;
@@ -191,9 +191,9 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
             return null;
         }
 
-        for (CommandImpl configuration : commands) {
-            if (configuration.getName().equals(name)) {
-                return configuration;
+        for (CommandImpl command : commands) {
+            if (command.getName().equals(name)) {
+                return command;
             }
         }
         return null;
@@ -235,14 +235,14 @@ public class SelectCommandComboBox extends AbstractPerspectiveAction implements 
         });
 
         CommandImpl prevCommand = null;
-        for (CommandImpl configuration : commands) {
-            if (prevCommand == null || !configuration.getType().equals(prevCommand.getType())) {
-                CommandType commandType = commandTypeRegistry.getCommandTypeById(configuration.getType());
+        for (CommandImpl command : commands) {
+            if (prevCommand == null || !command.getType().equals(prevCommand.getType())) {
+                CommandType commandType = commandTypeRegistry.getCommandTypeById(command.getType());
                 commandActions.addSeparator(commandType.getDisplayName());
             }
 
-            commandActions.add(commandsListWidget.createAction(configuration.getName(), configuration.getName()));
-            prevCommand = configuration;
+            commandActions.add(commandsListWidget.createAction(command.getName(), command.getName()));
+            prevCommand = command;
         }
 
         this.commands.addAll(commands);

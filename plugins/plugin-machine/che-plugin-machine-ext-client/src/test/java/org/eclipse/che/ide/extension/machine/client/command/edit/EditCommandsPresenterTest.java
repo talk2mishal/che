@@ -71,8 +71,6 @@ public class EditCommandsPresenterTest {
     private Promise<List<CommandImpl>>                                    commandsPromise;
     @Mock
     private Promise<CommandImpl>                                          commandPromise;
-    @Mock
-    private Promise<List<CommandImpl>>                                    commandConfigurationPromise;
     @Captor
     private ArgumentCaptor<Function<List<CommandDto>, List<CommandImpl>>> commandsCaptor;
     @Captor
