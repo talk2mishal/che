@@ -14,12 +14,14 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.gwt.inject.client.multibindings.GinMultibinder;
 
+import org.eclipse.che.ide.api.command.CommandProducer;
+import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
 import org.eclipse.che.ide.api.resources.ResourceInterceptor;
-import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.project.ResolvingProjectStateHolder;
 import org.eclipse.che.plugin.maven.client.command.MavenCommandType;
+import org.eclipse.che.plugin.maven.client.command.MavenTestCommandProducer;
 import org.eclipse.che.plugin.maven.client.editor.PomEditorConfigurationFactory;
 import org.eclipse.che.plugin.maven.client.editor.PomReconcilingStrategyFactory;
 import org.eclipse.che.plugin.maven.client.project.ResolvingMavenProjectStateHolder;
@@ -51,5 +53,7 @@ public class MavenGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder().build(PomEditorConfigurationFactory.class));
 
         GinMultibinder.newSetBinder(binder(), ResolvingProjectStateHolder.class).addBinding().to(ResolvingMavenProjectStateHolder.class);
+
+        GinMultibinder.newSetBinder(binder(), CommandProducer.class).addBinding().to(MavenTestCommandProducer.class);
     }
 }

@@ -14,15 +14,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.command.CommandPage;
-import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.gwt.client.GwtResources;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.DevMachineHostNameProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectPathProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.DevMachineHostNameProvider;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,11 +79,6 @@ public class GwtCommandType implements CommandType {
     public String getCommandLineTemplate() {
         return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey() + " -Dgwt.bindAddress=" +
                devMachineHostNameProvider.getKey();
-    }
-
-    @Override
-    public List<CommandProducer> getProducers() {
-        return Collections.emptyList();
     }
 
     @Override

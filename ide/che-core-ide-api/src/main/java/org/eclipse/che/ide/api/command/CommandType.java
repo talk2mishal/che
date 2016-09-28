@@ -40,9 +40,6 @@ public interface CommandType {
      */
     String getCommandLineTemplate();
 
-    /** Returns the {@link CommandProducer}s that can produce commands of concrete type from the current context. */
-    List<? extends CommandProducer> getProducers();
-
     /** Returns template for preview Url. */
     String getPreviewUrlTemplate();
 }

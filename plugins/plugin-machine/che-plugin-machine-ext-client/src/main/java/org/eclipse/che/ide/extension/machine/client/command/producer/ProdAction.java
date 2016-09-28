@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.extension.machine.client.actions;
+package org.eclipse.che.ide.extension.machine.client.command.producer;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -34,7 +34,7 @@ public class ProdAction extends AbstractPerspectiveAction {
         super(Collections.singletonList(ProjectPerspective.PROJECT_PERSPECTIVE_ID), "prod", "", null, null);
         this.commandManager = commandManager;
 
-        commandProducer = commandManager.getApplicableProducers().get(0);
+        commandProducer = commandManager.getCommandProducers().get(0);
     }
 
     @Override

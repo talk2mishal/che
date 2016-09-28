@@ -54,7 +54,8 @@ public interface CommandManager {
     /** Returns the pages for editing command of the specified {@code type}. */
     List<CommandPage> getPages(String type);
 
-    List<CommandProducer> getApplicableProducers();
+    /** Returns all command producers. */
+    List<CommandProducer> getCommandProducers();
 
     /**
      * Executes the given {@code command} on the specified {@code machine}.

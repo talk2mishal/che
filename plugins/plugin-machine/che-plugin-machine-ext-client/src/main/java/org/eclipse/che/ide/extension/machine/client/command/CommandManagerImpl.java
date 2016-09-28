@@ -43,6 +43,7 @@ import org.eclipse.che.ide.extension.machine.client.processes.panel.ProcessesPan
 import org.eclipse.che.ide.util.UUID;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,6 +68,7 @@ public class CommandManagerImpl implements CommandManager {
     private final CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
     private final CommandConsoleFactory                commandConsoleFactory;
     private final ProcessesPanelPresenter              processesPanelPresenter;
+    private final Set<CommandProducer>                 commandProducers;
 
     private final Map<String, CommandImpl>    commands;
     private final Set<CommandChangedListener> commandChangedListeners;
@@ -80,7 +82,8 @@ public class CommandManagerImpl implements CommandManager {
                               EventBus eventBus,
                               CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry,
                               CommandConsoleFactory commandConsoleFactory,
-                              ProcessesPanelPresenter processesPanelPresenter) {
+                              ProcessesPanelPresenter processesPanelPresenter,
+                              Set<CommandProducer> commandProducers) {
         this.commandTypeRegistry = commandTypeRegistry;
         this.appContext = appContext;
         this.workspaceServiceClient = workspaceServiceClient;
@@ -89,6 +92,7 @@ public class CommandManagerImpl implements CommandManager {
         this.commandPropertyValueProviderRegistry = commandPropertyValueProviderRegistry;
         this.commandConsoleFactory = commandConsoleFactory;
         this.processesPanelPresenter = processesPanelPresenter;
+        this.commandProducers = commandProducers;
 
         commands = new HashMap<>();
         commandChangedListeners = new HashSet<>();
@@ -220,24 +224,13 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public List<CommandPage> getPages(String type) {
-        final CommandType commandType = commandTypeRegistry.getCommandTypeById(type);
-
-        return commandType.getPages();
+        CommandType commandType = commandTypeRegistry.getCommandTypeById(type);
+        return commandType != null ? commandType.getPages() : Collections.emptyList();
     }
 
     @Override
-    public List<CommandProducer> getApplicableProducers() {
-        List<CommandProducer> producers = new ArrayList<>();
-
-        for (CommandType commandType : commandTypeRegistry.getCommandTypes()) {
-            for (CommandProducer commandProducer : commandType.getProducers()) {
-//                if (commandProducer.isApplicable()) {
-                producers.add(commandProducer);
-//                }
-            }
-        }
-
-        return producers;
+    public List<CommandProducer> getCommandProducers() {
+        return new ArrayList<>(commandProducers);
     }
 
     @Override

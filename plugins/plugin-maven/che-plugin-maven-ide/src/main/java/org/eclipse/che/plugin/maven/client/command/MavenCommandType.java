@@ -14,16 +14,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.command.CommandPage;
-import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectRelativePathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.ServerPortProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectPathProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectRelativePathProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.ServerPortProvider;
 import org.eclipse.che.plugin.maven.client.MavenResources;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -84,13 +82,6 @@ public class MavenCommandType implements CommandType {
     @Override
     public String getCommandLineTemplate() {
         return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey();
-    }
-
-    @Override
-    public List<CommandProducer> getProducers() {
-        ArrayList<CommandProducer> list = new ArrayList<>();
-        list.add(mavenTestCommandProducer);
-        return list;
     }
 
     @Override

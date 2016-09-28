@@ -14,7 +14,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.command.CommandPage;
-import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
@@ -23,9 +22,8 @@ import org.eclipse.che.ide.ext.java.client.JavaResources;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.ClasspathProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.OutputDirProvider;
 import org.eclipse.che.ide.ext.java.client.command.valueproviders.SourcepathProvider;
-import org.eclipse.che.ide.extension.machine.client.command.valueproviders.CurrentProjectPathProvider;
+import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectPathProvider;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,11 +93,6 @@ public class JavaCommandType implements CommandType {
                " src/Main.java" +
                " && java -classpath " + classpathProvider.getKey() + outputDirProvider.getKey() +
                " Main";
-    }
-
-    @Override
-    public List<CommandProducer> getProducers() {
-        return Collections.emptyList();
     }
 
     @Override

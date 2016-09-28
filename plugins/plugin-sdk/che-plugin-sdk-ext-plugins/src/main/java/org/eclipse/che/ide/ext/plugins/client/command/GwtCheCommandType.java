@@ -14,13 +14,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.command.CommandPage;
-import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.icon.Icon;
 import org.eclipse.che.ide.api.icon.IconRegistry;
 import org.eclipse.che.ide.ext.plugins.client.PluginsResources;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -76,11 +74,6 @@ public class GwtCheCommandType implements CommandType {
     public String getCommandLineTemplate() {
         return COMMAND_TEMPLATE.replace("$GWT_MODULE", IDE_GWT_MODULE)
                                .replace("$CHE_CLASSPATH", '"' + resources.cheClassPath().getText() + '"') + " -bindAddress 0.0.0.0";
-    }
-
-    @Override
-    public List<CommandProducer> getProducers() {
-        return Collections.emptyList();
     }
 
     @Override
