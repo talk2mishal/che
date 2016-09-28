@@ -225,7 +225,7 @@ public class CommandManagerImpl implements CommandManager {
     @Override
     public List<CommandPage> getPages(String type) {
         CommandType commandType = commandTypeRegistry.getCommandTypeById(type);
-        return commandType != null ? commandType.getPages() : Collections.emptyList();
+        return commandType != null ? commandType.getPages() : Collections.<CommandPage>emptyList();
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.eclipse.che.ide.extension.machine.client.command.edit.EditCommandsVie
 import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectPathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.macros.CurrentProjectRelativePathProvider;
 import org.eclipse.che.ide.extension.machine.client.command.macros.DevMachineHostNameProvider;
+import org.eclipse.che.ide.extension.machine.client.command.producer.CommandProducerActionFactory;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.EntityFactory;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.TerminalFactory;
 import org.eclipse.che.ide.extension.machine.client.inject.factories.WidgetsFactory;
@@ -99,6 +100,8 @@ public class MachineGinModule extends AbstractGinModule {
 
         bind(CommandManager.class).to(CommandManagerImpl.class).in(Singleton.class);
         bind(EditCommandsView.class).to(EditCommandsViewImpl.class).in(Singleton.class);
+
+        install(new GinFactoryModuleBuilder().build(CommandProducerActionFactory.class));
 
         bind(TargetsView.class).to(TargetsViewImpl.class).in(Singleton.class);
 
