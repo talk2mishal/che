@@ -21,9 +21,10 @@ import org.eclipse.che.ide.api.command.CommandManager;
 import org.eclipse.che.ide.api.command.CommandProducer;
 
 /**
- * Action for executing command produced by {@link CommandProducer}.
+ * Action for executing command which produced by {@link CommandProducer}.
  *
  * @author Artem Zatsarynnyi
+ * @see CommandProducer
  */
 public class CommandProducerAction extends Action {
 
