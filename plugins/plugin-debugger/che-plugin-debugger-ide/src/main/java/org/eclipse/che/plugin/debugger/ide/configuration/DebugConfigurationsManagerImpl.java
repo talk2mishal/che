@@ -238,7 +238,7 @@ public class DebugConfigurationsManagerImpl implements DebugConfigurationsManage
         if (debugger != null) {
             debuggerManager.setActiveDebugger(debugger);
 
-            currentProjectPathProvider.getValue().then(new Operation<String>() {
+            currentProjectPathProvider.expand().then(new Operation<String>() {
                 @Override
                 public void apply(String arg) throws OperationException {
                     Map<String, String> connectionProperties = prepareConnectionProperties(debugConfiguration, arg);

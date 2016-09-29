@@ -20,11 +20,11 @@ import org.eclipse.che.api.machine.shared.Constants;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
-import org.eclipse.che.ide.command.macros.CustomCommandPropertyValueProvider;
-import org.eclipse.che.ide.command.macros.ServerHostNameMacroProvider;
+import org.eclipse.che.ide.command.macro.CustomCommandMacro;
+import org.eclipse.che.ide.command.macro.ServerHostNameMacroProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,7 +54,7 @@ public class ServerHostNameMacroProviderTest {
     public static final String REF           = "ref";
 
     @Mock
-    private CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
+    private CommandMacroRegistry commandMacroRegistry;
 
     @Mock
     private EventBus eventBus;
@@ -78,37 +78,37 @@ public class ServerHostNameMacroProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        provider = new ServerHostNameMacroProvider(commandPropertyValueProviderRegistry, eventBus, appContext);
+        provider = new ServerHostNameMacroProvider(commandMacroRegistry, eventBus, appContext);
 
         registerProvider();
     }
 
     @Test
     public void getMacroProviders() throws Exception {
-        final Set<CommandPropertyValueProvider> providers = provider.getMacroProviders(devMachine);
+        final Set<CommandMacro> providers = provider.getMacroProviders(devMachine);
 
         assertEquals(providers.size(), 2);
 
-        final Iterator<CommandPropertyValueProvider> iterator = providers.iterator();
+        final Iterator<CommandMacro> iterator = providers.iterator();
 
-        final CommandPropertyValueProvider provider1 = iterator.next();
+        final CommandMacro provider1 = iterator.next();
 
-        assertTrue(provider1 instanceof CustomCommandPropertyValueProvider);
+        assertTrue(provider1 instanceof CustomCommandMacro);
         assertEquals(provider1.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT));
 
-        provider1.getValue().then(new Operation<String>() {
+        provider1.expand().then(new Operation<String>() {
             @Override
             public void apply(String address) throws OperationException {
                 assertEquals(address, PROTOCOL);
             }
         });
 
-        final CommandPropertyValueProvider provider2 = iterator.next();
+        final CommandMacro provider2 = iterator.next();
 
-        assertTrue(provider2 instanceof CustomCommandPropertyValueProvider);
+        assertTrue(provider2 instanceof CustomCommandMacro);
         assertEquals(provider2.getKey(), ServerHostNameMacroProvider.KEY.replace("%", WS_AGENT_PORT.substring(0, WS_AGENT_PORT.length() - 4)));
 
-        provider2.getValue().then(new Operation<String>() {
+        provider2.expand().then(new Operation<String>() {
             @Override
             public void apply(String address) throws OperationException {
                 assertEquals(address, PROTOCOL);

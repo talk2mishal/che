@@ -18,6 +18,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 import org.eclipse.che.ide.api.data.tree.NodeInterceptor;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import org.eclipse.che.ide.api.filetypes.FileType;
@@ -65,7 +66,6 @@ import org.eclipse.che.ide.ext.java.client.tree.LibraryNodeProvider;
 import org.eclipse.che.ide.ext.java.client.tree.SourceFolderDecorator;
 import org.eclipse.che.ide.ext.java.client.tree.TestFolderDecorator;
 import org.eclipse.che.ide.api.command.CommandType;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 import org.eclipse.che.ide.project.node.icon.NodeIconProvider;
 
 import static org.eclipse.che.ide.ext.java.client.action.OrganizeImportsAction.JAVA_ORGANIZE_IMPORT_ID;
@@ -117,11 +117,11 @@ public class JavaGinModule extends AbstractGinModule {
         bind(PreferencesManager.class).annotatedWith(JavaCompilerPreferenceManager.class).to(ErrorsWarningsPreferenceManager.class);
         GinMultibinder.newSetBinder(binder(), PreferencesManager.class).addBinding().to(ErrorsWarningsPreferenceManager.class);
 
-        GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class).addBinding().to(ClasspathProvider.class);
-        GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class).addBinding().to(OutputDirProvider.class);
-        GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class).addBinding().to(MainClassProvider.class);
-        GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class).addBinding().to(SourcepathProvider.class);
-        GinMultibinder.newSetBinder(binder(), CommandPropertyValueProvider.class).addBinding().to(CurrentClassFQNProvider.class);
+        GinMultibinder.newSetBinder(binder(), CommandMacro.class).addBinding().to(ClasspathProvider.class);
+        GinMultibinder.newSetBinder(binder(), CommandMacro.class).addBinding().to(OutputDirProvider.class);
+        GinMultibinder.newSetBinder(binder(), CommandMacro.class).addBinding().to(MainClassProvider.class);
+        GinMultibinder.newSetBinder(binder(), CommandMacro.class).addBinding().to(SourcepathProvider.class);
+        GinMultibinder.newSetBinder(binder(), CommandMacro.class).addBinding().to(CurrentClassFQNProvider.class);
         GinMultibinder.newSetBinder(binder(), ClasspathPagePresenter.class).addBinding().to(LibEntryPresenter.class);
         GinMultibinder.newSetBinder(binder(), ClasspathPagePresenter.class).addBinding().to(SourceEntryPresenter.class);
         GinMultibinder.newSetBinder(binder(), RenamingSupport.class).addBinding().to(JavaSourceRenameValidator.class);

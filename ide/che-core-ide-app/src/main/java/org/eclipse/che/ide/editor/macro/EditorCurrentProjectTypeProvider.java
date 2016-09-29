@@ -60,7 +60,7 @@ public class EditorCurrentProjectTypeProvider extends AbstractEditorMacroProvide
 
     /** {@inheritDoc} */
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final EditorPartPresenter editor = getActiveEditor();
 
         if (editor == null) {

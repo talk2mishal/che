@@ -46,7 +46,7 @@ public class ExplorerCurrentFileRelativePathProviderTest extends AbstractExplore
     public void getValue() throws Exception {
         initWithOneFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(FILE_1_PATH));
     }
@@ -55,7 +55,7 @@ public class ExplorerCurrentFileRelativePathProviderTest extends AbstractExplore
     public void getMultipleValues() throws Exception {
         initWithTwoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(Joiner.on(", ").join(FILE_1_PATH, FILE_2_PATH)));
     }
@@ -64,7 +64,7 @@ public class ExplorerCurrentFileRelativePathProviderTest extends AbstractExplore
     public void getEmptyValues() throws Exception {
         initWithNoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(""));
     }

@@ -99,13 +99,13 @@ public class DebugConfigurationsManagerImplTest extends TestCase {
         when(debugConfiguration.getType()).thenReturn(debugConfigurationType);
         when(debuggerManager.getDebugger(debugId)).thenReturn(debugger);
         when(debugger.connect(anyMap())).thenReturn(mock(Promise.class));
-        when(currentProjectPathProvider.getValue()).thenReturn(mock(Promise.class));
+        when(currentProjectPathProvider.expand()).thenReturn(mock(Promise.class));
         when(currentProjectPathProvider.getKey()).thenReturn("key");
 
         debugConfigurationsManager.apply(debugConfiguration);
 
         ArgumentCaptor<Operation> operationArgumentCaptor = ArgumentCaptor.forClass(Operation.class);
-        verify(currentProjectPathProvider.getValue()).then(operationArgumentCaptor.capture());
+        verify(currentProjectPathProvider.expand()).then(operationArgumentCaptor.capture());
         operationArgumentCaptor.getValue().apply("project path");
 
         verify(debuggerManager).setActiveDebugger(debugger);

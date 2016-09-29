@@ -17,11 +17,11 @@ import com.google.inject.Singleton;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 import org.eclipse.che.ide.api.resources.Container;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.ext.java.client.resource.SourceFolderMarker;
 import org.eclipse.che.ide.ext.java.client.util.JavaUtil;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 
 import static org.eclipse.che.ide.api.resources.Resource.FILE;
 import static org.eclipse.che.ide.ext.java.client.util.JavaUtil.isJavaFile;
@@ -32,7 +32,7 @@ import static org.eclipse.che.ide.ext.java.client.util.JavaUtil.isJavaFile;
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class CurrentClassFQNProvider implements CommandPropertyValueProvider {
+public class CurrentClassFQNProvider implements CommandMacro {
 
     private static final String KEY = "${current.class.fqn}";
     private final AppContext appContext;
@@ -53,7 +53,7 @@ public class CurrentClassFQNProvider implements CommandPropertyValueProvider {
     }
 
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final Resource[] resources = appContext.getResources();
 
         if (resources == null || resources.length > 1) {

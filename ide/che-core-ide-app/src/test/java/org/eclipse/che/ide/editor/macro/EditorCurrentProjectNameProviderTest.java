@@ -48,7 +48,7 @@ public class EditorCurrentProjectNameProviderTest extends AbstractEditorMacroPro
     public void getValue() throws Exception {
         initEditorWithTestFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(PROJECT_NAME));
@@ -56,7 +56,7 @@ public class EditorCurrentProjectNameProviderTest extends AbstractEditorMacroPro
 
     @Test
     public void getEmptyValue() throws Exception {
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(""));

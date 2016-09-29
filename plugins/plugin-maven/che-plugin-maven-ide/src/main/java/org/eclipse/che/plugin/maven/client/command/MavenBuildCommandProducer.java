@@ -17,34 +17,47 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.command.CommandImpl;
 import org.eclipse.che.ide.api.command.CommandProducer;
-import org.eclipse.che.ide.api.resources.Container;
-import org.eclipse.che.ide.api.resources.File;
 import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
-import org.eclipse.che.ide.ext.java.client.resource.SourceFolderMarker;
-import org.eclipse.che.ide.ext.java.client.util.JavaUtil;
-
-import static org.eclipse.che.ide.api.resources.Resource.FILE;
-import static org.eclipse.che.ide.ext.java.client.util.JavaUtil.isJavaFile;
 
 /**
- * Produces commands for launching tests with Maven.
+ * Produces commands for building module with Maven.
  *
  * @author Artem Zatsarynnyi
  */
 @Singleton
-public class MavenTestCommandProducer implements CommandProducer {
+public class MavenBuildCommandProducer implements CommandProducer {
 
     private final AppContext appContext;
 
     @Inject
-    public MavenTestCommandProducer(AppContext appContext) {
+    public MavenBuildCommandProducer(AppContext appContext) {
         this.appContext = appContext;
     }
 
     @Override
     public String getName() {
-        return "Test '" + getCurrentClassFQN() + "'";
+        return "Build '" + getFileName() + "' module";
+    }
+
+    private String getFileName() {
+        final Resource[] resources = appContext.getResources();
+        if (resources == null || resources.length != 1) {
+            return "";
+        }
+
+        final Optional<Project> projectOptional = appContext.getResource().getRelatedProject();
+
+        if (!projectOptional.isPresent()) {
+            return "";
+        }
+
+        final Project project = projectOptional.get();
+        if (project.isTypeOf("maven")) {
+            return project.getName();
+        }
+
+        return "";
     }
 
     @Override
@@ -63,8 +76,7 @@ public class MavenTestCommandProducer implements CommandProducer {
 
         final Project project = projectOptional.get();
         if (project.isTypeOf("maven") && resource.isFile()) {
-            final String ext = ((File)resource).getExtension();
-            return "java".equals(ext);
+            return "pom.xml".equals(resource.getName());
         }
 
         return false;
@@ -80,25 +92,8 @@ public class MavenTestCommandProducer implements CommandProducer {
             workingDirectory = projectOptional.get().getPath();
         }
 
-        MavenCommandModel mavenCommandModel = new MavenCommandModel("/projects" + workingDirectory, "test -Dtest=" + getCurrentClassFQN());
+        MavenCommandModel mavenCommandModel = new MavenCommandModel("/projects" + workingDirectory, "clean install");
 
         return new CommandImpl("name", mavenCommandModel.toCommandLine(), "mvn");
-    }
-
-    private String getCurrentClassFQN() {
-        final Resource[] resources = appContext.getResources();
-
-        if (resources == null || resources.length != 1) {
-            return "";
-        }
-
-        final Resource resource = resources[0];
-        final Optional<Resource> srcFolder = resource.getParentWithMarker(SourceFolderMarker.ID);
-
-        if (resource.getResourceType() == FILE && isJavaFile(resource) && srcFolder.isPresent()) {
-            return JavaUtil.resolveFQN((Container)srcFolder.get(), resource);
-        }
-
-        return "";
     }
 }

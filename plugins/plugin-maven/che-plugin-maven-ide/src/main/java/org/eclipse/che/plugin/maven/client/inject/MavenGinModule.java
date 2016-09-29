@@ -20,6 +20,7 @@ import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
 import org.eclipse.che.ide.api.resources.ResourceInterceptor;
 import org.eclipse.che.ide.project.ResolvingProjectStateHolder;
+import org.eclipse.che.plugin.maven.client.command.MavenBuildCommandProducer;
 import org.eclipse.che.plugin.maven.client.command.MavenCommandType;
 import org.eclipse.che.plugin.maven.client.command.MavenTestCommandProducer;
 import org.eclipse.che.plugin.maven.client.editor.PomEditorConfigurationFactory;
@@ -55,5 +56,6 @@ public class MavenGinModule extends AbstractGinModule {
         GinMultibinder.newSetBinder(binder(), ResolvingProjectStateHolder.class).addBinding().to(ResolvingMavenProjectStateHolder.class);
 
         GinMultibinder.newSetBinder(binder(), CommandProducer.class).addBinding().to(MavenTestCommandProducer.class);
+        GinMultibinder.newSetBinder(binder(), CommandProducer.class).addBinding().to(MavenBuildCommandProducer.class);
     }
 }

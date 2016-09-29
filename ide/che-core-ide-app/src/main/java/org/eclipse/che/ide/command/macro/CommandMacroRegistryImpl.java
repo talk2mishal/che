@@ -8,12 +8,12 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.command.macros;
+package org.eclipse.che.ide.command.macro;
 
 import com.google.inject.Inject;
 
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.ArrayList;
@@ -23,24 +23,24 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Implementation for {@link CommandPropertyValueProviderRegistry}.
+ * Implementation for {@link CommandMacroRegistry}.
  *
  * @author Artem Zatsarynnyi
  */
-public class CommandPropertyValueProviderRegistryImpl implements CommandPropertyValueProviderRegistry {
+public class CommandMacroRegistryImpl implements CommandMacroRegistry {
 
-    private final Map<String, CommandPropertyValueProvider> valueProviders;
+    private final Map<String, CommandMacro> valueProviders;
 
-    public CommandPropertyValueProviderRegistryImpl() {
+    public CommandMacroRegistryImpl() {
         this.valueProviders = new HashMap<>();
     }
 
     @Inject(optional = true)
-    public void register(Set<CommandPropertyValueProvider> valueProviders) {
-        for (CommandPropertyValueProvider provider : valueProviders) {
+    public void register(Set<CommandMacro> valueProviders) {
+        for (CommandMacro provider : valueProviders) {
             final String key = provider.getKey();
             if (this.valueProviders.containsKey(key)) {
-                Log.warn(CommandPropertyValueProviderRegistryImpl.class, "Value provider for key " + key + " is already registered.");
+                Log.warn(CommandMacroRegistryImpl.class, "Command macro '" + key + "' is already registered.");
             } else {
                 this.valueProviders.put(key, provider);
             }
@@ -48,17 +48,17 @@ public class CommandPropertyValueProviderRegistryImpl implements CommandProperty
     }
 
     @Override
-    public void unregister(CommandPropertyValueProvider valueProvider) {
+    public void unregister(CommandMacro valueProvider) {
         valueProviders.remove(valueProvider.getKey());
     }
 
     @Override
-    public CommandPropertyValueProvider getProvider(String key) {
+    public CommandMacro getProvider(String key) {
         return valueProviders.get(key);
     }
 
     @Override
-    public List<CommandPropertyValueProvider> getProviders() {
+    public List<CommandMacro> getProviders() {
         return new ArrayList<>(valueProviders.values());
     }
 

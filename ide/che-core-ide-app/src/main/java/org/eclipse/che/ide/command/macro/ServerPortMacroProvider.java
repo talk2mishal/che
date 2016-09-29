@@ -8,7 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.command.macros;
+package org.eclipse.che.ide.command.macro;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Sets;
@@ -18,8 +18,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.core.model.machine.Server;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
 
 import java.util.Map;
@@ -43,7 +43,7 @@ public class ServerPortMacroProvider extends AbstractServerMacroProvider {
     public static final String KEY = "${server.%.port}";
 
     @Inject
-    public ServerPortMacroProvider(CommandPropertyValueProviderRegistry providerRegistry,
+    public ServerPortMacroProvider(CommandMacroRegistry providerRegistry,
                                    EventBus eventBus,
                                    AppContext appContext) {
         super(providerRegistry, eventBus, appContext);
@@ -51,8 +51,8 @@ public class ServerPortMacroProvider extends AbstractServerMacroProvider {
 
     /** {@inheritDoc} */
     @Override
-    public Set<CommandPropertyValueProvider> getMacroProviders(DevMachine devMachine) {
-        final Set<CommandPropertyValueProvider> providers = Sets.newHashSet();
+    public Set<CommandMacro> getMacroProviders(DevMachine devMachine) {
+        final Set<CommandMacro> providers = Sets.newHashSet();
 
         for (Map.Entry<String, ? extends Server> entry : devMachine.getDescriptor().getRuntime().getServers().entrySet()) {
 
@@ -62,9 +62,9 @@ public class ServerPortMacroProvider extends AbstractServerMacroProvider {
 
             final String externalPort = entry.getValue().getAddress().split(":")[1];
 
-            CommandPropertyValueProvider macroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", entry.getKey()),
-                                                                                                externalPort,
-                                                                                                "Returns port of a server registered by name");
+            CommandMacro macroProvider = new CustomCommandMacro(KEY.replace("%", entry.getKey()),
+                                                                externalPort,
+                                                                "Returns port of a server registered by name");
 
             providers.add(macroProvider);
 
@@ -72,9 +72,9 @@ public class ServerPortMacroProvider extends AbstractServerMacroProvider {
             if (entry.getKey().endsWith("/tcp")) {
                 final String port = entry.getKey().substring(0, entry.getKey().length() - 4);
 
-                CommandPropertyValueProvider shortMacroProvider = new CustomCommandPropertyValueProvider(KEY.replace("%", port),
-                                                                                                         externalPort,
-                                                                                                         "Returns port of a server registered by name");
+                CommandMacro shortMacroProvider = new CustomCommandMacro(KEY.replace("%", port),
+                                                                         externalPort,
+                                                                         "Returns port of a server registered by name");
 
                 providers.add(shortMacroProvider);
             }

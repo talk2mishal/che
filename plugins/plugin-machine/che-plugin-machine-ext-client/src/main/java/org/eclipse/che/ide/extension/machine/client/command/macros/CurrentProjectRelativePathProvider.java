@@ -16,7 +16,7 @@ import com.google.inject.Singleton;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseProvider;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 import org.eclipse.che.ide.api.resources.Resource;
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.che.ide.api.resources.Resource;
  * @author Vlad Zhukovskiy
  */
 @Singleton
-public class CurrentProjectRelativePathProvider implements CommandPropertyValueProvider {
+public class CurrentProjectRelativePathProvider implements CommandMacro {
 
     private static final String KEY = "${current.project.relpath}";
 
@@ -52,7 +52,7 @@ public class CurrentProjectRelativePathProvider implements CommandPropertyValueP
     }
 
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final Resource[] resources = appContext.getResources();
 
         if (resources != null && resources.length == 1) {

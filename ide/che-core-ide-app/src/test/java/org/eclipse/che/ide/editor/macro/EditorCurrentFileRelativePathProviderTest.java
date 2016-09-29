@@ -48,7 +48,7 @@ public class EditorCurrentFileRelativePathProviderTest extends AbstractEditorMac
     public void getValue() throws Exception {
         initEditorWithTestFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(FILE_PATH));
@@ -56,7 +56,7 @@ public class EditorCurrentFileRelativePathProviderTest extends AbstractEditorMac
 
     @Test
     public void getEmptyValue() throws Exception {
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(""));

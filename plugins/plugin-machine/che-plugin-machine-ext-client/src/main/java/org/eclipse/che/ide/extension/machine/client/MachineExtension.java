@@ -60,8 +60,9 @@ import java.util.Set;
 
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_CENTER_TOOLBAR;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_CONSOLES_TREE_CONTEXT_MENU;
+import static org.eclipse.che.ide.api.action.IdeActions.GROUP_EDITOR_TAB_CONTEXT_MENU;
+import static org.eclipse.che.ide.api.action.IdeActions.GROUP_MAIN_CONTEXT_MENU;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_MAIN_MENU;
-import static org.eclipse.che.ide.api.action.IdeActions.GROUP_PROJECT_EXPLORER_CONTEXT_MENU;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_RIGHT_TOOLBAR;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_RUN;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_WORKSPACE;
@@ -262,10 +263,15 @@ public class MachineExtension {
 
 
         // populate context commands
-        DefaultActionGroup explorerContextMenu = (DefaultActionGroup)actionManager.getAction(GROUP_PROJECT_EXPLORER_CONTEXT_MENU);
+        DefaultActionGroup commandActionsGroup = new DefaultActionGroup(actionManager);
+        commandActionsGroup.addSeparator();
         for (CommandProducer commandProducer : commandProducers) {
-            explorerContextMenu.add(commandProducerActionFactory.create(commandProducer));
+            commandActionsGroup.add(commandProducerActionFactory.create(commandProducer));
         }
+        DefaultActionGroup mainContextMenu = (DefaultActionGroup)actionManager.getAction(GROUP_MAIN_CONTEXT_MENU);
+        DefaultActionGroup editorTabContextMenu = (DefaultActionGroup)actionManager.getAction(GROUP_EDITOR_TAB_CONTEXT_MENU);
+        mainContextMenu.add(commandActionsGroup);
+        editorTabContextMenu.add(commandActionsGroup);
 
 
         // Define hot-keys

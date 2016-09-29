@@ -30,8 +30,8 @@ import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.auth.OAuthServiceClient;
 import org.eclipse.che.ide.api.auth.OAuthServiceClientImpl;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.api.component.Component;
 import org.eclipse.che.ide.api.component.WsAgentComponent;
 import org.eclipse.che.ide.api.data.tree.NodeInterceptor;
@@ -114,7 +114,7 @@ import org.eclipse.che.ide.api.workspace.WorkspaceServiceClientImpl;
 import org.eclipse.che.ide.client.StartUpActionsProcessor;
 import org.eclipse.che.ide.client.WorkspaceStateRestorer;
 import org.eclipse.che.ide.command.CommandTypeRegistryImpl;
-import org.eclipse.che.ide.command.macros.CommandPropertyValueProviderRegistryImpl;
+import org.eclipse.che.ide.command.macro.CommandMacroRegistryImpl;
 import org.eclipse.che.ide.context.AppContextImpl;
 import org.eclipse.che.ide.editor.EditorAgentImpl;
 import org.eclipse.che.ide.editor.EditorRegistryImpl;
@@ -491,9 +491,9 @@ public class CoreGinModule extends AbstractGinModule {
         // Command API
         bind(CommandTypeRegistry.class).to(CommandTypeRegistryImpl.class).in(Singleton.class);
 
-        bind(CommandPropertyValueProviderRegistry.class).to(CommandPropertyValueProviderRegistryImpl.class).in(Singleton.class);
-        GinMultibinder<CommandPropertyValueProvider> macroProviders = GinMultibinder.newSetBinder(binder(),
-                                                                                                  CommandPropertyValueProvider.class);
+        bind(CommandMacroRegistry.class).to(CommandMacroRegistryImpl.class).in(Singleton.class);
+        GinMultibinder<CommandMacro> macroProviders = GinMultibinder.newSetBinder(binder(),
+                                                                                  CommandMacro.class);
         macroProviders.addBinding().to(EditorCurrentFileNameProvider.class);
         macroProviders.addBinding().to(EditorCurrentFilePathProvider.class);
         macroProviders.addBinding().to(EditorCurrentFileRelativePathProvider.class);

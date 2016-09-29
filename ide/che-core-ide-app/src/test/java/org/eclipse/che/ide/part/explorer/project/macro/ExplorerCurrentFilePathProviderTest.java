@@ -47,7 +47,7 @@ public class ExplorerCurrentFilePathProviderTest extends AbstractExplorerMacroPr
     public void getValue() throws Exception {
         initWithOneFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(Path.valueOf(PROJECTS_ROOT).append(FILE_1_PATH).toString()));
     }
@@ -56,7 +56,7 @@ public class ExplorerCurrentFilePathProviderTest extends AbstractExplorerMacroPr
     public void getMultipleValues() throws Exception {
         initWithTwoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(Joiner.on(", ").join(Path.valueOf(PROJECTS_ROOT).append(FILE_1_PATH).toString(),
                                                                 Path.valueOf(PROJECTS_ROOT).append(FILE_2_PATH).toString())));
@@ -66,7 +66,7 @@ public class ExplorerCurrentFilePathProviderTest extends AbstractExplorerMacroPr
     public void getEmptyValues() throws Exception {
         initWithNoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(""));
     }

@@ -48,7 +48,7 @@ public class EditorCurrentFileNameProviderTest extends AbstractEditorMacroProvid
     public void getValue() throws Exception {
         initEditorWithTestFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(FILE_NAME));
@@ -56,7 +56,7 @@ public class EditorCurrentFileNameProviderTest extends AbstractEditorMacroProvid
 
     @Test
     public void getEmptyValue() throws Exception {
-        provider.getValue();
+        provider.expand();
 
         verify(editorAgent).getActiveEditor();
         verify(promiseProvider).resolve(eq(""));

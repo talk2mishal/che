@@ -45,7 +45,7 @@ public class ExplorerCurrentProjectTypeProviderTest extends AbstractExplorerMacr
     public void getValue() throws Exception {
         initWithOneFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(PROJECT_TYPE));
     }
@@ -54,7 +54,7 @@ public class ExplorerCurrentProjectTypeProviderTest extends AbstractExplorerMacr
     public void getMultipleValues() throws Exception {
         initWithTwoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(""));
     }
@@ -63,7 +63,7 @@ public class ExplorerCurrentProjectTypeProviderTest extends AbstractExplorerMacr
     public void getEmptyValues() throws Exception {
         initWithNoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(""));
     }

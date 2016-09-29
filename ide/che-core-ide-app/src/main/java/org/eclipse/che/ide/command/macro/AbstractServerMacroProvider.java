@@ -8,14 +8,14 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.command.macros;
+package org.eclipse.che.ide.command.macro;
 
 import com.google.common.annotations.Beta;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.api.machine.DevMachine;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;
@@ -29,8 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * to allow fetch necessary information to use in custom commands, preview urls, etc.
  *
  * @author Vlad Zhukovskyi
- * @see CommandPropertyValueProviderRegistry
- * @see CommandPropertyValueProvider
+ * @see CommandMacroRegistry
+ * @see CommandMacro
  * @see ServerHostNameMacroProvider
  * @see ServerMacroProvider
  * @see ServerPortMacroProvider
@@ -40,10 +40,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Beta
 public abstract class AbstractServerMacroProvider implements WsAgentStateHandler {
 
-    private final CommandPropertyValueProviderRegistry providerRegistry;
-    private final AppContext                           appContext;
+    private final CommandMacroRegistry providerRegistry;
+    private final AppContext           appContext;
 
-    public AbstractServerMacroProvider(CommandPropertyValueProviderRegistry providerRegistry,
+    public AbstractServerMacroProvider(CommandMacroRegistry providerRegistry,
                                        EventBus eventBus,
                                        AppContext appContext) {
         this.providerRegistry = providerRegistry;
@@ -65,7 +65,7 @@ public abstract class AbstractServerMacroProvider implements WsAgentStateHandler
             return;
         }
 
-        final Set<CommandPropertyValueProvider> providers = getMacroProviders(devMachine);
+        final Set<CommandMacro> providers = getMacroProviders(devMachine);
         checkNotNull(providers);
 
         if (providers.isEmpty()) {
@@ -88,22 +88,22 @@ public abstract class AbstractServerMacroProvider implements WsAgentStateHandler
             return;
         }
 
-        for (CommandPropertyValueProvider provider : getMacroProviders(devMachine)) {
+        for (CommandMacro provider : getMacroProviders(devMachine)) {
             providerRegistry.unregister(provider);
         }
     }
 
     /**
-     * Returns the macros which implementation provides based on the information from the developer machine.
+     * Returns the macro which implementation provides based on the information from the developer machine.
      *
      * @param devMachine
      *         current developer machine
      * @return set of unique macro providers
      * @see DevMachine
-     * @see CommandPropertyValueProvider
+     * @see CommandMacro
      * @since 4.7.0
      */
-    public abstract Set<CommandPropertyValueProvider> getMacroProviders(DevMachine devMachine);
+    public abstract Set<CommandMacro> getMacroProviders(DevMachine devMachine);
 
     /** {@inheritDoc} */
     @Override

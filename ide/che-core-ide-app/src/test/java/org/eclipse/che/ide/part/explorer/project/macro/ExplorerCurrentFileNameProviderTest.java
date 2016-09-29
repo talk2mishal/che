@@ -46,7 +46,7 @@ public class ExplorerCurrentFileNameProviderTest extends AbstractExplorerMacroPr
     public void getValue() throws Exception {
         initWithOneFile();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(FILE_1_NAME));
     }
@@ -55,7 +55,7 @@ public class ExplorerCurrentFileNameProviderTest extends AbstractExplorerMacroPr
     public void getMultipleValues() throws Exception {
         initWithTwoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(Joiner.on(", ").join(FILE_1_NAME, FILE_2_NAME)));
     }
@@ -64,7 +64,7 @@ public class ExplorerCurrentFileNameProviderTest extends AbstractExplorerMacroPr
     public void getEmptyValues() throws Exception {
         initWithNoFiles();
 
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(""));
     }

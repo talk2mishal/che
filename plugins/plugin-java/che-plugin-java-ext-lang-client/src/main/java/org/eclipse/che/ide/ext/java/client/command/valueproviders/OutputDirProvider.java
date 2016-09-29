@@ -19,7 +19,7 @@ import org.eclipse.che.api.promises.client.PromiseProvider;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 
 import static org.eclipse.che.ide.ext.java.client.util.JavaUtil.isJavaProject;
 import static org.eclipse.che.ide.ext.java.shared.Constants.OUTPUT_FOLDER;
@@ -30,7 +30,7 @@ import static org.eclipse.che.ide.ext.java.shared.Constants.OUTPUT_FOLDER;
  * @author Valeriy Svydenko
  */
 @Singleton
-public class OutputDirProvider implements CommandPropertyValueProvider {
+public class OutputDirProvider implements CommandMacro {
 
     private static final String KEY = "${project.java.output.dir}";
 
@@ -54,7 +54,7 @@ public class OutputDirProvider implements CommandPropertyValueProvider {
     }
 
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final Resource[] resources = appContext.getResources();
 
         if (resources != null && resources.length == 1) {

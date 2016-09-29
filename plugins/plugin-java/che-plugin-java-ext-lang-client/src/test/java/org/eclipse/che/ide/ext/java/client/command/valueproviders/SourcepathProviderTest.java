@@ -108,7 +108,7 @@ public class SourcepathProviderTest {
         when(classpathContainer.getClasspathEntries(anyString())).thenReturn(classpathEntriesPromise);
         when(classpathResolver.getSources()).thenReturn(sources);
 
-        sourcepathProvider.getValue();
+        sourcepathProvider.expand();
 
         verify(classpathEntriesPromise).then(classpathEntriesCapture.capture());
         String classpath = classpathEntriesCapture.getValue().apply(entries);
@@ -127,7 +127,7 @@ public class SourcepathProviderTest {
         when(classpathContainer.getClasspathEntries(anyString())).thenReturn(classpathEntriesPromise);
         when(classpathResolver.getLibs()).thenReturn(libs);
 
-        sourcepathProvider.getValue();
+        sourcepathProvider.expand();
 
         verify(classpathEntriesPromise).then(classpathEntriesCapture.capture());
         String classpath = classpathEntriesCapture.getValue().apply(entries);

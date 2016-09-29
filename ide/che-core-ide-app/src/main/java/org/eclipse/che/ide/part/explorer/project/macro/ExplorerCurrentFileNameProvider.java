@@ -19,8 +19,8 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 import org.eclipse.che.ide.api.data.tree.Node;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.part.explorer.project.ProjectExplorerPresenter;
 import org.eclipse.che.ide.resources.tree.ResourceNode;
@@ -41,13 +41,13 @@ import static com.google.common.collect.Iterables.transform;
  * In case if project explorer has more than one selected file, comma separated file list is returned.
  *
  * @author Vlad Zhukovskyi
- * @see CommandPropertyValueProvider
+ * @see CommandMacro
  * @see ProjectExplorerPresenter
  * @since 4.7.0
  */
 @Beta
 @Singleton
-public class ExplorerCurrentFileNameProvider implements CommandPropertyValueProvider {
+public class ExplorerCurrentFileNameProvider implements CommandMacro {
 
     public static final String KEY = "${explorer.current.file.name}";
 
@@ -104,7 +104,7 @@ public class ExplorerCurrentFileNameProvider implements CommandPropertyValueProv
 
     /** {@inheritDoc} */
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
 
         List<Node> selectedNodes = projectExplorer.getTree().getSelectionModel().getSelectedNodes();
 

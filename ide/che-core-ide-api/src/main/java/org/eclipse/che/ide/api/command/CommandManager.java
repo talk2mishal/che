@@ -12,7 +12,7 @@ package org.eclipse.che.ide.api.command;
 
 import org.eclipse.che.api.core.model.machine.Machine;
 import org.eclipse.che.api.promises.client.Promise;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 
 import java.util.List;
 import java.util.Map;
@@ -58,21 +58,27 @@ public interface CommandManager {
     List<CommandProducer> getCommandProducers();
 
     /**
-     * Executes the given {@code command} on the specified {@code machine}.
+     * Sends the the given {@code command} to the specified {@code machine} for execution.
+     * <p><b>Note</b> that all {@link CommandMacro}s will be expanded into
+     * real values before sending the {@code command} for execution.
      *
      * @param command
      *         command to execute
      * @param machine
      *         machine to execute the command
+     * @see CommandMacro
+     * @see #expandMacros(String)
      */
     void executeCommand(CommandImpl command, Machine machine);
 
     /**
-     * Substitutes all macroses with the appropriate values in the given {@code commandLine}.
+     * Expands all macros in the given {@code commandLine}.
+     * <p>If {@link CommandManager} is unable to find a macro, the macro will not be expanded.
      *
-     * @see CommandPropertyValueProvider
+     * @see CommandMacro
+     * @see #executeCommand(CommandImpl, Machine)
      */
-    Promise<String> substituteMacroses(String commandLine);
+    Promise<String> expandMacros(String commandLine);
 
     void addCommandChangedListener(CommandChangedListener listener);
 

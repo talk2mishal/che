@@ -8,31 +8,31 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.api.command.macros;
+package org.eclipse.che.ide.api.command.macro;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * Registry for {@link CommandPropertyValueProvider}s.
+ * Registry for {@link CommandMacro}s.
  *
  * @author Artem Zatsarynnyi
- * @see CommandPropertyValueProvider
+ * @see CommandMacro
  */
-public interface CommandPropertyValueProviderRegistry {
+public interface CommandMacroRegistry {
 
     /** Register set of property value providers. */
-    void register(Set<CommandPropertyValueProvider> valueProviders);
+    void register(Set<CommandMacro> valueProviders);
 
     /** Unregister specific property value provider. */
-    void unregister(CommandPropertyValueProvider valueProvider);
+    void unregister(CommandMacro valueProvider);
 
-    /** Returns keys of all registered {@link CommandPropertyValueProvider}s. */
+    /** Returns keys of all registered {@link CommandMacro}s. */
     Set<String> getKeys();
 
-    /** Returns {@link CommandPropertyValueProvider} by the given key. */
-    CommandPropertyValueProvider getProvider(String key);
+    /** Returns {@link CommandMacro} by the given key. */
+    CommandMacro getProvider(String key);
 
-    /** Returns all registered {@link CommandPropertyValueProvider}s. */
-    List<CommandPropertyValueProvider> getProviders();
+    /** Returns all registered {@link CommandMacro}s. */
+    List<CommandMacro> getProviders();
 }

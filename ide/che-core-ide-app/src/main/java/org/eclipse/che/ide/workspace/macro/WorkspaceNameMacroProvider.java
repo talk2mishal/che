@@ -17,7 +17,7 @@ import com.google.inject.Singleton;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseProvider;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 
 /**
  * Provider which is responsible for retrieving the workspace name.
@@ -25,12 +25,12 @@ import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
  * Macro provided: <code>${workspace.name}</code>
  *
  * @author Vlad Zhukovskyi
- * @see CommandPropertyValueProvider
+ * @see CommandMacro
  * @since 4.7.0
  */
 @Beta
 @Singleton
-public class WorkspaceNameMacroProvider implements CommandPropertyValueProvider {
+public class WorkspaceNameMacroProvider implements CommandMacro {
 
     public static final String KEY = "${workspace.name}";
 
@@ -56,7 +56,7 @@ public class WorkspaceNameMacroProvider implements CommandPropertyValueProvider 
 
     /** {@inheritDoc} */
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         return promises.resolve(appContext.getWorkspaceName());
     }
 }

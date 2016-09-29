@@ -22,7 +22,6 @@ import org.eclipse.che.api.promises.client.FunctionException;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
-import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.command.CommandImpl;
@@ -31,8 +30,6 @@ import org.eclipse.che.ide.api.command.CommandPage;
 import org.eclipse.che.ide.api.command.CommandProducer;
 import org.eclipse.che.ide.api.command.CommandType;
 import org.eclipse.che.ide.api.command.CommandTypeRegistry;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.workspace.WorkspaceServiceClient;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStartedEvent;
@@ -46,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,15 +56,15 @@ public class CommandManagerImpl implements CommandManager {
 
     public static final String PREVIEW_URL_ATTR = "previewUrl";
 
-    private final CommandTypeRegistry                  commandTypeRegistry;
-    private final AppContext                           appContext;
-    private final WorkspaceServiceClient               workspaceServiceClient;
-    private final MachineServiceClient                 machineServiceClient;
-    private final DtoFactory                           dtoFactory;
-    private final CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry;
-    private final CommandConsoleFactory                commandConsoleFactory;
-    private final ProcessesPanelPresenter              processesPanelPresenter;
-    private final Set<CommandProducer>                 commandProducers;
+    private final CommandTypeRegistry     commandTypeRegistry;
+    private final AppContext              appContext;
+    private final WorkspaceServiceClient  workspaceServiceClient;
+    private final MachineServiceClient    machineServiceClient;
+    private final DtoFactory              dtoFactory;
+    private final MacroPreProcessor       macroPreProcessor;
+    private final CommandConsoleFactory   commandConsoleFactory;
+    private final ProcessesPanelPresenter processesPanelPresenter;
+    private final Set<CommandProducer>    commandProducers;
 
     private final Map<String, CommandImpl>    commands;
     private final Set<CommandChangedListener> commandChangedListeners;
@@ -80,7 +76,7 @@ public class CommandManagerImpl implements CommandManager {
                               MachineServiceClient machineServiceClient,
                               DtoFactory dtoFactory,
                               EventBus eventBus,
-                              CommandPropertyValueProviderRegistry commandPropertyValueProviderRegistry,
+                              MacroPreProcessor macroPreProcessor,
                               CommandConsoleFactory commandConsoleFactory,
                               ProcessesPanelPresenter processesPanelPresenter,
                               Set<CommandProducer> commandProducers) {
@@ -89,7 +85,7 @@ public class CommandManagerImpl implements CommandManager {
         this.workspaceServiceClient = workspaceServiceClient;
         this.machineServiceClient = machineServiceClient;
         this.dtoFactory = dtoFactory;
-        this.commandPropertyValueProviderRegistry = commandPropertyValueProviderRegistry;
+        this.macroPreProcessor = macroPreProcessor;
         this.commandConsoleFactory = commandConsoleFactory;
         this.processesPanelPresenter = processesPanelPresenter;
         this.commandProducers = commandProducers;
@@ -241,12 +237,15 @@ public class CommandManagerImpl implements CommandManager {
         console.listenToOutput(outputChannel);
         processesPanelPresenter.addCommandOutput(machine.getId(), console);
 
-        substituteMacroses(command.getCommandLine()).then(new Operation<String>() {
+        expandMacros(command.getCommandLine()).then(new Operation<String>() {
             @Override
             public void apply(String arg) throws OperationException {
+                final CommandImpl toExecute = new CommandImpl(command);
+                toExecute.setCommandLine(arg);
+
                 Promise<MachineProcessDto> processPromise = machineServiceClient.executeCommand(machine.getWorkspaceId(),
                                                                                                 machine.getId(),
-                                                                                                command,
+                                                                                                toExecute,
                                                                                                 outputChannel);
                 processPromise.then(new Operation<MachineProcessDto>() {
                     @Override
@@ -259,41 +258,8 @@ public class CommandManagerImpl implements CommandManager {
     }
 
     @Override
-    public Promise<String> substituteMacroses(String commandLine) {
-        Promise<String> promise = Promises.resolve(null);
-        CommandLineContainer commandLineContainer = new CommandLineContainer(commandLine);
-        return replaceParameters(promise, commandLineContainer, commandPropertyValueProviderRegistry.getProviders().iterator());
-    }
-
-
-    private Promise<String> replaceParameters(Promise<String> promise,
-                                              CommandLineContainer commandLineContainer,
-                                              Iterator<CommandPropertyValueProvider> iterator) {
-        if (!iterator.hasNext()) {
-            return promise;
-        }
-
-        final CommandPropertyValueProvider provider = iterator.next();
-
-        Promise<String> derivedPromise = promise.thenPromise(proceedRefactoringMove(commandLineContainer, provider));
-
-        return replaceParameters(derivedPromise, commandLineContainer, iterator);
-    }
-
-    private Function<String, Promise<String>> proceedRefactoringMove(final CommandLineContainer commandLineContainer,
-                                                                     final CommandPropertyValueProvider provider) {
-        return new Function<String, Promise<String>>() {
-            @Override
-            public Promise<String> apply(String arg) throws FunctionException {
-                return provider.getValue().thenPromise(new Function<String, Promise<String>>() {
-                    @Override
-                    public Promise<String> apply(String arg) throws FunctionException {
-                        commandLineContainer.setCommandLine(commandLineContainer.getCommandLine().replace(provider.getKey(), arg));
-                        return Promises.resolve(commandLineContainer.getCommandLine());
-                    }
-                });
-            }
-        };
+    public Promise<String> expandMacros(String commandLine) {
+        return macroPreProcessor.expandMacros(commandLine);
     }
 
     @Override
@@ -350,21 +316,5 @@ public class CommandManagerImpl implements CommandManager {
         }
 
         return newCommandName;
-    }
-
-    private class CommandLineContainer {
-        private String commandLine;
-
-        CommandLineContainer(String commandLine) {
-            this.commandLine = commandLine;
-        }
-
-        public String getCommandLine() {
-            return commandLine;
-        }
-
-        public void setCommandLine(String commandLine) {
-            this.commandLine = commandLine;
-        }
     }
 }

@@ -14,7 +14,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
-import org.eclipse.che.ide.command.macros.CustomCommandPropertyValueProvider;
+import org.eclipse.che.ide.command.macro.CustomCommandMacro;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,22 +22,22 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertSame;
 
 /**
- * Unit tests for the {@link CustomCommandPropertyValueProvider}
+ * Unit tests for the {@link CustomCommandMacro}
  *
  * @author Vlad Zhukovskyi
  */
 @RunWith(GwtMockitoTestRunner.class)
-public class CustomCommandPropertyValueProviderTest {
+public class CustomCommandMacroTest {
 
     public static final String KEY   = "key";
     public static final String VALUE = "value";
     public static final String DESCRIPTION = "description";
 
-    private CustomCommandPropertyValueProvider provider;
+    private CustomCommandMacro provider;
 
     @Before
     public void init() throws Exception {
-        provider = new CustomCommandPropertyValueProvider(KEY, VALUE, DESCRIPTION);
+        provider = new CustomCommandMacro(KEY, VALUE, DESCRIPTION);
     }
 
     @Test
@@ -47,7 +47,7 @@ public class CustomCommandPropertyValueProviderTest {
 
     @Test
     public void getValue() throws Exception {
-        provider.getValue().then(new Operation<String>() {
+        provider.expand().then(new Operation<String>() {
             @Override
             public void apply(String value) throws OperationException {
                 assertSame(value, VALUE);

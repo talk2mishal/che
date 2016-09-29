@@ -19,13 +19,13 @@ import org.eclipse.che.api.promises.client.FunctionException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseProvider;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 import org.eclipse.che.ide.api.resources.Project;
 import org.eclipse.che.ide.api.resources.Resource;
 import org.eclipse.che.ide.ext.java.client.command.ClasspathContainer;
 import org.eclipse.che.ide.ext.java.client.project.classpath.ClasspathResolver;
 import org.eclipse.che.ide.ext.java.client.util.JavaUtil;
 import org.eclipse.che.ide.ext.java.shared.dto.classpath.ClasspathEntryDto;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
 
 import java.util.List;
 import java.util.Set;
@@ -36,7 +36,7 @@ import java.util.Set;
  * @author Valeriy Svydenko
  */
 @Singleton
-public class SourcepathProvider implements CommandPropertyValueProvider {
+public class SourcepathProvider implements CommandMacro {
 
     private static final String KEY = "${project.java.sourcepath}";
 
@@ -67,7 +67,7 @@ public class SourcepathProvider implements CommandPropertyValueProvider {
     }
 
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final Resource[] resources = appContext.getResources();
 
         if (resources == null || resources.length != 1) {

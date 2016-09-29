@@ -104,7 +104,7 @@ public class CommandOutputConsolePresenter implements CommandOutputConsole, Outp
 
         final String previewUrl = command.getAttributes().get(PREVIEW_URL_ATTR);
         if (!isNullOrEmpty(previewUrl)) {
-            commandManager.substituteMacroses(previewUrl).then(new Operation<String>() {
+            commandManager.expandMacros(previewUrl).then(new Operation<String>() {
                 @Override
                 public void apply(String arg) throws OperationException {
                     view.showPreviewUrl(arg);

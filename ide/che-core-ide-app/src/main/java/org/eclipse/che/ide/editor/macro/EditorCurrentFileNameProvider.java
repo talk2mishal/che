@@ -56,7 +56,7 @@ public class EditorCurrentFileNameProvider extends AbstractEditorMacroProvider {
 
     /** {@inheritDoc} */
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         final EditorPartPresenter editor = getActiveEditor();
 
         if (editor == null) {

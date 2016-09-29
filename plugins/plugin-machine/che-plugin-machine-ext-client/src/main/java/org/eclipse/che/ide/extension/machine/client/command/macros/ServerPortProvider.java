@@ -22,8 +22,8 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProviderRegistry;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
+import org.eclipse.che.ide.api.command.macro.CommandMacroRegistry;
 import org.eclipse.che.ide.api.machine.MachineServiceClient;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateEvent;
 import org.eclipse.che.ide.api.machine.events.WsAgentStateHandler;
@@ -41,11 +41,11 @@ public class ServerPortProvider implements WsAgentStateHandler {
 
     public static final String KEY_TEMPLATE = "${server.port.%}";
 
-    private final MachineServiceClient                 machineServiceClient;
-    private final CommandPropertyValueProviderRegistry commandPropertyRegistry;
-    private final AppContext                           appContext;
+    private final MachineServiceClient machineServiceClient;
+    private final CommandMacroRegistry commandPropertyRegistry;
+    private final AppContext           appContext;
 
-    private Set<CommandPropertyValueProvider> providers;
+    private Set<CommandMacro> providers;
 
     private final Operation<MachineDto> registerProviders = new Operation<MachineDto>() {
         @Override
@@ -58,7 +58,7 @@ public class ServerPortProvider implements WsAgentStateHandler {
     @Inject
     public ServerPortProvider(EventBus eventBus,
                               MachineServiceClient machineServiceClient,
-                              CommandPropertyValueProviderRegistry commandPropertyRegistry,
+                              CommandMacroRegistry commandPropertyRegistry,
                               AppContext appContext) {
         this.machineServiceClient = machineServiceClient;
         this.commandPropertyRegistry = commandPropertyRegistry;
@@ -76,8 +76,8 @@ public class ServerPortProvider implements WsAgentStateHandler {
         }
     }
 
-    private Set<CommandPropertyValueProvider> getProviders(MachineDto machine) {
-        Set<CommandPropertyValueProvider> providers = Sets.newHashSet();
+    private Set<CommandMacro> getProviders(MachineDto machine) {
+        Set<CommandMacro> providers = Sets.newHashSet();
         for (Map.Entry<String, ServerDto> entry : machine.getRuntime().getServers().entrySet()) {
             providers.add(new AddressProvider(entry.getKey(),
                                               entry.getValue().getAddress(),
@@ -99,14 +99,14 @@ public class ServerPortProvider implements WsAgentStateHandler {
 
     @Override
     public void onWsAgentStopped(WsAgentStateEvent event) {
-        for (CommandPropertyValueProvider provider : providers) {
+        for (CommandMacro provider : providers) {
             commandPropertyRegistry.unregister(provider);
         }
 
         providers.clear();
     }
 
-    private class AddressProvider implements CommandPropertyValueProvider {
+    private class AddressProvider implements CommandMacro {
 
         String variable;
         String address;
@@ -129,7 +129,7 @@ public class ServerPortProvider implements WsAgentStateHandler {
         }
 
         @Override
-        public Promise<String> getValue() {
+        public Promise<String> expand() {
             return Promises.resolve(address);
         }
     }

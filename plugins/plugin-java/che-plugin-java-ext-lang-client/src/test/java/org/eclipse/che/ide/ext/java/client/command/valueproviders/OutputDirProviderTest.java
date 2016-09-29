@@ -91,7 +91,7 @@ public class OutputDirProviderTest {
         resources = null;
         when(appContext.getResources()).thenReturn(resources);
 
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq(""));
     }
@@ -101,7 +101,7 @@ public class OutputDirProviderTest {
         resources = new Resource[]{resource1, resource2};
         when(appContext.getResources()).thenReturn(resources);
 
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq(""));
     }
@@ -110,7 +110,7 @@ public class OutputDirProviderTest {
     public void valueShouldBeEmptyIfRelatedProjectOfSelectedResourceIsNull() throws Exception {
         when(projectOptional.isPresent()).thenReturn(false);
 
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq(""));
     }
@@ -120,14 +120,14 @@ public class OutputDirProviderTest {
         attributes.put(LANGUAGE, singletonList("cpp"));
         when(relatedProject.getAttributes()).thenReturn(attributes);
 
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq(""));
     }
 
     @Test
     public void outputFolderShouldBeRootOfProjectIfAttributeDoesNotExist() throws Exception {
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq("/projects/projectParent/project"));
     }
@@ -136,7 +136,7 @@ public class OutputDirProviderTest {
     public void outputFolderShouldBeSetAsValueOfAttribute() throws Exception {
         attributes.put(OUTPUT_FOLDER, singletonList("bin"));
 
-        provider.getValue();
+        provider.expand();
 
         verify(promises).resolve(eq("/projects/projectParent/project/bin"));
     }

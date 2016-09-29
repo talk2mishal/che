@@ -55,7 +55,7 @@ public class WorkspaceNameMacroProviderTest {
 
     @Test
     public void getValue() throws Exception {
-        provider.getValue();
+        provider.expand();
 
         verify(promiseProvider).resolve(eq(WS_NAME));
     }

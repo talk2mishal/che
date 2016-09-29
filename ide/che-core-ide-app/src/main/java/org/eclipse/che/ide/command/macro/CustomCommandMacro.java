@@ -8,14 +8,14 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  *******************************************************************************/
-package org.eclipse.che.ide.command.macros;
+package org.eclipse.che.ide.command.macro;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.ide.api.command.macros.CommandPropertyValueProvider;
+import org.eclipse.che.ide.api.command.macro.CommandMacro;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -23,17 +23,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Custom macro provider which allows to register user's macro with the provided value.
  *
  * @author Vlad Zhukovskyi
- * @see CommandPropertyValueProvider
+ * @see CommandMacro
  * @since 4.7.0
  */
 @Beta
-public class CustomCommandPropertyValueProvider implements CommandPropertyValueProvider {
+public class CustomCommandMacro implements CommandMacro {
 
     private final String key;
     private final String value;
     private final String description;
 
-    public CustomCommandPropertyValueProvider(String key, String value, String description) {
+    public CustomCommandMacro(String key, String value, String description) {
         this.key = checkNotNull(key, "Key should not be null");
         this.value = checkNotNull(value, "Value should not be null");
         this.description = checkNotNull(description, "Description should not be null");
@@ -52,7 +52,7 @@ public class CustomCommandPropertyValueProvider implements CommandPropertyValueP
 
     /** {@inheritDoc} */
     @Override
-    public Promise<String> getValue() {
+    public Promise<String> expand() {
         return Promises.resolve(value);
     }
 
@@ -61,7 +61,7 @@ public class CustomCommandPropertyValueProvider implements CommandPropertyValueP
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomCommandPropertyValueProvider that = (CustomCommandPropertyValueProvider)o;
+        CustomCommandMacro that = (CustomCommandMacro)o;
         return Objects.equal(key, that.key) &&
                Objects.equal(value, that.value) &&
                Objects.equal(description, that.description);
@@ -76,7 +76,7 @@ public class CustomCommandPropertyValueProvider implements CommandPropertyValueP
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "CustomCommandPropertyValueProvider{" +
+        return "CustomCommandMacro{" +
                "key='" + key + '\'' +
                ", value='" + value + '\'' +
                ", description='" + description + '\'' +
