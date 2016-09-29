@@ -20,9 +20,9 @@ public interface CommandProducer {
     /** Returns the text that will be used as related action's title. */
     String getName();
 
-    /** Whether the producer can produce command from the current context? */
+    /** Whether the command produced by concrete producer is applicable to the current context? */
     boolean isApplicable();
 
-    /** Creates command from the current context of application. */
+    /** Creates command from the current context. */
     CommandImpl createCommand();
 }
