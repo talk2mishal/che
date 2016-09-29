@@ -53,7 +53,7 @@ public class ExplorerCurrentProjectNameProvider implements CommandMacro {
 
     /** {@inheritDoc} */
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

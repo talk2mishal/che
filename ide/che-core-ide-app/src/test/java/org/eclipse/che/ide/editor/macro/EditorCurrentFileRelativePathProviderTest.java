@@ -41,7 +41,7 @@ public class EditorCurrentFileRelativePathProviderTest extends AbstractEditorMac
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), EditorCurrentFileRelativePathProvider.KEY);
+        assertSame(provider.getName(), EditorCurrentFileRelativePathProvider.KEY);
     }
 
     @Test

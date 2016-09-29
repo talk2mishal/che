@@ -53,6 +53,6 @@ public class MavenCommandTypeTest {
     public void testGettingCommandTemplate() throws Exception {
         mavenCommandType.getCommandLineTemplate();
 
-        verify(currentProjectPathProvider).getKey();
+        verify(currentProjectPathProvider).getName();
     }
 }

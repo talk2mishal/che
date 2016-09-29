@@ -77,8 +77,8 @@ public class GwtCommandType implements CommandType {
 
     @Override
     public String getCommandLineTemplate() {
-        return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey() + " -Dgwt.bindAddress=" +
-               devMachineHostNameProvider.getKey();
+        return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getName() + " -Dgwt.bindAddress=" +
+               devMachineHostNameProvider.getName();
     }
 
     @Override

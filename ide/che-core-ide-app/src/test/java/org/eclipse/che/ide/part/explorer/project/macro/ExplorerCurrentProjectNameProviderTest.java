@@ -38,7 +38,7 @@ public class ExplorerCurrentProjectNameProviderTest extends AbstractExplorerMacr
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), ExplorerCurrentProjectNameProvider.KEY);
+        assertSame(provider.getName(), ExplorerCurrentProjectNameProvider.KEY);
     }
 
     @Test

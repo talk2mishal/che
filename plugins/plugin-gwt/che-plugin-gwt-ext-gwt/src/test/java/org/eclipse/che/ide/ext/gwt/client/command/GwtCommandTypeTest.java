@@ -55,7 +55,7 @@ public class GwtCommandTypeTest {
     public void shouldReturnCommandTemplate() throws Exception {
         gwtCommandType.getCommandLineTemplate();
 
-        verify(currentProjectPathProvider).getKey();
-        verify(devMachineHostNameProvider).getKey();
+        verify(currentProjectPathProvider).getName();
+        verify(devMachineHostNameProvider).getName();
     }
 }

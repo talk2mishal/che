@@ -148,7 +148,7 @@ public class SourcepathProviderTest {
 
     @Test
     public void keyOfTheSourcepathShouldBeReturned() throws Exception {
-        assertEquals("${project.java.sourcepath}", sourcepathProvider.getKey());
+        assertEquals("${project.java.sourcepath}", sourcepathProvider.getName());
     }
 
 }

@@ -39,7 +39,7 @@ public class ExplorerCurrentFileNameProviderTest extends AbstractExplorerMacroPr
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), ExplorerCurrentFileNameProvider.KEY);
+        assertSame(provider.getName(), ExplorerCurrentFileNameProvider.KEY);
     }
 
     @Test

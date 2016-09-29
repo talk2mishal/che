@@ -49,7 +49,7 @@ public class EditorCurrentProjectNameProvider extends AbstractEditorMacroProvide
 
     /** {@inheritDoc} */
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

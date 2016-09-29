@@ -50,7 +50,7 @@ public class EditorCurrentFilePathProvider extends AbstractEditorMacroProvider {
 
     /** {@inheritDoc} */
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

@@ -40,7 +40,7 @@ public class ExplorerCurrentFilePathProviderTest extends AbstractExplorerMacroPr
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), ExplorerCurrentFilePathProvider.KEY);
+        assertSame(provider.getName(), ExplorerCurrentFilePathProvider.KEY);
     }
 
     @Test

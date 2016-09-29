@@ -74,7 +74,7 @@ public class GdbConfigurationPagePresenterTest {
         verify(configuration, atLeastOnce()).getHost();
         verify(configuration, atLeastOnce()).getPort();
         verify(configuration, atLeastOnce()).getConnectionProperties();
-        verify(currentProjectPathProvider).getKey();
+        verify(currentProjectPathProvider).getName();
     }
 
     @Test

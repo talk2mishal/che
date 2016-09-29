@@ -188,6 +188,6 @@ public class ClasspathProviderTest {
 
     @Test
     public void keyOfTheClasspathShouldBeReturned() throws Exception {
-        assertEquals("${project.java.classpath}", classpathProvider.getKey());
+        assertEquals("${project.java.classpath}", classpathProvider.getName());
     }
 }

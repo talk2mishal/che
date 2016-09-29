@@ -86,12 +86,12 @@ public class JavaCommandType implements CommandType {
 
     @Override
     public String getCommandLineTemplate() {
-        return "cd " + currentProjectPathProvider.getKey() +
-               " && javac -classpath " + classpathProvider.getKey() +
-               " -sourcepath " + sourcepathProvider.getKey() +
-               " -d " + outputDirProvider.getKey() +
+        return "cd " + currentProjectPathProvider.getName() +
+               " && javac -classpath " + classpathProvider.getName() +
+               " -sourcepath " + sourcepathProvider.getName() +
+               " -d " + outputDirProvider.getName() +
                " src/Main.java" +
-               " && java -classpath " + classpathProvider.getKey() + outputDirProvider.getKey() +
+               " && java -classpath " + classpathProvider.getName() + outputDirProvider.getName() +
                " Main";
     }
 

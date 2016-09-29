@@ -42,7 +42,7 @@ public class CustomCommandMacroTest {
 
     @Test
     public void getKey() throws Exception {
-        assertSame(provider.getKey(), KEY);
+        assertSame(provider.getName(), KEY);
     }
 
     @Test

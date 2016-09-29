@@ -41,7 +41,7 @@ public class EditorCurrentProjectTypeProviderTest extends AbstractEditorMacroPro
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), EditorCurrentProjectTypeProvider.KEY);
+        assertSame(provider.getName(), EditorCurrentProjectTypeProvider.KEY);
     }
 
     @Test

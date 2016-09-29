@@ -42,7 +42,7 @@ public class EditorCurrentFilePathProviderTest extends AbstractEditorMacroProvid
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), EditorCurrentFilePathProvider.KEY);
+        assertSame(provider.getName(), EditorCurrentFilePathProvider.KEY);
     }
 
     @Test

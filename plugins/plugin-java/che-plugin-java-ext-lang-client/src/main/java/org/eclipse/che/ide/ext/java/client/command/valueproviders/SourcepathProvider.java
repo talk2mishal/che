@@ -57,7 +57,7 @@ public class SourcepathProvider implements CommandMacro {
     }
 
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

@@ -44,7 +44,7 @@ public class OutputDirProvider implements CommandMacro {
     }
 
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

@@ -50,7 +50,7 @@ public class WorkspaceNameMacroProviderTest {
 
     @Test
     public void getKey() throws Exception {
-        assertSame(provider.getKey(), WorkspaceNameMacroProvider.KEY);
+        assertSame(provider.getName(), WorkspaceNameMacroProvider.KEY);
     }
 
     @Test

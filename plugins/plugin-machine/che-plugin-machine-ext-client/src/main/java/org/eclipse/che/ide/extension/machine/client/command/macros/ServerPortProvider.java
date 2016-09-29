@@ -119,7 +119,7 @@ public class ServerPortProvider implements WsAgentStateHandler {
         }
 
         @Override
-        public String getKey() {
+        public String getName() {
             return variable;
         }
 

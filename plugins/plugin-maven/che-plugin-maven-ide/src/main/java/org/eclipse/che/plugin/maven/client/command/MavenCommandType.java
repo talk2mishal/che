@@ -81,13 +81,13 @@ public class MavenCommandType implements CommandType {
 
     @Override
     public String getCommandLineTemplate() {
-        return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getKey();
+        return COMMAND_TEMPLATE + " -f " + currentProjectPathProvider.getName();
     }
 
     @Override
     public String getPreviewUrlTemplate() {
         //TODO: hardcode http after switching WS Master to https
         return "http://" + ServerPortProvider.KEY_TEMPLATE.replace("%", DEF_PORT) + "/" +
-               currentProjectRelativePathProvider.getKey();
+               currentProjectRelativePathProvider.getName();
     }
 }

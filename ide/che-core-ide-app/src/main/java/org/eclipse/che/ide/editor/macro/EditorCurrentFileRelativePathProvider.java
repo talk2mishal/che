@@ -45,7 +45,7 @@ public class EditorCurrentFileRelativePathProvider extends AbstractEditorMacroPr
 
     /** {@inheritDoc} */
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

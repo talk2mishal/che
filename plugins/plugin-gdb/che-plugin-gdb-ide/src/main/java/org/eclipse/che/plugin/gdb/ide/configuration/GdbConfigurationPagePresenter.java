@@ -96,7 +96,7 @@ public class GdbConfigurationPagePresenter implements GdbConfigurationPageView.A
     }
 
     private String getDefaultBinaryPath() {
-        return currentProjectPathProvider.getKey() + "/" + DEFAULT_EXECUTABLE_TARGET_NAME;
+        return currentProjectPathProvider.getName() + "/" + DEFAULT_EXECUTABLE_TARGET_NAME;
     }
 
     @Override

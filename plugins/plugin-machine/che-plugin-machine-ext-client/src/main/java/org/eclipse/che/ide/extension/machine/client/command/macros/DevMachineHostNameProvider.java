@@ -46,7 +46,7 @@ public class DevMachineHostNameProvider implements CommandMacro, WsAgentStateHan
 
     @NotNull
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

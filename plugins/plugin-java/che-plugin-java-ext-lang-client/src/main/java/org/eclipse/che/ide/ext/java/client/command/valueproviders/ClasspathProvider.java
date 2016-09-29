@@ -60,7 +60,7 @@ public class ClasspathProvider implements CommandMacro {
     }
 
     @Override
-    public String getKey() {
+    public String getName() {
         return KEY;
     }
 

@@ -74,7 +74,7 @@ public class MacroPreProcessor {
                 return macro.expand().thenPromise(new Function<String, Promise<String>>() {
                     @Override
                     public Promise<String> apply(String arg) throws FunctionException {
-                        commandLineContainer.setCommandLine(commandLineContainer.getCommandLine().replace(macro.getKey(), arg));
+                        commandLineContainer.setCommandLine(commandLineContainer.getCommandLine().replace(macro.getName(), arg));
                         return Promises.resolve(commandLineContainer.getCommandLine());
                     }
                 });

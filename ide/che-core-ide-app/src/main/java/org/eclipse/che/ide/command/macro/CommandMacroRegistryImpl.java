@@ -38,7 +38,7 @@ public class CommandMacroRegistryImpl implements CommandMacroRegistry {
     @Inject(optional = true)
     public void register(Set<CommandMacro> valueProviders) {
         for (CommandMacro provider : valueProviders) {
-            final String key = provider.getKey();
+            final String key = provider.getName();
             if (this.valueProviders.containsKey(key)) {
                 Log.warn(CommandMacroRegistryImpl.class, "Command macro '" + key + "' is already registered.");
             } else {
@@ -49,7 +49,7 @@ public class CommandMacroRegistryImpl implements CommandMacroRegistry {
 
     @Override
     public void unregister(CommandMacro valueProvider) {
-        valueProviders.remove(valueProvider.getKey());
+        valueProviders.remove(valueProvider.getName());
     }
 
     @Override

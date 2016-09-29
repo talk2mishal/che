@@ -39,7 +39,7 @@ public class ExplorerCurrentFileRelativePathProviderTest extends AbstractExplore
 
     @Test
     public void testGetKey() throws Exception {
-        assertSame(provider.getKey(), ExplorerCurrentFileRelativePathProvider.KEY);
+        assertSame(provider.getName(), ExplorerCurrentFileRelativePathProvider.KEY);
     }
 
     @Test

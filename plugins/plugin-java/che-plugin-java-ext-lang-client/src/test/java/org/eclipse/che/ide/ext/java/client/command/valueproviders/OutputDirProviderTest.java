@@ -83,7 +83,7 @@ public class OutputDirProviderTest {
 
     @Test
     public void keyShouldBeReturned() throws Exception {
-        assertEquals("${project.java.output.dir}", provider.getKey());
+        assertEquals("${project.java.output.dir}", provider.getName());
     }
 
     @Test

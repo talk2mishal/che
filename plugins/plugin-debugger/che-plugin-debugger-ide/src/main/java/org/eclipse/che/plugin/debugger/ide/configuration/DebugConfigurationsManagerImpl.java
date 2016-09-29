@@ -260,7 +260,7 @@ public class DebugConfigurationsManagerImpl implements DebugConfigurationsManage
         connectionProperties.put("PORT", String.valueOf(debugConfiguration.getPort()));
 
         for (Map.Entry<String, String> entry : debugConfiguration.getConnectionProperties().entrySet()) {
-            String newValue = entry.getValue().replace(currentProjectPathProvider.getKey(), currentProjectPath);
+            String newValue = entry.getValue().replace(currentProjectPathProvider.getName(), currentProjectPath);
             connectionProperties.put(entry.getKey(), newValue);
         }
         return connectionProperties;

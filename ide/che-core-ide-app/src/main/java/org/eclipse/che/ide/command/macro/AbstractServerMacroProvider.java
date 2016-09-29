@@ -94,7 +94,7 @@ public abstract class AbstractServerMacroProvider implements WsAgentStateHandler
     }
 
     /**
-     * Returns the macro which implementation provides based on the information from the developer machine.
+     * Returns the macros which implementation provides based on the information from the developer machine.
      *
      * @param devMachine
      *         current developer machine

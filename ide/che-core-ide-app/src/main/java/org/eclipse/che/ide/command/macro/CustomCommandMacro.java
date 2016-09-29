@@ -41,7 +41,7 @@ public class CustomCommandMacro implements CommandMacro {
 
     /** {@inheritDoc} */
     @Override
-    public String getKey() {
+    public String getName() {
         return key;
     }
 

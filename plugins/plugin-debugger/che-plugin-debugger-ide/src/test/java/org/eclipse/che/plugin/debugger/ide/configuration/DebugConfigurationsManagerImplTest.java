@@ -100,7 +100,7 @@ public class DebugConfigurationsManagerImplTest extends TestCase {
         when(debuggerManager.getDebugger(debugId)).thenReturn(debugger);
         when(debugger.connect(anyMap())).thenReturn(mock(Promise.class));
         when(currentProjectPathProvider.expand()).thenReturn(mock(Promise.class));
-        when(currentProjectPathProvider.getKey()).thenReturn("key");
+        when(currentProjectPathProvider.getName()).thenReturn("key");
 
         debugConfigurationsManager.apply(debugConfiguration);
 

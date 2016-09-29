@@ -93,7 +93,7 @@ public class ServerProtocolMacroProviderTest {
         final CommandMacro provider1 = iterator.next();
 
         assertTrue(provider1 instanceof CustomCommandMacro);
-        assertEquals(provider1.getKey(), ServerProtocolMacroProvider.KEY.replace("%", WS_AGENT_PORT));
+        assertEquals(provider1.getName(), ServerProtocolMacroProvider.KEY.replace("%", WS_AGENT_PORT));
 
         provider1.expand().then(new Operation<String>() {
             @Override
@@ -105,7 +105,7 @@ public class ServerProtocolMacroProviderTest {
         final CommandMacro provider2 = iterator.next();
 
         assertTrue(provider2 instanceof CustomCommandMacro);
-        assertEquals(provider2.getKey(), ServerProtocolMacroProvider.KEY.replace("%", WS_AGENT_PORT.substring(0, WS_AGENT_PORT.length() - 4)));
+        assertEquals(provider2.getName(), ServerProtocolMacroProvider.KEY.replace("%", WS_AGENT_PORT.substring(0, WS_AGENT_PORT.length() - 4)));
 
         provider2.expand().then(new Operation<String>() {
             @Override
