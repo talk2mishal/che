@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +32,7 @@ public abstract class GdbProcess {
     private static final int    MAX_CAPACITY = 1000;
     private static final int    MAX_OUTPUT   = 4096;
 
+    protected       int                      pid;
     protected final Process                  process;
     protected final String                   outputSeparator;
     protected final BlockingQueue<GdbOutput> outputs;
@@ -41,11 +43,30 @@ public abstract class GdbProcess {
         this.outputs = new ArrayBlockingQueue<>(MAX_CAPACITY);
 
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
-        process = processBuilder.start();
+        process = processBuilder.start();process.destroy();
 
         outputReader = new OutputReader(commands[0] + " output reader");
         outputReader.setDaemon(true);
         outputReader.start();
+
+        Field pidField = null;
+        pid = -1;
+        try {
+            pidField = Thread.currentThread().getContextClassLoader().loadClass("java.lang.UNIXProcess").getDeclaredField("pid");
+            pidField.setAccessible(true);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        if (pidField != null) {
+            try {
+                pid = ((Number)pidField.get(process)).intValue();
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Can't get process' pid. Not unix system?", e);
+            }
+        } else {
+            throw new IllegalStateException("Can't get process' pid. Not unix system?");
+        }
     }
 
     /**
@@ -54,7 +75,7 @@ public abstract class GdbProcess {
     protected void stop() {
         outputReader.interrupt();
         outputs.clear();
-        process.destroyForcibly();
+        process.destroy();
     }
 
     /**

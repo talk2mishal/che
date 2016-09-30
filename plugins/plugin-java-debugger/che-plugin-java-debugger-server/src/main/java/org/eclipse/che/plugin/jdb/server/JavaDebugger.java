@@ -47,6 +47,7 @@ import org.eclipse.che.api.debug.shared.model.action.StartAction;
 import org.eclipse.che.api.debug.shared.model.action.StepIntoAction;
 import org.eclipse.che.api.debug.shared.model.action.StepOutAction;
 import org.eclipse.che.api.debug.shared.model.action.StepOverAction;
+import org.eclipse.che.api.debug.shared.model.action.SuspendAction;
 import org.eclipse.che.api.debug.shared.model.impl.DebuggerInfoImpl;
 import org.eclipse.che.api.debug.shared.model.impl.FieldImpl;
 import org.eclipse.che.api.debug.shared.model.impl.SimpleValueImpl;
@@ -199,6 +200,11 @@ public class JavaDebugger implements EventsHandler, Debugger {
             }
         }
         vm.resume();
+    }
+
+    @Override
+    public void suspend() throws DebuggerException {
+
     }
 
     @Override

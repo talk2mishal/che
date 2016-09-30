@@ -85,6 +85,8 @@ public interface Debugger extends DebuggerObservable {
      */
     void resume();
 
+    void suspend();
+
     /**
      * Evaluates the given expression
      */

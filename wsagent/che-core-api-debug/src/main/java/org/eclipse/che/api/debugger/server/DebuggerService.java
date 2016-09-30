@@ -13,6 +13,7 @@ package org.eclipse.che.api.debugger.server;
 import com.google.inject.Inject;
 
 import org.eclipse.che.api.debug.shared.dto.SimpleValueDto;
+import org.eclipse.che.api.debug.shared.model.action.SuspendAction;
 import org.eclipse.che.api.debugger.server.exceptions.DebuggerException;
 import org.eclipse.che.api.debugger.server.exceptions.DebuggerNotFoundException;
 import org.eclipse.che.api.debug.shared.dto.BreakpointDto;
@@ -114,6 +115,9 @@ public class DebuggerService {
                 break;
             case RESUME:
                 debugger.resume((ResumeAction)action);
+                break;
+            case SUSPEND:
+                debugger.suspend();
                 break;
             case STEP_INTO:
                 debugger.stepInto((StepIntoAction)action);

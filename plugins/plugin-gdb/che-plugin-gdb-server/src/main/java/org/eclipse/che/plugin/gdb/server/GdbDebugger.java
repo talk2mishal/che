@@ -22,6 +22,7 @@ import org.eclipse.che.api.debug.shared.model.action.StartAction;
 import org.eclipse.che.api.debug.shared.model.action.StepIntoAction;
 import org.eclipse.che.api.debug.shared.model.action.StepOutAction;
 import org.eclipse.che.api.debug.shared.model.action.StepOverAction;
+import org.eclipse.che.api.debug.shared.model.action.SuspendAction;
 import org.eclipse.che.api.debug.shared.model.impl.DebuggerInfoImpl;
 import org.eclipse.che.api.debug.shared.model.impl.SimpleValueImpl;
 import org.eclipse.che.api.debug.shared.model.impl.StackFrameDumpImpl;
@@ -32,14 +33,13 @@ import org.eclipse.che.api.debug.shared.model.impl.event.DisconnectEventImpl;
 import org.eclipse.che.api.debug.shared.model.impl.event.SuspendEventImpl;
 import org.eclipse.che.api.debugger.server.Debugger;
 import org.eclipse.che.api.debugger.server.exceptions.DebuggerException;
-import org.eclipse.che.plugin.gdb.server.exception.GdbException;
+import org.eclipse.che.plugin.gdb.server.exception.GdbParseException;
 import org.eclipse.che.plugin.gdb.server.exception.GdbTerminatedException;
 import org.eclipse.che.plugin.gdb.server.parser.GdbContinue;
 import org.eclipse.che.plugin.gdb.server.parser.GdbDirectory;
 import org.eclipse.che.plugin.gdb.server.parser.GdbInfoBreak;
 import org.eclipse.che.plugin.gdb.server.parser.GdbInfoLine;
 import org.eclipse.che.plugin.gdb.server.parser.GdbInfoProgram;
-import org.eclipse.che.plugin.gdb.server.exception.GdbParseException;
 import org.eclipse.che.plugin.gdb.server.parser.GdbPrint;
 import org.eclipse.che.plugin.gdb.server.parser.GdbRun;
 import org.eclipse.che.plugin.gdb.server.parser.GdbVersion;
@@ -158,11 +158,7 @@ public class GdbDebugger implements Debugger {
                 gdb.targetRemote(host, port);
             }
         } catch (DebuggerException | IOException | InterruptedException e) {
-            try {
-                gdb.quit();
-            } catch (IOException | InterruptedException | GdbException e1) {
-                LOG.error("Can't stop GDB: " + e1.getMessage(), e1);
-            }
+            gdb.stop();
             throw new DebuggerException("Can't initialize GDB: " + e.getMessage(), e);
         }
 
@@ -186,11 +182,7 @@ public class GdbDebugger implements Debugger {
         currentLocation = null;
         debuggerCallback.onEvent(new DisconnectEventImpl());
 
-        try {
-            gdb.quit();
-        } catch (IOException | InterruptedException | GdbException e) {
-            LOG.error(e.getMessage(), e);
-        }
+        gdb.stop();
     }
 
     @Override
@@ -288,6 +280,18 @@ public class GdbDebugger implements Debugger {
         } catch (IOException | GdbParseException | InterruptedException e) {
             throw new DebuggerException("Error during running. " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void suspend() throws DebuggerException {
+        try {
+            gdb.suspend();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private boolean isRemoteConnection() {

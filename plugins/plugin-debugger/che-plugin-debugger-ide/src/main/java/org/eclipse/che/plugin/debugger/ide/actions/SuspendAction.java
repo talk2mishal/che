@@ -16,47 +16,46 @@ import org.eclipse.che.ide.api.action.AbstractPerspectiveAction;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.debug.Debugger;
 import org.eclipse.che.ide.debug.DebuggerManager;
-import org.eclipse.che.ide.util.loging.Log;
+import org.eclipse.che.ide.ui.FontAwesome;
 import org.eclipse.che.plugin.debugger.ide.DebuggerLocalizationConstant;
-import org.eclipse.che.plugin.debugger.ide.DebuggerResources;
 
 import java.util.Collections;
 
 import static org.eclipse.che.ide.workspace.perspectives.project.ProjectPerspective.PROJECT_PERSPECTIVE_ID;
 
 /**
- * Action which allows disconnect debugger from running process
+ * Action which allows to suspend debugger session
  *
- * @author Mykola Morhun
+ * @author Roman Nikitenko
  */
-public class DisconnectDebuggerAction extends AbstractPerspectiveAction {
+public class SuspendAction extends AbstractPerspectiveAction {
+
     private final DebuggerManager debuggerManager;
 
     @Inject
-    public DisconnectDebuggerAction(DebuggerManager debuggerManager,
-                                    DebuggerLocalizationConstant locale,
-                                    DebuggerResources resources) {
+    public SuspendAction(DebuggerManager debuggerManager,
+                         DebuggerLocalizationConstant locale) {
         super(Collections.singletonList(PROJECT_PERSPECTIVE_ID),
-              locale.disconnectDebugger(),
-              locale.disconnectDebuggerDescription(),
+              locale.suspend(),
+              locale.suspendDescription(),
               null,
-              resources.disconnectDebugger());
+              null,
+              FontAwesome.PAUSE);
         this.debuggerManager = debuggerManager;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Log.error(getClass(), "=== DisconnectDebuggerAction actionPerformed ===");
         Debugger debugger = debuggerManager.getActiveDebugger();
         if (debugger != null) {
-            Log.error(getClass(), "=== DisconnectDebuggerAction before disconnect ===");
-            debugger.disconnect();
+            debugger.suspend();
         }
     }
 
     @Override
     public void updateInPerspective(ActionEvent event) {
         Debugger debugger = debuggerManager.getActiveDebugger();
-        event.getPresentation().setEnabled(debugger != null && debugger.isConnected());
+
+        event.getPresentation().setEnabled(debugger != null);
     }
 }

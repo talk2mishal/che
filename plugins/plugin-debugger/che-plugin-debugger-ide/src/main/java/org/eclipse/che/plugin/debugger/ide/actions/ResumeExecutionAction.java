@@ -55,6 +55,6 @@ public class ResumeExecutionAction extends AbstractPerspectiveAction {
     @Override
     public void updateInPerspective(ActionEvent event) {
         Debugger debugger = debuggerManager.getActiveDebugger();
-        event.getPresentation().setEnabled(debugger != null && debugger.isSuspended());
+        event.getPresentation().setEnabled(true);
     }
 }

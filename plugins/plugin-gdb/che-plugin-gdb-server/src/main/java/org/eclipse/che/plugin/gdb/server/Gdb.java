@@ -81,6 +81,10 @@ public class Gdb extends GdbProcess {
         return GdbRun.parse(gdbOutput);
     }
 
+    public void suspend() throws IOException, InterruptedException, DebuggerException {
+        Runtime.getRuntime().exec("kill -SIGINT " + pid);
+    }
+
     /**
      * `set var` command.
      */

@@ -26,6 +26,7 @@ import org.eclipse.che.api.debug.shared.dto.action.StartActionDto;
 import org.eclipse.che.api.debug.shared.dto.action.StepIntoActionDto;
 import org.eclipse.che.api.debug.shared.dto.action.StepOutActionDto;
 import org.eclipse.che.api.debug.shared.dto.action.StepOverActionDto;
+import org.eclipse.che.api.debug.shared.dto.action.SuspendActionDto;
 import org.eclipse.che.api.debug.shared.dto.event.BreakpointActivatedEventDto;
 import org.eclipse.che.api.debug.shared.dto.event.DebuggerEventDto;
 import org.eclipse.che.api.debug.shared.dto.event.SuspendEventDto;
@@ -207,13 +208,16 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
 
         switch (event.getType()) {
             case SUSPEND:
+                Log.error(getClass(), "SUSPEND");
                 newLocationDto = ((SuspendEventDto)event).getLocation();
                 break;
             case BREAKPOINT_ACTIVATED:
+                Log.error(getClass(), "BREAKPOINT_ACTIVATED");
                 BreakpointDto breakpointDto = ((BreakpointActivatedEventDto)event).getBreakpoint();
                 onBreakpointActivated(breakpointDto.getLocation());
                 return;
             case DISCONNECT:
+                Log.error(getClass(), "DISCONNECT");
                 disconnect();
                 return;
             default:
@@ -316,6 +320,7 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
 
     @Override
     public void addBreakpoint(final VirtualFile file, final int lineNumber) {
+        Log.error(getClass(), "=== addBreakpoint === " + lineNumber);
         if (isConnected()) {
             String fqn = pathToFqn(file);
             if (fqn == null) {
@@ -407,7 +412,9 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
 
     @Override
     public Promise<Void> connect(Map<String, String> connectionProperties) {
+        Log.error(getClass(), "=== connect ===");
         if (isConnected()) {
+            Log.error(getClass(), "=== Debugger already connected ===");
             return Promises.reject(JsPromiseError.create("Debugger already connected"));
         }
 
@@ -417,10 +424,12 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
         Promise<Void> promise = connect.then(new Function<DebugSessionDto, Void>() {
             @Override
             public Void apply(final DebugSessionDto arg) throws FunctionException {
+                Log.error(getClass(), "=== connect apply === " + isConnected());
                 DebuggerInfo debuggerInfo = arg.getDebuggerInfo();
                 debuggerDescriptor.setInfo(debuggerInfo.getName() + " " + debuggerInfo.getVersion());
 
                 setDebugSession(arg);
+                Log.error(getClass(), "=== connect apply2 === " + isConnected());
                 preserveDebuggerState();
                 startCheckingEvents();
                 startDebugger(arg);
@@ -430,6 +439,7 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
         }).catchError(new Operation<PromiseError>() {
             @Override
             public void apply(PromiseError arg) throws OperationException {
+                Log.error(getClass(), "=== connect error ===");
                 Log.error(AbstractDebugger.class, arg.getMessage());
                 throw new OperationException(arg.getCause());
             }
@@ -466,17 +476,31 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
         action.setType(Action.TYPE.START);
         action.setBreakpoints(breakpoints);
 
-        service.start(debugSessionDto.getId(), action);
+        Log.error(getClass(), "=== before  service.start ===");
+        service.start(debugSessionDto.getId(), action).then(new Operation<Void>() {
+            @Override
+            public void apply(Void arg) throws OperationException {
+                Log.error(getClass(), "=== service.start apply ===");
+            }
+        }).catchError(new Operation<PromiseError>() {
+            @Override
+            public void apply(PromiseError arg) throws OperationException {
+                Log.error(getClass(), "=== service.start error ===");
+            }
+        });
     }
 
     @Override
     public void disconnect() {
+        Log.error(getClass(), "=== disconnect ===");
         stopCheckingDebugEvents();
 
         Promise<Void> disconnect;
         if (isConnected()) {
+            Log.error(getClass(), "=== disconnect  isConnected ===");
             disconnect = service.disconnect(debugSessionDto.getId());
         } else {
+            Log.error(getClass(), "=== disconnect  not Connected ===");
             disconnect = Promises.resolve(null);
         }
 
@@ -486,17 +510,21 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
         disconnect.then(new Operation<Void>() {
             @Override
             public void apply(Void arg) throws OperationException {
+                Log.error(getClass(), "=== disconnect  then apply  ===");
                 for (DebuggerObserver observer : observers) {
                     observer.onDebuggerDisconnected();
                 }
+                Log.error(getClass(), "=== disconnect  before set active debugger null  ===");
                 debuggerManager.setActiveDebugger(null);
             }
         }).catchError(new Operation<PromiseError>() {
             @Override
             public void apply(PromiseError arg) throws OperationException {
+                Log.error(getClass(), "=== disconnect  then error  ===");
                 for (DebuggerObserver observer : observers) {
                     observer.onDebuggerDisconnected();
                 }
+                Log.error(getClass(), "=== disconnect  before set active debugger null  ===");
                 debuggerManager.setActiveDebugger(null);
             }
         });
@@ -587,6 +615,25 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
     }
 
     @Override
+    public void suspend() {
+        SuspendActionDto action = dtoFactory.createDto(SuspendActionDto.class);
+        action.setType(Action.TYPE.SUSPEND);
+
+        Log.error(getClass(), "!!! before suspend !!!");
+        service.suspend(debugSessionDto.getId(), action).then(new Operation<Void>() {
+            @Override
+            public void apply(Void arg) throws OperationException {
+                Log.error(getClass(), "!!! suspend success !!!");
+            }
+        }).catchError(new Operation<PromiseError>() {
+            @Override
+            public void apply(PromiseError arg) throws OperationException {
+                Log.error(getClass(), "!!! suspend ERROR !!!");
+            }
+        });
+    }
+
+    @Override
     public Promise<String> evaluate(String expression) {
         if (isConnected()) {
             return service.evaluate(debugSessionDto.getId(), expression);
@@ -641,6 +688,7 @@ public abstract class AbstractDebugger implements Debugger, DebuggerObservable {
     }
 
     protected void setDebugSession(DebugSessionDto debugSessionDto) {
+        Log.error(getClass(), "setDebugSession " + debugSessionDto);
         this.debugSessionDto = debugSessionDto;
     }
 

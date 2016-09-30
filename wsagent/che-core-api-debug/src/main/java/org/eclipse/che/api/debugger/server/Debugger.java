@@ -11,6 +11,7 @@
 package org.eclipse.che.api.debugger.server;
 
 import org.eclipse.che.api.debug.shared.model.SimpleValue;
+import org.eclipse.che.api.debug.shared.model.action.SuspendAction;
 import org.eclipse.che.api.debugger.server.exceptions.DebuggerException;
 import org.eclipse.che.api.debug.shared.model.Breakpoint;
 import org.eclipse.che.api.debug.shared.model.DebuggerInfo;
@@ -67,6 +68,8 @@ public interface Debugger {
      *      if any error occur
      */
     void start(StartAction action) throws DebuggerException;
+
+    void suspend() throws DebuggerException;
 
     /**
      * Adds given breakpoint. When breakpoint is accepted by server
