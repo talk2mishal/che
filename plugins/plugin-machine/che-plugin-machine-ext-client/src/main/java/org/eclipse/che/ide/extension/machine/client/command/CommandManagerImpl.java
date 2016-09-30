@@ -61,7 +61,7 @@ public class CommandManagerImpl implements CommandManager {
     private final WorkspaceServiceClient  workspaceServiceClient;
     private final MachineServiceClient    machineServiceClient;
     private final DtoFactory              dtoFactory;
-    private final MacroPreProcessor       macroPreProcessor;
+    private final MacroProcessor          macroProcessor;
     private final CommandConsoleFactory   commandConsoleFactory;
     private final ProcessesPanelPresenter processesPanelPresenter;
     private final Set<CommandProducer>    commandProducers;
@@ -76,7 +76,7 @@ public class CommandManagerImpl implements CommandManager {
                               MachineServiceClient machineServiceClient,
                               DtoFactory dtoFactory,
                               EventBus eventBus,
-                              MacroPreProcessor macroPreProcessor,
+                              MacroProcessor macroProcessor,
                               CommandConsoleFactory commandConsoleFactory,
                               ProcessesPanelPresenter processesPanelPresenter,
                               Set<CommandProducer> commandProducers) {
@@ -85,7 +85,7 @@ public class CommandManagerImpl implements CommandManager {
         this.workspaceServiceClient = workspaceServiceClient;
         this.machineServiceClient = machineServiceClient;
         this.dtoFactory = dtoFactory;
-        this.macroPreProcessor = macroPreProcessor;
+        this.macroProcessor = macroProcessor;
         this.commandConsoleFactory = commandConsoleFactory;
         this.processesPanelPresenter = processesPanelPresenter;
         this.commandProducers = commandProducers;
@@ -259,7 +259,7 @@ public class CommandManagerImpl implements CommandManager {
 
     @Override
     public Promise<String> expandMacros(String commandLine) {
-        return macroPreProcessor.expandMacros(commandLine);
+        return macroProcessor.expandMacros(commandLine);
     }
 
     @Override

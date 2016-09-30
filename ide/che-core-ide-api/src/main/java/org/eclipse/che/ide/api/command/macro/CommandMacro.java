@@ -25,7 +25,7 @@ import org.eclipse.che.ide.api.command.CommandManager;
  */
 public interface CommandMacro {
 
-    /** Returns macro name. The recommended format is ${macro.name}. */
+    /** Returns macro name. The recommended syntax is ${macro.name}. */
     String getName();
 
     /** Returns macro description. */

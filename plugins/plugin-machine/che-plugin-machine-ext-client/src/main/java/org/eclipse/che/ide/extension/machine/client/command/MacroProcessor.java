@@ -33,18 +33,18 @@ import java.util.Iterator;
  * @see CommandManager#executeCommand(CommandImpl, Machine)
  */
 @Singleton
-public class MacroPreProcessor {
+public class MacroProcessor {
 
     private final CommandMacroRegistry commandMacroRegistry;
 
     @Inject
-    public MacroPreProcessor(CommandMacroRegistry commandMacroRegistry) {
+    public MacroProcessor(CommandMacroRegistry commandMacroRegistry) {
         this.commandMacroRegistry = commandMacroRegistry;
     }
 
     /**
      * Expands all macros in the given {@code commandLine}.
-     * <p>If {@link MacroPreProcessor} is unable to find a macro, the macro will not be expanded.
+     * <p>If {@link MacroProcessor} is unable to find a macro, the macro will not be expanded.
      */
     public Promise<String> expandMacros(String commandLine) {
         Promise<String> promise = Promises.resolve(null);
