@@ -22,10 +22,8 @@ import org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,9 +57,9 @@ public class LocalWorkspaceFSStorageCleanerImpl implements WorkspaceFSStorageCle
         ThreadLocalPropagateContext.wrap(() -> {
             try {
                 String workspacePath = workspaceFolderPathProvider.getPath(workspaceId);
-                Path workspaceStorage = Paths.get(workspacePath);
-                if (!workspacePath.equals(hostProjectsFolder) && Files.exists(workspaceStorage)) {
-                    IoUtil.deleteRecursive(workspaceStorage.toFile());
+                File workspaceStorage = new File(workspacePath);
+                if (!workspacePath.equals(hostProjectsFolder) && workspaceStorage.exists()) {
+                    IoUtil.deleteRecursive(workspaceStorage);
                 }
             } catch (IOException e) {
                 LOG.error("Failed to clean up workspace folder for workspace with id: {}. Cause: {}.", workspaceId, e.getMessage());
