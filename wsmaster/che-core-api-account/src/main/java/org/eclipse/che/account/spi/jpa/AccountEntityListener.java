@@ -18,6 +18,7 @@ import org.eclipse.che.api.core.notification.EventService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.PreRemove;
+import javax.persistence.RollbackException;
 
 /**
  * Callback for {@link AccountImpl account} jpa related events.
@@ -35,7 +36,7 @@ public class AccountEntityListener {
         final BeforeAccountRemovedEvent event = new BeforeAccountRemovedEvent(account);
         eventService.publish(event);
         if (event.isFailure()) {
-            throw event.cause();
+            throw new RollbackException(event.cause());
         }
     }
 }

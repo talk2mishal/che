@@ -103,6 +103,9 @@ public class JpaUserDao implements UserDao {
         try {
             doRemove(id);
         } catch (RuntimeException x) {
+            if (x.getCause() instanceof ConflictException) {
+                throw new ConflictException(x.getLocalizedMessage());
+            }
             throw new ServerException(x.getLocalizedMessage(), x);
         }
     }
