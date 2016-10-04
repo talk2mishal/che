@@ -10,12 +10,19 @@
  *******************************************************************************/
 package org.eclipse.che.api.core.util;
 
+import com.google.common.base.Joiner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static java.lang.String.format;
 
 /**
  * Helpers to manage system processes.
@@ -24,6 +31,8 @@ import java.util.concurrent.TimeoutException;
  * @author Alexander Garagatyi
  */
 public final class ProcessUtil {
+
+    private static final Logger         LOG             = LoggerFactory.getLogger(ProcessUtil.class);
     private static final ProcessManager PROCESS_MANAGER = ProcessManager.newInstance();
 
     /**
@@ -95,18 +104,19 @@ public final class ProcessUtil {
 
         Process process = pb.start();
 
-        // consume logs until process ends
         CompletableFuture.runAsync(() -> {
             try {
+                // consume logs until process ends
                 process(process, outputConsumer);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(format("Failed to complete process '%s'.", Joiner.on(" ").join(commandLine)), e);
             }
         });
 
         if (!process.waitFor(timeout, timeUnit)) {
             ProcessUtil.kill(process);
-            throw new TimeoutException();
+            throw new TimeoutException(format("Process '%s' was terminated by timeout %s %s.",
+                                              Joiner.on(" ").join(commandLine), timeout, timeUnit.name()));
         }
 
         return process;
