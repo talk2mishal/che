@@ -13,6 +13,7 @@ package org.eclipse.che.api.core.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -92,29 +93,22 @@ public final class ProcessUtil {
             throws TimeoutException, IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(commandLine).redirectErrorStream(true);
 
-        // process will be stopped after timeout
-        Watchdog watcher = new Watchdog(timeout, timeUnit);
-        Process process;
-        try {
-            process = pb.start();
+        Process process = pb.start();
 
-            final ValueHolder<Boolean> isTimeoutExceeded = new ValueHolder<>(false);
-            watcher.start(() -> {
-                isTimeoutExceeded.set(true);
-                ProcessUtil.kill(process);
-            });
-
-            // consume logs until process ends
-            process(process, outputConsumer);
-
-            process.waitFor(timeout, timeUnit);
-
-            if (isTimeoutExceeded.get()) {
-                throw new TimeoutException();
+        // consume logs until process ends
+        CompletableFuture.runAsync(() -> {
+            try {
+                process(process, outputConsumer);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } finally {
-            watcher.stop();
+        });
+
+        if (!process.waitFor(timeout, timeUnit)) {
+            ProcessUtil.kill(process);
+            throw new TimeoutException();
         }
+
         return process;
     }
 
