@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2016 Codenvy, S.A.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Codenvy, S.A. - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.che.api.core.jdbc.jpa.event;
 
 import org.eclipse.che.api.core.notification.EventSubscriber;
@@ -11,11 +21,11 @@ public abstract class CascadeRemoveEventSubscriber<T extends CascadeRemovalEvent
 
     @Override
     public void onEvent(T event) {
-        if (!event.isFailure()) {
+        if (!event.getContext().isFailed()) {
             try {
-                onCascadeEvent(event);
-            } catch (Exception exception) {
-                event.setCause(exception);
+                onRemove(event);
+            } catch (Exception ex) {
+                event.getContext().setCause(ex);
             }
         }
     }
@@ -23,5 +33,5 @@ public abstract class CascadeRemoveEventSubscriber<T extends CascadeRemovalEvent
     /**
      * TODO
      */
-    public abstract void onCascadeEvent(T event) throws Exception;
+    public abstract void onRemove(T event) throws Exception;
 }

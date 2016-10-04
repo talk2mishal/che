@@ -18,14 +18,13 @@ package org.eclipse.che.api.core.jdbc.jpa.event;
 public class RemovalContext {
     private Exception cause;
 
-    
     // TODO
-    public Exception cause() {
+    public Exception getCause() {
         return cause;
     }
 
     // TODO
-    public boolean isFailure() {
+    public boolean isFailed() {
         return cause != null;
     }
 

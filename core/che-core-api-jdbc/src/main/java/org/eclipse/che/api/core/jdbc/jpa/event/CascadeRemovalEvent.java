@@ -22,15 +22,7 @@ public abstract class CascadeRemovalEvent {
         this.context = new RemovalContext();
     }
 
-    public Exception cause() {
-        return context.cause();
-    }
-
-    public boolean isFailure() {
-        return context.isFailure();
-    }
-
-    public void setCause(Exception cause) {
-        context.setCause(cause);
+    public RemovalContext getContext() {
+        return context;
     }
 }

@@ -32,11 +32,11 @@ public class AccountEntityListener {
     private EventService eventService;
 
     @PreRemove
-    private void preRemove(AccountImpl account) throws Throwable {
+    private void preRemove(AccountImpl account) {
         final BeforeAccountRemovedEvent event = new BeforeAccountRemovedEvent(account);
         eventService.publish(event);
-        if (event.isFailure()) {
-            throw new RollbackException(event.cause());
+        if (event.getContext().isFailed()) {
+            throw new RollbackException(event.getContext().getCause());
         }
     }
 }
