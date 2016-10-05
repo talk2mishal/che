@@ -38,7 +38,7 @@ public class HelloWorldAction extends Action {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        workspaceAgent.openPart(helloWorldViewPresenter, PartStackType.EDITING);
+        workspaceAgent.openPart(helloWorldViewPresenter, PartStackType.INFORMATION);
         workspaceAgent.setActivePart(helloWorldViewPresenter);
         helloWorldViewPresenter.setVisible(true);
     }

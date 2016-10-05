@@ -24,7 +24,7 @@ public class HelloWorldViewOverlay extends JavaScriptObject {
     }
 
     public final static native void sayHello(final Element element, String message) /*-{
-        new $wnd.HelloWorld(element, contents);
+        new $wnd.HelloWorld(element, message);
     }-*/;
 
 }
